@@ -1,0 +1,7 @@
+CREATE TABLE cliente(
+  Cli_Codigo INT PRIMARY KEY AUTO_INCREMENT,
+  Cli_Nome VARCHAR(60) NOT NULL,
+  Cli_Cpf VARCHAR(11) UNIQUE,
+  Cli_Cnpj VARCHAR(14) UNIQUE,
+  Cli_Telefone VARCHAR(20)
+);
