@@ -20,12 +20,12 @@ class ClienteController {
     }
 
     async create(req, res) {
-        const { nome, cpf, cnpj, telefone } = req.body;
+        const { nome, cpf, cnpj, contato } = req.body;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Cpf = "${cpf}" OR Cli_Cnpj = "${cnpj}"`,
+                    `SELECT * FROM cliente WHERE Cli_CPF = "${cpf}" OR Cli_CNPJ = "${cnpj}"`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
@@ -33,13 +33,74 @@ class ClienteController {
                             return res.status(404).json("CPF ou CNPJ já cadastrado");
                         } else {
                             conn.query(
-                                `INSERT INTO cliente (Cli_Nome, Cli_Cpf, Cli_Cnpj, Cli_Telefone) ` + 
-                                `VALUES ("${nome}", ${cpf!=''?`"${cpf}"`:'NULL'}, ${cnpj!=''?`"${cnpj}"`:'NULL'}, ${telefone!=''?`"${telefone}"`:'NULL'})`,
+                                `INSERT INTO cliente (Cli_Nome, Cli_CNPJ, Cli_CPF, Cli_Contato) ` + 
+                                `VALUES ("${nome}", ${cnpj!=''?`"${cnpj}"`:'NULL'}, ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
                                 }
                             )
+                        }
+                    }
+                )
+                conn.release();
+            })
+        } catch(err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal server error." })
+        }
+    }
+
+    async update(req, res) {
+        const { nome, cpf, cnpj, contato } = req.body;
+        const { id } = req.params;
+
+        try {
+            mysql.getConnection((error, conn) => {
+                conn.query(
+                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                        
+                        if (JSON.stringify(result) === '[]') {
+                            return res.status(404).json("Cliente não existe");
+                        } else if (nome === '') {
+                            return res.status(404).json("Nome deve ser informado");
+                        } else {
+                            conn.query(
+                                `UPDATE cliente SET Cli_Nome = "${nome}", Cli_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, ` + 
+                                `Cli_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, Cli_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
+                                `WHERE Cli_Codigo = ${id}`,
+                                (error, result, fields) => {
+                                    if (error) { return res.status(500).send({ error: error }) }
+                                    return res.status(201).json(result);
+                                }
+                            )
+                        }
+                    }
+                )
+                conn.release();
+            })
+        } catch(err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal server error." })
+        }
+    }
+
+    async show(req, res) {
+        const { id } = req.params;
+
+        try {
+            mysql.getConnection((error, conn) => {
+                conn.query(
+                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                        
+                        if (JSON.stringify(result) === '[]') {
+                            return res.status(404).json("Cliente não existe");
+                        } else {
+                            return res.status(201).json(result);
                         }
                     }
                 )
