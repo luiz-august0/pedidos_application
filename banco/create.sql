@@ -18,7 +18,6 @@ CREATE TABLE fornecedor(
 CREATE TABLE funcionario(
   Fun_Codigo INT PRIMARY KEY AUTO_INCREMENT,
   Fun_Nome VARCHAR(60) NOT NULL,
-  Fun_RazaoSocial VARCHAR(100),
   Fun_CPF VARCHAR(11) UNIQUE,
   Fun_Contato VARCHAR(20)
 );
@@ -33,16 +32,18 @@ CREATE TABLE produto(
 
 CREATE TABLE pedido(
   Ped_Codigo INT PRIMARY KEY AUTO_INCREMENT,
-  Ped_VlrTotal FLOAT NOT NULL,
   Cli_Codigo INT NOT NULL,
   For_Codigo INT NOT NULL,
-  Fun_Codigo INT NOT NULL
+  Fun_Codigo INT NOT NULL,
+  Ped_VlrTotal FLOAT NOT NULL,
+  Ped_Situacao CHAR(1) NOT NULL
 );
 
 CREATE TABLE pedido_itens(
   Ped_Codigo INT NOT NULL,
   Pro_Codigo INT NOT NULL,
-  Ped_Qtd FLOAT NOT NULL
+  PedItm_Qtd FLOAT NOT NULL,
+  PedItm_VlrTotal FLOAT NOT NULL
 );
 
 ALTER TABLE pedido ADD CONSTRAINT fk_cli_codigo
@@ -53,3 +54,6 @@ FOREIGN KEY(For_Codigo) REFERENCES fornecedor(For_Codigo);
 
 ALTER TABLE pedido ADD CONSTRAINT fk_fun_codigo
 FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);
+
+ALTER TABLE pedido_itens ADD CONSTRAINT pk_pedido_produto
+PRIMARY KEY (Ped_Codigo, Pro_Codigo);

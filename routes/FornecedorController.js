@@ -1,11 +1,11 @@
 const mysql = require('../mysql/mysql').pool;
 
-class ClienteController {   
+class FornecedorController {   
     async index(req, res) {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente`,
+                    `SELECT * FROM fornecedor`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
@@ -20,12 +20,12 @@ class ClienteController {
     }
 
     async create(req, res) {
-        const { nome, cpf, cnpj, contato } = req.body;
+        const { nome, razaoSocial, cnpj, cpf, contato } = req.body;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_CPF = "${cpf}" OR Cli_CNPJ = "${cnpj}"`,
+                    `SELECT * FROM fornecedor WHERE For_CNPJ = "${cpf}" OR For_CPF = "${cnpj}"`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
@@ -33,8 +33,8 @@ class ClienteController {
                             return res.status(404).json("CPF ou CNPJ já cadastrado");
                         } else {
                             conn.query(
-                                `INSERT INTO cliente (Cli_Nome, Cli_CNPJ, Cli_CPF, Cli_Contato) ` + 
-                                `VALUES ("${nome}", ${cnpj!=''?`"${cnpj}"`:'NULL'}, ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
+                                `INSERT INTO fornecedor (For_Nome, For_RazaoSocial, For_CNPJ, For_CPF, For_Contato) ` + 
+                                `VALUES ("${nome}", ${razaoSocial!=''?`"${razaoSocial}"`:'NULL'}, ${cnpj!=''?`"${cnpj}"`:'NULL'}, ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
@@ -52,23 +52,23 @@ class ClienteController {
     }
 
     async update(req, res) {
-        const { nome, cpf, cnpj, contato } = req.body;
+        const { nome, razaoSocial, cnpj, cpf, contato } = req.body;
         const { id } = req.params;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM fornecedor WHERE For_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Fornecedor não existe");
                         } else {
                             conn.query(
-                                `UPDATE cliente SET Cli_Nome = "${nome}", Cli_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, ` + 
-                                `Cli_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, Cli_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
-                                `WHERE Cli_Codigo = ${id}`,
+                                `UPDATE fornecedor SET For_Nome = "${nome}", For_RazaoSocial = ${razaoSocial!=''?`"${razaoSocial}"`:'NULL'} ` + 
+                                `For_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, For_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, For_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
+                                `WHERE For_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
@@ -91,12 +91,12 @@ class ClienteController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM fornecedor WHERE For_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Fornecedor não existe");
                         } else {
                             return res.status(201).json(result);
                         }
@@ -116,15 +116,15 @@ class ClienteController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM fornecedor WHERE For_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Fornecedor não existe");
                         } else {
                             conn.query(
-                                `DELETE FROM cliente WHERE Cli_Codigo = ${id}`,
+                                `DELETE FROM fornecedor WHERE For_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     return res.json(result);
                                 }
@@ -142,4 +142,4 @@ class ClienteController {
 
 }
 
-export default new ClienteController();
+export default new FornecedorController();

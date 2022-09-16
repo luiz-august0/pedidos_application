@@ -1,11 +1,11 @@
 const mysql = require('../mysql/mysql').pool;
 
-class ClienteController {   
+class ProdutoController {   
     async index(req, res) {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente`,
+                    `SELECT * FROM produto`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
@@ -20,31 +20,21 @@ class ClienteController {
     }
 
     async create(req, res) {
-        const { nome, cpf, cnpj, contato } = req.body;
-
+        const { descricao, unidade, valorUni, qtdEst } = req.body;
         try {
             mysql.getConnection((error, conn) => {
-                conn.query(
-                    `SELECT * FROM cliente WHERE Cli_CPF = "${cpf}" OR Cli_CNPJ = "${cnpj}"`,
                     (error, result, fields) => {
-                        if (error) { return res.status(500).send({ error: error }) }
-                        
-                        if (JSON.stringify(result) !== '[]') {
-                            return res.status(404).json("CPF ou CNPJ já cadastrado");
-                        } else {
-                            conn.query(
-                                `INSERT INTO cliente (Cli_Nome, Cli_CNPJ, Cli_CPF, Cli_Contato) ` + 
-                                `VALUES ("${nome}", ${cnpj!=''?`"${cnpj}"`:'NULL'}, ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
-                                (error, result, fields) => {
-                                    if (error) { return res.status(500).send({ error: error }) }
-                                    return res.status(201).json(result);
-                                }
-                            )
+                    conn.query(
+                        `INSERT INTO produto (Pro_Descricao, Pro_Unidade, Pro_VlrUni, Pro_QtdEst) ` + 
+                        `VALUES ("${descricao}", "${unidade}", ${valorUni}, ${qtdEst})`,
+                        (error, result, fields) => {
+                            if (error) { return res.status(500).send({ error: error }) }
+                            return res.status(201).json(result);
                         }
-                    }
-                )
-                conn.release();
-            })
+                    )
+                }
+            conn.release();
+        })
         } catch(err) {
             console.error(err);
             return res.status(500).json({ error: "Internal server error." })
@@ -52,23 +42,22 @@ class ClienteController {
     }
 
     async update(req, res) {
-        const { nome, cpf, cnpj, contato } = req.body;
+        const { descricao, unidade, valorUni, qtdEst } = req.body;
         const { id } = req.params;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM produto WHERE Pro_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Produto não existe");
                         } else {
                             conn.query(
-                                `UPDATE cliente SET Cli_Nome = "${nome}", Cli_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, ` + 
-                                `Cli_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, Cli_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
-                                `WHERE Cli_Codigo = ${id}`,
+                                `UPDATE produto SET Pro_Descricao = "${descricao}", Pro_Unidade = "${unidade}", ` + 
+                                `Pro_VlrUni = ${valorUni}, Pro_QtdEst = ${qtdEst} WHERE Pro_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
@@ -91,12 +80,12 @@ class ClienteController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM produto WHERE Pro_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Produto não existe");
                         } else {
                             return res.status(201).json(result);
                         }
@@ -116,15 +105,15 @@ class ClienteController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM produto WHERE Pro_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Produto não existe");
                         } else {
                             conn.query(
-                                `DELETE FROM cliente WHERE Cli_Codigo = ${id}`,
+                                `DELETE FROM produto WHERE Pro_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     return res.json(result);
                                 }
@@ -139,7 +128,6 @@ class ClienteController {
             return res.status(500).json({ error: "Internal server error." })
         }
     }
-
 }
 
-export default new ClienteController();
+export default new ProdutoController();

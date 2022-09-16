@@ -1,11 +1,11 @@
 const mysql = require('../mysql/mysql').pool;
 
-class ClienteController {   
+class FuncionarioController {   
     async index(req, res) {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente`,
+                    `SELECT * FROM funcionario`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
@@ -20,21 +20,21 @@ class ClienteController {
     }
 
     async create(req, res) {
-        const { nome, cpf, cnpj, contato } = req.body;
+        const { nome, cpf, contato } = req.body;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_CPF = "${cpf}" OR Cli_CNPJ = "${cnpj}"`,
+                    `SELECT * FROM funcionario WHERE Fun_CPF = "${cpf}"`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) !== '[]') {
-                            return res.status(404).json("CPF ou CNPJ já cadastrado");
+                            return res.status(404).json("CPF já cadastrado");
                         } else {
                             conn.query(
-                                `INSERT INTO cliente (Cli_Nome, Cli_CNPJ, Cli_CPF, Cli_Contato) ` + 
-                                `VALUES ("${nome}", ${cnpj!=''?`"${cnpj}"`:'NULL'}, ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
+                                `INSERT INTO funcionario (Fun_Nome, Fun_CPF, Fun_Contato) ` + 
+                                `VALUES ("${nome}", ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
@@ -52,23 +52,22 @@ class ClienteController {
     }
 
     async update(req, res) {
-        const { nome, cpf, cnpj, contato } = req.body;
+        const { nome, cpf, contato } = req.body;
         const { id } = req.params;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM funcionario WHERE Fun_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Funcionario não existe");
                         } else {
                             conn.query(
-                                `UPDATE cliente SET Cli_Nome = "${nome}", Cli_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, ` + 
-                                `Cli_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, Cli_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
-                                `WHERE Cli_Codigo = ${id}`,
+                                `UPDATE funcionario SET Fun_Nome = "${nome}", Fun_CPF = ${cpf!=''?`"${cpf}"`:'NULL'} ` + 
+                                `Fun_Contato = ${contato!=''?`"${contato}"`:'NULL'} WHERE Fun_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
@@ -91,12 +90,12 @@ class ClienteController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM funcionario WHERE Fun_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Funcionario não existe");
                         } else {
                             return res.status(201).json(result);
                         }
@@ -116,15 +115,15 @@ class ClienteController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM funcionario WHERE Fun_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                            return res.status(404).json("Funcionario não existe");
                         } else {
                             conn.query(
-                                `DELETE FROM cliente WHERE Cli_Codigo = ${id}`,
+                                `DELETE FROM funcionario WHERE Fun_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     return res.json(result);
                                 }
@@ -142,4 +141,4 @@ class ClienteController {
 
 }
 
-export default new ClienteController();
+export default new FuncionarioController();
