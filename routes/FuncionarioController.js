@@ -66,7 +66,7 @@ class FuncionarioController {
                             return res.status(404).json("Funcionario não existe");
                         } else {
                             conn.query(
-                                `UPDATE funcionario SET Fun_Nome = "${nome}", Fun_CPF = ${cpf!=''?`"${cpf}"`:'NULL'} ` + 
+                                `UPDATE funcionario SET Fun_Nome = "${nome}", Fun_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, ` + 
                                 `Fun_Contato = ${contato!=''?`"${contato}"`:'NULL'} WHERE Fun_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }

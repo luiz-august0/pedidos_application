@@ -20,19 +20,17 @@ class ProdutoController {
     }
 
     async create(req, res) {
-        const { descricao, unidade, valorUni, qtdEst } = req.body;
+        const { descricao, unidade, valorUni } = req.body;
         try {
             mysql.getConnection((error, conn) => {
-                    (error, result, fields) => {
                     conn.query(
                         `INSERT INTO produto (Pro_Descricao, Pro_Unidade, Pro_VlrUni, Pro_QtdEst) ` + 
-                        `VALUES ("${descricao}", "${unidade}", ${valorUni}, ${qtdEst})`,
+                        `VALUES ("${descricao}", "${unidade}", ${valorUni}, 0)`,
                         (error, result, fields) => {
                             if (error) { return res.status(500).send({ error: error }) }
                             return res.status(201).json(result);
                         }
                     )
-                }
             conn.release();
         })
         } catch(err) {
@@ -42,7 +40,7 @@ class ProdutoController {
     }
 
     async update(req, res) {
-        const { descricao, unidade, valorUni, qtdEst } = req.body;
+        const { descricao, unidade, valorUni } = req.body;
         const { id } = req.params;
 
         try {
@@ -57,7 +55,7 @@ class ProdutoController {
                         } else {
                             conn.query(
                                 `UPDATE produto SET Pro_Descricao = "${descricao}", Pro_Unidade = "${unidade}", ` + 
-                                `Pro_VlrUni = ${valorUni}, Pro_QtdEst = ${qtdEst} WHERE Pro_Codigo = ${id}`,
+                                `Pro_VlrUni = ${valorUni} WHERE Pro_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);

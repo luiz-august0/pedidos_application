@@ -66,15 +66,26 @@ class FornecedorController {
                             return res.status(404).json("Fornecedor não existe");
                         } else {
                             conn.query(
-                                `UPDATE fornecedor SET For_Nome = "${nome}", For_RazaoSocial = ${razaoSocial!=''?`"${razaoSocial}"`:'NULL'} ` + 
-                                `For_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, For_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, For_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
-                                `WHERE For_Codigo = ${id}`,
+                                `SELECT * FROM fornecedor WHERE For_Codigo <> ${id} AND (For_CNPJ = "${cpf}" OR For_CPF = "${cnpj}")`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
-                                    return res.status(201).json(result);
+            
+                                    if (JSON.stringify(result) !== '[]') {
+                                        return res.status(404).json("CPF ou CNPJ já cadastrado");
+                                    } else {                                        
+                                        conn.query(
+                                            `UPDATE fornecedor SET For_Nome = "${nome}", For_RazaoSocial = ${razaoSocial!=''?`"${razaoSocial}"`:'NULL'}, ` + 
+                                            `For_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, For_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, For_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
+                                            `WHERE For_Codigo = ${id}`,
+                                            (error, result, fields) => {
+                                                if (error) { return res.status(500).send({ error: error }) }
+                                                return res.status(201).json(result);
+                                            }
+                                        )
+                                    }
                                 }
                             )
-                        }
+                        }        
                     }
                 )
                 conn.release();

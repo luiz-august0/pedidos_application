@@ -4,6 +4,7 @@ import FornecedorController from "./routes/FornecedorController";
 import FuncionarioController from "./routes/FuncionarioController";
 import ProdutoController from "./routes/ProdutoController";
 import PedidoController from "./routes/PedidoController";
+import EstoqueController from "./routes/EstoqueController";
 
 const routes = new Router();
 
@@ -43,7 +44,9 @@ routes.put('/pedido/:id', PedidoController.updatePed);
 routes.delete('/pedido/:id', PedidoController.deletePed);
 routes.post('/pedido_item/:id', PedidoController.createPedItem);
 routes.get('/pedido_item/:id', PedidoController.showPedItem);
-routes.put('/pedido_item/:id', PedidoController.updatePedItem);
 routes.delete('/pedido_item/:id', PedidoController.deleteItemPed);
+
+//Rota de adição de estoque
+routes.post('/estoque_adiciona/:id', EstoqueController.addEstoque);
 
 export default routes;

@@ -1,4 +1,5 @@
 const mysql = require('../mysql/mysql').pool;
+import EstoqueController from './EstoqueController';
 
 class PedidoController {   
     async index(req, res) {
@@ -59,6 +60,7 @@ class PedidoController {
                                 `VALUES (${id}, ${cod_pro}, ${qtd}, ${vlrTotal})` ,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
+                                    EstoqueController.dimEstoque(qtd, cod_pro);
                                     return res.status(201).json(result);
                                 }
                             )
@@ -96,28 +98,6 @@ class PedidoController {
                                 }
                             )
                         }
-                    }
-                )
-                conn.release();
-            })
-        } catch(err) {
-            console.error(err);
-            return res.status(500).json({ error: "Internal server error." })
-        }
-    }
-
-    async updatePedItem(req, res) {
-        const { cod_pro, qtd, vlrTotal } = req.body;
-        const { id } = req.params;
-
-        try {
-            mysql.getConnection((error, conn) => {
-                conn.query(
-                    `UPDATE pedido_itens SET PedItm_Qtd = ${qtd}, PedItm_VlrTotal = ${vlrTotal}) ` + 
-                    `WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}`,
-                    (error, result, fields) => {
-                        if (error) { return res.status(500).send({ error: error }) }
-                        return res.status(201).json(result);
                     }
                 )
                 conn.release();
