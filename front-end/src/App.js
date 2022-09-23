@@ -1,13 +1,8 @@
-import React from "react";
+import React from 'react';
+import Rotas from "./routes/";
 
-const App = () => {
-  return(
-    <>
-      <div>
-        teste
-      </div>
-    </>
-  )
+export default function App() {
+   return (
+        <Rotas/>
+   );
 }
-
-export default App;
