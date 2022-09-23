@@ -25,7 +25,7 @@ class ProdutoController {
             mysql.getConnection((error, conn) => {
                     conn.query(
                         `INSERT INTO produto (Pro_Descricao, Pro_Unidade, Pro_VlrUni, Pro_QtdEst) ` + 
-                        `VALUES ("${descricao}", "${unidade}", ${valorUni}, 0)`,
+                        `VALUES ("${descricao}", "${unidade}", ROUND(${valorUni},2), 0)`,
                         (error, result, fields) => {
                             if (error) { return res.status(500).send({ error: error }) }
                             return res.status(201).json(result);
@@ -55,7 +55,7 @@ class ProdutoController {
                         } else {
                             conn.query(
                                 `UPDATE produto SET Pro_Descricao = "${descricao}", Pro_Unidade = "${unidade}", ` + 
-                                `Pro_VlrUni = ${valorUni} WHERE Pro_Codigo = ${id}`,
+                                `Pro_VlrUni = ROUND(${valorUni},2) WHERE Pro_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);

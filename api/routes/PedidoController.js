@@ -27,7 +27,7 @@ class PedidoController {
             mysql.getConnection((error, conn) => {
                 conn.query(
                     `INSERT INTO pedido (Cli_Codigo, For_Codigo, Fun_Codigo, Ped_VlrTotal, Ped_Situacao) ` +
-                    `VALUES (${cod_cli}, ${cod_forn}, ${cod_func}, ${vlrTotal}, "${situacao}")` ,
+                    `VALUES (${cod_cli}, ${cod_forn}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}")` ,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
@@ -57,7 +57,7 @@ class PedidoController {
                         } else {
                             conn.query(
                                 `INSERT INTO pedido_itens (Ped_Codigo, Pro_Codigo, PedItm_Qtd, PedItm_VlrTotal) ` +
-                                `VALUES (${id}, ${cod_pro}, ${qtd}, ${vlrTotal})` ,
+                                `VALUES (${id}, ${cod_pro}, ${qtd}, ROUND(${vlrTotal},2))` ,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     EstoqueController.dimEstoque(qtd, cod_pro);
@@ -91,7 +91,7 @@ class PedidoController {
                         } else {
                             conn.query(
                                 `UPDATE pedido SET Cli_Codigo = "${cod_cli}", For_Codigo = ${cod_forn} ` + 
-                                `Fun_Codigo = ${cod_func}, Ped_VlrTotal = ${vlrTotal}, Ped_Situacao = "${situacao}" WHERE Ped_Codigo = ${id}`,
+                                `Fun_Codigo = ${cod_func}, Ped_VlrTotal = ROUND(${vlrTotal},2), Ped_Situacao = "${situacao}" WHERE Ped_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);

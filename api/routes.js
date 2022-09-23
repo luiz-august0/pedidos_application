@@ -1,12 +1,23 @@
 import { Router } from "express";
+import SessionController from "./routes/SessionController";
+import UsuarioController from "./routes/UsuarioController";
 import ClienteController from "./routes/ClienteController";
 import FornecedorController from "./routes/FornecedorController";
 import FuncionarioController from "./routes/FuncionarioController";
 import ProdutoController from "./routes/ProdutoController";
 import PedidoController from "./routes/PedidoController";
 import EstoqueController from "./routes/EstoqueController";
+import auth from "./middlewares/auth";
 
 const routes = new Router();
+
+routes.put('/sessions', SessionController.create);
+routes.use(auth);
+
+//Rotas usuário
+routes.post('/usuario', UsuarioController.create);
+routes.put('/usuario/:id', UsuarioController.update);
+routes.delete('/usuario/:id', UsuarioController.destroy);
 
 //Rota Clientes
 routes.get('/cliente', ClienteController.index);
