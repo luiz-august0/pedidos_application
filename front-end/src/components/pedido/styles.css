@@ -1,0 +1,78 @@
+.main-container {
+    min-height: 100vh;
+    padding: 0;
+    background-color: #b30000;
+}
+
+.cont-second  h2{
+    margin-left: 2rem;
+    margin-top: 5px;
+}
+
+h2{
+    color: #fff;
+}
+
+p{
+    color: #fff; 
+}
+
+.logout-button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.image-logout{
+    transition: all 0.15s ease;
+    filter: invert(1);
+}
+
+.image-logout:hover {
+    width: 42px;
+    height: 42px;
+}
+
+.on-screen {
+    display: flex;
+    margin-top: 10%;
+    width: 100%;
+    gap: 2rem;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+.on-screen button {
+    width: 15%;
+    height: 100px;
+    background-color: #6bbf79;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 600px) {
+    .on-screen button {
+        width: 25%;
+    }
+}
+
+.on-screen button p {
+    font-size: 140%;
+}
+
+.on-screen button:hover{
+    background-color: #396340;
+    color: whitesmoke;
+}
+
+.cont-second {
+    display: flex;
+    padding: 5px 5px 0px 0px ;
+    background-color: #4d0000;
+    height: 52px;
+    width: 100%;
+}
