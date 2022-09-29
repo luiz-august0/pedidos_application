@@ -17,13 +17,23 @@ import
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-import { addEstoqueProd } from '../../services/api';
+import { addEstoqueProd, getProdutos } from '../../services/api';
 
-const DialogEstoque = ({ open, handleClose, dataProdutos }) => {
+const DialogEstoque = ({ open, handleClose }) => {
+    const [ produtos, setProdutos ] = React.useState([]);
     const [ produtoSelected, setProdutoSelected ] = React.useState();
     const [ quantidade, setQuantidade ] = React.useState();
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
+
+    React.useEffect(() => {
+        getDataProdutos();
+    }, []);
+
+    const getDataProdutos = async () => {
+        const response = await getProdutos();
+        setProdutos(response.data);
+    }
 
     const MySwal = withReactContent(Swal);
 
@@ -33,11 +43,11 @@ const DialogEstoque = ({ open, handleClose, dataProdutos }) => {
     }
 
     const addEstoque = async() => {
-        try {           
+        try {         
             await addEstoqueProd(produtoSelected, quantidade);
             handleClose();
             MySwal.fire({
-                html: <i>Adicionado {quantidade} quantidade no estoque do produto {produtoSelected}</i>,
+                html: <i>Adicionado {quantidade} quantidade(s) no estoque do produto {produtoSelected}</i>,
                 icon: 'success'
             })
         } catch (error) {
@@ -47,6 +57,10 @@ const DialogEstoque = ({ open, handleClose, dataProdutos }) => {
                 icon: 'error'
             })
         }
+
+        getDataProdutos();
+        setProdutoSelected();
+        setQuantidade();   
     }
 
     const onConfirm = () => {
@@ -55,7 +69,7 @@ const DialogEstoque = ({ open, handleClose, dataProdutos }) => {
             return;
         }
 
-        if (quantidade === '') {
+        if (quantidade === undefined) {
             alert(true, 'Quantidade é obrigatória');
             return;
         }
@@ -105,7 +119,7 @@ const DialogEstoque = ({ open, handleClose, dataProdutos }) => {
                         onChange={handleChangeProduto}
                         style={{width: '250px'}}
                         >
-                            {dataProdutos.map((element) => {
+                            {produtos.map((element) => {
                                 return (
                                     <MenuItem value={element.Pro_Codigo}>{element.Pro_Codigo} - {element.Pro_Descricao} - Estoque atual:{element.Pro_QtdEst}</MenuItem> 
                                 )

@@ -31,17 +31,6 @@ const Home = () => {
         logout();
     };
 
-    const [produtos, setProdutos] = useState([]);
-
-    React.useEffect(() => {
-        getDataProdutos();
-    }, []);
-
-    const getDataProdutos = async () => {
-        const response = await getProdutos();
-        setProdutos(response.data);
-    }
-
     const [open, setOpen] = useState(false);
 
     const handleClose = () => {
@@ -83,7 +72,6 @@ const Home = () => {
             <DialogEstoque
             open={open} 
             handleClose={handleClose} 
-            dataProdutos={produtos} 
             />
         </div>
     );

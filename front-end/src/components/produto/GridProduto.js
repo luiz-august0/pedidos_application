@@ -164,7 +164,7 @@ const GridProduto = () => {
                 <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
             </IconButton>
             </Grid>
-            <div className="ag-theme-material" style={{ height: '700px'}}>
+            <div className="ag-theme-material" style={{ height: '600px'}}>
                 <AgGridReact 
                     rowData={produtos}
                     columnDefs={columnDefs} 

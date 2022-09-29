@@ -28,5 +28,5 @@ export const deleteProduto = async (produtoID) => {
 
 //Rotas de estoque
 export const addEstoqueProd = async (produtoID, quantidade) => {
-    return api.post(`/estoque_adiciona/${produtoID}`, { quantidade });
+    return api.post(`/estoque_adiciona/${produtoID}`, {qtd: quantidade});
 };
