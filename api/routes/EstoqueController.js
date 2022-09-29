@@ -19,16 +19,26 @@ class EstoqueController {
     }
 
     async addEstoque(req, res) {
-        const { qtd } = req.body;
         const { id } = req.params;
+        const { qtd } = req.body;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `UPDATE produto SET Pro_QtdEst = (Pro_QtdEst + ${qtd}) WHERE Pro_Codigo = ${id} `,
+                    `SELECT Pro_Codigo FROM produto WHERE Pro_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
-                        return res.status(201).json(result);
+                        if (JSON.stringify(result) === '[]') {
+                            return res.status(404).json('Produto não existe');
+                        } else {
+                            conn.query(
+                                `UPDATE produto SET Pro_QtdEst = (Pro_QtdEst + ${qtd}) WHERE Pro_Codigo = ${id} `,
+                                (error, result, fields) => {
+                                    if (error) { return res.status(500).send({ error: error }) }
+                                    return res.status(201).json(result);
+                                }
+                            )
+                        }
                     }
                 )
                 conn.release();
