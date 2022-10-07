@@ -30,3 +30,21 @@ export const deleteProduto = async (produtoID) => {
 export const addEstoqueProd = async (produtoID, quantidade) => {
     return api.post(`/estoque_adiciona/${produtoID}`, {qtd: quantidade});
 };
+
+//Rotas de cliente
+export const getClientes = async () => {
+    return api.get('/cliente');
+}
+
+export const createCliente = async (nome, cpf, cnpj, contato) => {
+    return api.post('/cliente', { nome, cpf, cnpj, contato });
+};
+
+export const updateCliente = async (clienteID, nome, cpf, cnpj, contato) => {
+    return api.put(`/cliente/${clienteID}`, { nome, cpf, cnpj, contato });
+};
+
+export const deleteCliente = async (clienteID) => {
+    return api.delete(`/cliente/${clienteID}`);
+};
+

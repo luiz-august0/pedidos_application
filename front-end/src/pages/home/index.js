@@ -1,7 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../contexts/auth';
 import { ProSidebar, Menu, MenuItem, SidebarContent, SidebarHeader, SidebarFooter } from 'react-pro-sidebar';
-import Produto from '../../components/produto/index'
+import Produto from '../../components/produto/index';
+import Cliente from '../../components/cliente';
 import Fornecedor from '../../components/fornecedor/index';
 import Pedidos from '../../components/pedido';
 import { FiLogOut, FiArrowLeftCircle, FiArrowRightCircle } from "react-icons/fi";
@@ -53,7 +54,7 @@ const Home = () => {
                 <SidebarContent>
                     <Menu>
                         <MenuItem onClick={() => setSelectedComponent(Produto)} icon={<MdProductionQuantityLimits/>}>Produtos</MenuItem>
-                        <MenuItem icon={<BsPeopleFill/>}>Clientes</MenuItem>
+                        <MenuItem onClick={() => setSelectedComponent(Cliente)} icon={<BsPeopleFill/>}>Clientes</MenuItem>
                         <MenuItem icon={<FaPeopleCarry/>}>Funcionários</MenuItem>
                         <MenuItem icon={<MdBusinessCenter/>}>Fornecedores</MenuItem>
                         <MenuItem icon={<BsCart3/>} onClick={() => setSelectedComponent(Pedidos)}>Pedidos</MenuItem>
