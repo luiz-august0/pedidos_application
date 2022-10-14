@@ -10,6 +10,7 @@ import "ag-grid-community/dist/styles/ag-theme-material.css";
 import FormDialog from "./Dialog";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 
 const initialValue = {nome: "", cpf: "", cnpj: "", contato: ""};
 
@@ -44,7 +45,7 @@ const GridCliente = () => {
         filter: true,
         floatingFilter: true,
         resizable: true,
-        flex: 1
+        flex: flexOnOrNot()
     }
 
     const handleClickOpen = () => {
@@ -171,6 +172,7 @@ const GridCliente = () => {
                     columnDefs={columnDefs} 
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
+                    localeText={AG_GRID_LOCALE_BR}
                 />
             </div>
             <FormDialog

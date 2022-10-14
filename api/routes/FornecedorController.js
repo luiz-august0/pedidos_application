@@ -25,7 +25,7 @@ class FornecedorController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM fornecedor WHERE For_CNPJ = "${cpf}" OR For_CPF = "${cnpj}"`,
+                    `SELECT * FROM fornecedor WHERE For_CNPJ = "${cnpj}" OR For_CPF = "${cpf}"`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
@@ -34,7 +34,8 @@ class FornecedorController {
                         } else {
                             conn.query(
                                 `INSERT INTO fornecedor (For_Nome, For_RazaoSocial, For_CNPJ, For_CPF, For_Contato) ` + 
-                                `VALUES ("${nome}", ${razaoSocial!=''?`"${razaoSocial}"`:'NULL'}, ${cnpj!=''?`"${cnpj}"`:'NULL'}, ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
+                                `VALUES ("${nome}", ${razaoSocial!=''&&razaoSocial!=null?`"${razaoSocial}"`:'NULL'}, ${cnpj!=''&&cnpj!=null?`"${cnpj}"`:'NULL'}, ` + 
+                                `${cpf!=''&&cpf!=null?`"${cpf}"`:'NULL'}, ${contato!=''&&contato!=null?`"${contato}"`:'NULL'})`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
@@ -74,8 +75,9 @@ class FornecedorController {
                                         return res.status(404).json("CPF ou CNPJ já cadastrado");
                                     } else {                                        
                                         conn.query(
-                                            `UPDATE fornecedor SET For_Nome = "${nome}", For_RazaoSocial = ${razaoSocial!=''?`"${razaoSocial}"`:'NULL'}, ` + 
-                                            `For_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, For_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, For_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
+                                            `UPDATE fornecedor SET For_Nome = "${nome}", For_RazaoSocial = ${razaoSocial!=''&&razaoSocial!=null?`"${razaoSocial}"`:'NULL'}, ` + 
+                                            `For_CNPJ = ${cnpj!=''&&cnpj!=null?`"${cnpj}"`:'NULL'}, For_CPF = ${cpf!=''&&cpf!=null?`"${cpf}"`:'NULL'}, `+
+                                            `For_Contato = ${contato!=''&&contato!=null?`"${contato}"`:'NULL'} ` + 
                                             `WHERE For_Codigo = ${id}`,
                                             (error, result, fields) => {
                                                 if (error) { return res.status(500).send({ error: error }) }

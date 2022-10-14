@@ -4,6 +4,11 @@ export const api = axios.create({
     baseURL: 'http://localhost:5000'
 });
 
+//Rota de usuário
+export const getUsuario = async (usuarioID) => {
+    return api.get(`/usuario/${usuarioID}`);
+};
+
 //Rota de sessão
 export const createSession = async (usuario, senha) => {
     return api.put('/sessions', { usuario, senha });
@@ -46,5 +51,39 @@ export const updateCliente = async (clienteID, nome, cpf, cnpj, contato) => {
 
 export const deleteCliente = async (clienteID) => {
     return api.delete(`/cliente/${clienteID}`);
+};
+
+//Rotas de Funcionario
+export const getFuncionarios = async () => {
+    return api.get(`/funcionario`);
+}
+
+export const createFuncionario = async (nome, cpf, contato) => {
+    return api.post(`/funcionario`, { nome, cpf, contato });
+};
+
+export const updateFuncionario = async (funcionarioID, nome, cpf, contato) => {
+    return api.put(`/funcionario/${funcionarioID}`, { nome, cpf, contato });
+};
+
+export const deleteFuncionario = async (funcionarioID) => {
+    return api.delete(`/funcionario/${funcionarioID}`);
+};
+
+//Rotas Fornecedor
+export const getFornecedores = async () => {
+    return api.get(`/fornecedor`);
+}
+
+export const createFornecedor = async (nome, razaoSocial, cpf, cnpj, contato) => {
+    return api.post(`/fornecedor`, { nome, razaoSocial, cpf, cnpj, contato });
+};
+
+export const updateFornecedor = async (fornecedorID, nome, razaoSocial, cpf, cnpj, contato) => {
+    return api.put(`/fornecedor/${fornecedorID}`, { nome, razaoSocial, cpf, cnpj, contato });
+};
+
+export const deleteFornecedor = async (fornecedorID) => {
+    return api.delete(`/fornecedor/${fornecedorID}`);
 };
 

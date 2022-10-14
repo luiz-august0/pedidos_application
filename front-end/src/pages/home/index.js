@@ -4,6 +4,7 @@ import { ProSidebar, Menu, MenuItem, SidebarContent, SidebarHeader, SidebarFoote
 import Produto from '../../components/produto/index';
 import Cliente from '../../components/cliente';
 import Fornecedor from '../../components/fornecedor/index';
+import Funcionario from '../../components/funcionario';
 import Pedidos from '../../components/pedido';
 import { FiLogOut, FiArrowLeftCircle, FiArrowRightCircle } from "react-icons/fi";
 import { MdProductionQuantityLimits, MdBusinessCenter } from "react-icons/md"
@@ -13,7 +14,6 @@ import { FaPeopleCarry } from "react-icons/fa"
 import 'react-pro-sidebar/dist/css/styles.css';
 import './styles.css';
 
-import { getProdutos } from '../../services/api';
 import DialogEstoque from './DialogEstoque';
 
 const Home = () => {
@@ -53,12 +53,22 @@ const Home = () => {
                 </SidebarHeader>
                 <SidebarContent>
                     <Menu>
-                        <MenuItem onClick={() => setSelectedComponent(Produto)} icon={<MdProductionQuantityLimits/>}>Produtos</MenuItem>
-                        <MenuItem onClick={() => setSelectedComponent(Cliente)} icon={<BsPeopleFill/>}>Clientes</MenuItem>
-                        <MenuItem icon={<FaPeopleCarry/>}>Funcionários</MenuItem>
-                        <MenuItem icon={<MdBusinessCenter/>}>Fornecedores</MenuItem>
+                        {localStorage.getItem('isFuncionario') === 'F'
+                        ?<MenuItem onClick={() => setSelectedComponent(Produto)} icon={<MdProductionQuantityLimits/>}>Produtos</MenuItem>
+                        :null}
+                        {localStorage.getItem('isFuncionario') === 'F'
+                        ?<MenuItem onClick={() => setSelectedComponent(Cliente)} icon={<BsPeopleFill/>}>Clientes</MenuItem>
+                        :null}
+                        {localStorage.getItem('isFuncionario') === 'F'
+                        ?<MenuItem onClick={() => setSelectedComponent(Funcionario)} icon={<FaPeopleCarry/>}>Funcionários</MenuItem>
+                        :null}
+                        {localStorage.getItem('isFuncionario') === 'F'
+                        ?<MenuItem onClick={() => setSelectedComponent(Fornecedor)} icon={<MdBusinessCenter/>}>Fornecedores</MenuItem>
+                        :null}
                         <MenuItem icon={<BsCart3/>} onClick={() => setSelectedComponent(Pedidos)}>Pedidos</MenuItem>
-                        <MenuItem icon={<ImBoxAdd/>} onClick={() => setOpen(true)}>Adicionar Estoque</MenuItem>
+                        {localStorage.getItem('isFuncionario') === 'F'
+                        ?<MenuItem icon={<ImBoxAdd/>} onClick={() => setOpen(true)}>Adicionar Estoque</MenuItem>
+                        :null}
                     </Menu>
                 </SidebarContent>
                 <SidebarFooter>

@@ -16,7 +16,7 @@ import { cpf as cpfValid, cnpj as cnpjValid } from 'cpf-cnpj-validator';
 
 
 const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => {
-    const { id, nome, cpf, cnpj, contato } = data;
+    const { id, nome, razaoSocial, cpf, cnpj, contato } = data;
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
 
@@ -86,6 +86,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                 <DialogContent>
                     <form>
                         <TextField id="nome" required value={nome} onChange={e => onChange(e)} placeholder="Nome" variant="outlined" margin="dense" label="Nome" fullWidth type={'text'}/>
+                        <TextField id="razaoSocial" value={razaoSocial} onChange={e => onChange(e)} placeholder="Nome" variant="outlined" margin="dense" label="Razão Social" fullWidth type={'text'}/>
                         <TextField id="cpf" value={cpf} onChange={e => onChange(e)} placeholder="CPF" variant="outlined" margin="dense" label="CPF" fullWidth type={'number'}/>
                         <TextField id="cnpj" value={cnpj} onChange={e => onChange(e)} placeholder="CNPJ" variant="outlined" margin="dense" label="CNPJ" fullWidth type={'number'}/>
                         <TextField id="contato" value={contato} onChange={e => onChange(e)} placeholder="Contato" variant="outlined" margin="dense" label="Contato" fullWidth type={'number'}/>

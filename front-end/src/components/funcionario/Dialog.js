@@ -12,11 +12,11 @@ import
     Snackbar
 } from '@mui/material';
 
-import { cpf as cpfValid, cnpj as cnpjValid } from 'cpf-cnpj-validator';
+import { cpf as cpfValid} from 'cpf-cnpj-validator';
 
 
 const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => {
-    const { id, nome, cpf, cnpj, contato } = data;
+    const { id, nome, cpf, contato } = data;
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
 
@@ -38,14 +38,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
             }
         }
 
-        if (cnpj !== '' && cnpj !== null) {
-            if (!cnpjValid.isValid(cnpj)) {
-                alert(true, 'CNPJ inválido');
-                return;
-            }
-        }
-
-        if (contato !== '' && contato !== null ) {
+        if (contato !== '' && contato !== null) {
             if (contato.length < 11) {
                 alert(true, 'Número de telefone inválido');
                 return;
@@ -82,12 +75,11 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                     </Alert>
                 </Snackbar>
 
-                <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{id?"Editar Cliente":"Cadastrar Cliente"}</DialogTitle>
+                <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{id?"Editar Funcionário":"Cadastrar Funcionário"}</DialogTitle>
                 <DialogContent>
                     <form>
                         <TextField id="nome" required value={nome} onChange={e => onChange(e)} placeholder="Nome" variant="outlined" margin="dense" label="Nome" fullWidth type={'text'}/>
                         <TextField id="cpf" value={cpf} onChange={e => onChange(e)} placeholder="CPF" variant="outlined" margin="dense" label="CPF" fullWidth type={'number'}/>
-                        <TextField id="cnpj" value={cnpj} onChange={e => onChange(e)} placeholder="CNPJ" variant="outlined" margin="dense" label="CNPJ" fullWidth type={'number'}/>
                         <TextField id="contato" value={contato} onChange={e => onChange(e)} placeholder="Contato" variant="outlined" margin="dense" label="Contato" fullWidth type={'number'}/>
                     </form>
                 </DialogContent>

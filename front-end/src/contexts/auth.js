@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useNavigate } from "react-router-dom";
 
-import { api, createSession } from "../services/api";
+import { api, createSession, getUsuario } from "../services/api";
 
 export const AuthContext = createContext();
 
@@ -29,15 +29,17 @@ export const AuthProvider = ({ children }) => {
 
         try {            
             const response = await createSession(usuario, senha);
-    
             const usuarioLogado = response.data.usuario;
             const token = response.data.token;
     
             localStorage.setItem("usuario", JSON.stringify(usuarioLogado));
             localStorage.setItem("token", token);
-    
             api.defaults.headers.Authorization = `Bearer ${token}`;
-    
+            
+            const responseUsuario = await getUsuario(usuarioLogado.id);
+            const usuarioData = responseUsuario.data;
+            localStorage.setItem("isFuncionario", usuarioData[0].Usr_Funcionario);
+            
             setUsuario(usuarioLogado);
             navigate("/");
         } catch (error) {
@@ -52,6 +54,7 @@ export const AuthProvider = ({ children }) => {
         
         localStorage.removeItem("usuario");
         localStorage.removeItem("token");
+        localStorage.removeItem("isFuncionario");
         
         api.defaults.headers.Authorization = null;
         

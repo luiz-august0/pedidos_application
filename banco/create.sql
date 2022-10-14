@@ -1,7 +1,8 @@
 CREATE TABLE usuario(
     Usr_Codigo INT PRIMARY KEY AUTO_INCREMENT,
     Usr_Login VARCHAR(55) NOT NULL,
-    Usr_Senha VARCHAR(255) NOT NULL
+    Usr_Senha VARCHAR(255) NOT NULL,
+    Usr_Funcionario CHAR(1) NOT NULL
 );
 
 CREATE TABLE cliente(

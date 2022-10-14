@@ -3,15 +3,35 @@ import { createPasswordHash } from '../services/auth';
 const mysql = require('../mysql/mysql').pool;
 
 class UsuarioController {
+    async show(req, res) {
+        try {
+            const { id } = req.params;
+            
+            mysql.getConnection((error, conn) => {
+                conn.query(
+                    `SELECT Usr_Login, Usr_Funcionario FROM usuario WHERE Usr_Codigo = ${id}`,
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                        return res.status(201).json(result);
+                    }
+                )
+                conn.release();
+            });
+        } catch(err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal server error." });
+        }
+    }
+
     async create(req, res) {
         try {
-            const { usuario, senha } = req.body;
+            const { usuario, senha, isFuncionario } = req.body;
 
             const encryptedPassword = await createPasswordHash(senha);
             
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `INSERT INTO usuario (Usr_Login, Usr_Senha) VALUES ("${usuario}","${encryptedPassword}")`,
+                    `INSERT INTO usuario (Usr_Login, Usr_Senha, Usr_Funcionario) VALUES ("${usuario}","${encryptedPassword}", "${isFuncionario}")`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
@@ -28,7 +48,7 @@ class UsuarioController {
     async update(req, res) {
         try {
             const { id } = req.params;
-            const { usuario, senha } = req.body;
+            const { usuario, senha, isFuncionario } = req.body;
             const encryptedPassword = await createPasswordHash(senha);
 
             mysql.getConnection((error, conn) => {
@@ -42,7 +62,7 @@ class UsuarioController {
                         }
                         else {
                             conn.query(
-                                `UPDATE usuario SET Usr_Login = "${usuario}", Usr_Senha = "${encryptedPassword}" WHERE Usr_Codigo = "${id}"`,
+                                `UPDATE usuario SET Usr_Login = "${usuario}", Usr_Senha = "${encryptedPassword}", Usr_Funcionario = "${isFuncionario}" WHERE Usr_Codigo = "${id}"`,
                             (error, result, fields) => {
                                 if (error) { return res.status(500).send({ error: error }) }
                                 return res.status(201).json(result);

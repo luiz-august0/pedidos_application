@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
-import { getProdutos, createProduto, updateProduto, deleteProduto } from "../../services/api";
+import { getFornecedores, createFornecedor, updateFornecedor, deleteFornecedor } from "../../services/api";
 
 import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton';
@@ -12,24 +12,25 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 
-const initialValue = {descricao: "", unidade: "", valorUni: ""};
+const initialValue = {nome: "", razaoSocial: "", cpf: "", cnpj: "", contato: ""};
 
-const GridProduto = () => {
+const GridFornecedor = () => {
 
     const MySwal = withReactContent(Swal);
     
     const [gridApi, setGridApi] = useState(null);
-    const [produtos, setProdutos] = useState([]);
+    const [fornecedores, setFornecedores] = useState([]);
     const [open, setOpen] = React.useState(false);
     const [formData, setFormData] = useState(initialValue);
 
     const columnDefs = [
-        { field: "Pro_Codigo", headerName: "Código"},
-        { field: "Pro_Descricao", headerName: "Descrição" },
-        { field: "Pro_Unidade", headerName: "Unidade", },
-        { field: "Pro_VlrUni", headerName: "Valor Unitário" },
-        { field: "Pro_QtdEst", headerName: "Estoque" },
-        { field: "Pro_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
+        { field: "For_Codigo", headerName: "Código"},
+        { field: "For_Nome", headerName: "Nome" },
+        { field: "For_RazaoSocial", headerName: "Razão Social" },
+        { field: "For_CPF", headerName: "CPF", },
+        { field: "For_CNPJ", headerName: "CNPJ" },
+        { field: "For_Contato", headerName: "Telefone" },
+        { field: "For_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
             <IconButton style={{ color: 'orange' }} onClick={() => handleUpdate(params.data)}>
                 <Icon.ModeEdit/>
@@ -58,8 +59,8 @@ const GridProduto = () => {
     }
     
     const refreshGrid = async () => {
-        const response = await getProdutos();
-        setProdutos(response.data);
+        const response = await getFornecedores();
+        setFornecedores(response.data);
     }
 
     useEffect(() => {
@@ -77,17 +78,19 @@ const GridProduto = () => {
 
     //Insere registro //Atualiza registro
     const handleFormSubmit = async () => {
-        const descricao = formData.descricao;
-        const unidade = formData.unidade;
-        const valorUni = formData.valorUni;
+        const nome = formData.nome;
+        const cpf = formData.cpf;
+        const razaoSocial = formData.razaoSocial;
+        const cnpj = formData.cnpj;
+        const contato = formData.contato;
 
         if(formData.id) {
             try {            
-                await updateProduto(formData.id, descricao, unidade, valorUni);
+                await updateFornecedor(formData.id, nome, razaoSocial, cpf, cnpj, contato);
                 refreshGrid();
                 handleClose();
                 MySwal.fire({
-                    html: <i>Produto alterado com sucesso!</i>,
+                    html: <i>Fornecedor alterado com sucesso!</i>,
                     icon: 'success'
                 })
             } catch (error) {
@@ -99,11 +102,11 @@ const GridProduto = () => {
             }
         }else {
             try {           
-                await createProduto(descricao, unidade, valorUni);
+                await createFornecedor(nome, razaoSocial, cpf, cnpj, contato);
                 refreshGrid();
                 handleClose();
                 MySwal.fire({
-                    html: <i>Produto cadastrado com sucesso!</i>,
+                    html: <i>Fornecedor cadastrado com sucesso!</i>,
                     icon: 'success'
                 })
             } catch (error) {
@@ -117,7 +120,7 @@ const GridProduto = () => {
     }
 
     const handleUpdate = (oldData) => {
-        setFormData({id: oldData.Pro_Codigo, descricao: oldData.Pro_Descricao, unidade: oldData.Pro_Unidade, valorUni: oldData.Pro_VlrUni});
+        setFormData({id: oldData.For_Codigo, nome: oldData.For_Nome, razaoSocial: oldData.For_RazaoSocial, cpf: oldData.For_CPF , cnpj: oldData.For_CNPJ, contato: oldData.For_Contato});
         handleClickOpen();
     }
 
@@ -125,9 +128,9 @@ const GridProduto = () => {
     const handleDelete = (id) => {
         const deleteRegister = async () => {
             try {
-                await deleteProduto(id);
+                await deleteFornecedor(id);
                 MySwal.fire({
-                    html: <i>Produto excluido com sucesso!</i>,
+                    html: <i>Fornecedor excluido com sucesso!</i>,
                     icon: 'success'
                 })
                 refreshGrid();
@@ -140,7 +143,7 @@ const GridProduto = () => {
         }
 
         MySwal.fire({
-            title: 'Confirma a exclusão do Produto?',
+            title: 'Confirma a exclusão do Fornecedor?',
             showDenyButton: true,
             confirmButtonText: 'Sim',
             denyButtonText: 'Não',
@@ -167,7 +170,7 @@ const GridProduto = () => {
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px'}}>
                 <AgGridReact 
-                    rowData={produtos}
+                    rowData={fornecedores}
                     columnDefs={columnDefs} 
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
@@ -185,4 +188,4 @@ const GridProduto = () => {
     )
 }
 
-export default GridProduto;
+export default GridFornecedor;

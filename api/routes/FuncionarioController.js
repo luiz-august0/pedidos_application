@@ -34,7 +34,7 @@ class FuncionarioController {
                         } else {
                             conn.query(
                                 `INSERT INTO funcionario (Fun_Nome, Fun_CPF, Fun_Contato) ` + 
-                                `VALUES ("${nome}", ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
+                                `VALUES ("${nome}", ${cpf!=''&&cpf!=null?`"${cpf}"`:'NULL'}, ${contato!=''&&contato!=null?`"${contato}"`:'NULL'})`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
@@ -66,8 +66,8 @@ class FuncionarioController {
                             return res.status(404).json("Funcionario não existe");
                         } else {
                             conn.query(
-                                `UPDATE funcionario SET Fun_Nome = "${nome}", Fun_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, ` + 
-                                `Fun_Contato = ${contato!=''?`"${contato}"`:'NULL'} WHERE Fun_Codigo = ${id}`,
+                                `UPDATE funcionario SET Fun_Nome = "${nome}", Fun_CPF = ${cpf!=''&&cpf!=null?`"${cpf}"`:'NULL'}, ` + 
+                                `Fun_Contato = ${contato!=''&&contato!=null?`"${contato}"`:'NULL'} WHERE Fun_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);

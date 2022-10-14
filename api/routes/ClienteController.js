@@ -34,7 +34,8 @@ class ClienteController {
                         } else {
                             conn.query(
                                 `INSERT INTO cliente (Cli_Nome, Cli_CNPJ, Cli_CPF, Cli_Contato) ` + 
-                                `VALUES ("${nome}", ${cnpj!=''?`"${cnpj}"`:'NULL'}, ${cpf!=''?`"${cpf}"`:'NULL'}, ${contato!=''?`"${contato}"`:'NULL'})`,
+                                `VALUES ("${nome}", ${cnpj!=''&&cnpj!=null?`"${cnpj}"`:'NULL'}, ${cpf!=''&&cpf!=null?`"${cpf}"`:'NULL'}, ` + 
+                                `${contato!=''&&contato!=null?`"${contato}"`:'NULL'})`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);
@@ -66,8 +67,8 @@ class ClienteController {
                             return res.status(404).json("Cliente não existe");
                         } else {
                             conn.query(
-                                `UPDATE cliente SET Cli_Nome = "${nome}", Cli_CNPJ = ${cnpj!=''?`"${cnpj}"`:'NULL'}, ` + 
-                                `Cli_CPF = ${cpf!=''?`"${cpf}"`:'NULL'}, Cli_Contato = ${contato!=''?`"${contato}"`:'NULL'} ` + 
+                                `UPDATE cliente SET Cli_Nome = "${nome}", Cli_CNPJ = ${cnpj!=''&&cnpj!=null?`"${cnpj}"`:'NULL'}, ` + 
+                                `Cli_CPF = ${cpf!=''&&cpf!=null?`"${cpf}"`:'NULL'}, Cli_Contato = ${contato!=''&&contato!=null?`"${contato}"`:'NULL'} ` + 
                                 `WHERE Cli_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }

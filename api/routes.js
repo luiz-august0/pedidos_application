@@ -16,6 +16,7 @@ routes.put('/sessions', SessionController.create);
 routes.use(auth);
 
 //Rotas usuário
+routes.get('/usuario/:id', UsuarioController.show);
 routes.put('/usuario/:id', UsuarioController.update);
 routes.delete('/usuario/:id', UsuarioController.destroy);
 

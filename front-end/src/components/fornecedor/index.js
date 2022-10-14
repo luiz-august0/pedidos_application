@@ -1,11 +1,14 @@
 import React from 'react';
 import './styles.css';
+import GridFornecedor from './GridFornecedor';
+//import imgProduto from '../../img/produtos.png'
 
 const Fornecedor = () => {
 
     return (
-        <div> 
-            <p>Fornecedor</p>
+        <div className="container"> 
+            <h1><img width="40"/>Fornecedores</h1>
+            <GridFornecedor/>
         </div>
     );
 };
