@@ -87,3 +87,7 @@ export const deleteFornecedor = async (fornecedorID) => {
     return api.delete(`/fornecedor/${fornecedorID}`);
 };
 
+//Rotas de pedidos
+export const getPedidos = async () => {
+    return api.get('/pedido');
+};

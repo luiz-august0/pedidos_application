@@ -6,7 +6,15 @@ class PedidoController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM pedido P INNER JOIN pedido_itens PI ON P.Ped_Codigo = PI.Ped_Codigo`,
+                    `SELECT P.Ped_Codigo, CONCAT(P.Cli_Codigo," - ",C.Cli_Nome) AS Cliente,
+                    CONCAT(P.For_Codigo," - ",F.For_Nome) AS Fornecedor,
+                    CONCAT(P.Fun_Codigo," - ",FUN.Fun_Nome) AS Funcionario,
+                    P.Ped_VlrTotal, 
+                    IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao
+                    FROM Pedido P
+                    INNER JOIN Cliente C ON P.Cli_Codigo = C.Cli_Codigo
+                    INNER JOIN Fornecedor F ON P.For_Codigo = F.For_Codigo
+                    INNER JOIN Funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
