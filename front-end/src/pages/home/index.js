@@ -42,7 +42,7 @@ const Home = () => {
         <div className="main-container">
             <ProSidebar collapsed={menuCollapse} className="sidebar">
                 <SidebarHeader>
-                        <h2>Menu</h2>
+                    <h2>Menu</h2>
                     <div className="closemenu" onClick={menuIconClick}>
                         {menuCollapse ? (
                         <FiArrowRightCircle/>

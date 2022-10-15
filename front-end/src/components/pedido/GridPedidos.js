@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
 import { getPedidos} from "../../services/api";
+import ModalPedido from "./ModalPedido";
 
 import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton';
@@ -11,6 +12,7 @@ import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 
 const GridPedidos = () => {
     const [pedidos, setPedidos] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
 
     const columnDefs = [
         { field: "Ped_Codigo", headerName: "Código"},
@@ -44,10 +46,7 @@ const GridPedidos = () => {
     return (
         <div className="Grid"> 
             <Grid align="right" marginBottom={1}>
-            <IconButton style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold'}}>
-                Adicionar
-                <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
-            </IconButton>
+                <ModalPedido/>
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px'}}>
                 <AgGridReact 
