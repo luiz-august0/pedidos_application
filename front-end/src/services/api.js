@@ -19,6 +19,10 @@ export const getProdutos = async () => {
     return api.get(`/produto`);
 };
 
+export const getProduto = async (produtoID) => {
+    return api.get(`/produto/${produtoID}`);
+};
+
 export const createProduto = async (descricao, unidade, valorUni) => {
     return api.post('/produto', { descricao, unidade, valorUni });
 };

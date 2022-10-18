@@ -6,14 +6,12 @@ import IconButton from '@mui/material/IconButton';
 import * as Icon from '@mui/icons-material';
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
-//import FormDialogItem from "./DialogItem";
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
-const initialValue = {codigo: "100", qtd: "100", valorUni: "100,00", valorTotal: "1000,00"};
+import FormDialogItem from "./DialogItem";
 
 const GridItens = () => {
-    const [itens, setItens] = useState([initialValue]);
+    const [itens, setItens] = useState([]);
     const [open, setOpen] = React.useState(false);
-    const [formData, setFormData] = useState(initialValue);
 
     const columnDefs = [
         { field: "codigo", headerName: "Código"},
@@ -25,7 +23,7 @@ const GridItens = () => {
             <IconButton style={{ color: 'orange' }}>
                 <Icon.ModeEdit/>
             </IconButton>
-            <IconButton style={{ color: 'red' }}>
+            <IconButton style={{ color: 'red' }} onClick={() => handleDelete(params.value)}>
                 <Icon.Delete/>
             </IconButton>
         </div>}
@@ -45,7 +43,23 @@ const GridItens = () => {
 
     const handleClose = () => {
         setOpen(false);
-        setFormData(initialValue);
+    }
+
+    const handleFormSubmit = (codigo, qtd, valorUni, valorTotal) => {
+        setItens([...itens,{codigo: codigo, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
+        handleClose();
+    }
+
+    const removeItem = (array, value) => {
+        var index = array.indexOf(value)
+        if (index !== -1) {
+          array.splice(index, 1);
+        }
+    };
+
+    const handleDelete = (id) => {
+        removeItem(itens, id);
+        console.log(itens);
     }
 
     return (
@@ -63,6 +77,11 @@ const GridItens = () => {
                     localeText={AG_GRID_LOCALE_BR}
                 />
             </div>
+            <FormDialogItem
+            open={open} 
+            handleClose={handleClose} 
+            handleFormSubmit={handleFormSubmit}
+            />
         </div>
     )
 }

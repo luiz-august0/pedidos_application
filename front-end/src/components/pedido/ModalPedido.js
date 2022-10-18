@@ -53,45 +53,51 @@ const ModalPedido = (idPedido) => {
                     <div className="header">Pedido</div>
                     <div className="content">
                             <form>
-                                <InputLabel required id="demo-simple-select-label">Cliente</InputLabel>
-                                <Select
-                                id="cliente" 
-                                value={clienteSelected}
-                                label="Cliente"
-                                onChange={handleChangeCliente}
-                                style={{width: '250px'}}
-                                >
-                                    {clientes.map((element) => {
-                                        return (
-                                            <MenuItem value={element.Cli_Codigo}>{element.Cli_Codigo} - {element.Cli_Nome}</MenuItem> 
-                                        )
-                                    })}
-                                </Select>
-                                <InputLabel required id="demo-simple-select-label">Funcionário</InputLabel>
-                                <Select
-                                id="funcionario" 
-                                value={funcionarioSelected}
-                                label="Funcionário"
-                                onChange={handleChangeFuncionario}
-                                style={{width: '250px'}}
-                                >
-                                    {funcionarios.map((element) => {
-                                        return (
-                                            <MenuItem value={element.Fun_Codigo}>{element.Fun_Codigo} - {element.Fun_Nome}</MenuItem> 
-                                        )
-                                    })}
-                                </Select>
-                                <InputLabel required id="demo-simple-select-label">Situação do Pedido</InputLabel>
-                                <Select
-                                id="situacao" 
-                                value={situacaoSelected}
-                                label="Situação"
-                                onChange={handleChangeSituacao}
-                                style={{width: '250px'}}
-                                >
-                                    <MenuItem value={"A"}>A - ABERTO</MenuItem> 
-                                    <MenuItem value={"F"}>F - FECHADO</MenuItem>            
-                                </Select>
+                                <div>
+                                    <InputLabel required id="demo-simple-select-label">Cliente</InputLabel>
+                                    <Select
+                                    id="cliente" 
+                                    value={clienteSelected}
+                                    label="Cliente"
+                                    onChange={handleChangeCliente}
+                                    style={{width: '250px'}}
+                                    >
+                                        {clientes.map((element) => {
+                                            return (
+                                                <MenuItem value={element.Cli_Codigo}>{element.Cli_Codigo} - {element.Cli_Nome}</MenuItem> 
+                                            )
+                                        })}
+                                    </Select>
+                                </div>
+                                <div>
+                                    <InputLabel required id="demo-simple-select-label">Funcionário</InputLabel>
+                                    <Select
+                                    id="funcionario" 
+                                    value={funcionarioSelected}
+                                    label="Funcionário"
+                                    onChange={handleChangeFuncionario}
+                                    style={{width: '250px'}}
+                                    >
+                                        {funcionarios.map((element) => {
+                                            return (
+                                                <MenuItem value={element.Fun_Codigo}>{element.Fun_Codigo} - {element.Fun_Nome}</MenuItem> 
+                                            )
+                                        })}
+                                    </Select>
+                                </div>
+                                <div>
+                                    <InputLabel required id="demo-simple-select-label">Situação do Pedido</InputLabel>
+                                    <Select
+                                    id="situacao" 
+                                    value={situacaoSelected}
+                                    label="Situação"
+                                    onChange={handleChangeSituacao}
+                                    style={{width: '250px'}}
+                                    >
+                                        <MenuItem value={"A"}>A - ABERTO</MenuItem> 
+                                        <MenuItem value={"F"}>F - FECHADO</MenuItem>            
+                                    </Select>
+                                </div>
                             </form>
                             <GridItens/>
                             <h2 style={{color: '#000'}}>Valor Total: R$1000,00</h2>
