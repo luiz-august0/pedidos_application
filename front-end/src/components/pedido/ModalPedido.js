@@ -100,8 +100,6 @@ const ModalPedido = (idPedido) => {
                                 </div>
                             </form>
                             <GridItens/>
-                            <h2 style={{color: '#000'}}>Valor Total: R$1000,00</h2>
-                            <Button color='primary' variant='contained'>Confirmar</Button>
                     </div>
                     <div className="actions">
                     </div>

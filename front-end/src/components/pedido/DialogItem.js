@@ -36,27 +36,42 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
         setProdutos(response.data);
     }
 
+    const limpaCampos = () => {
+        setProdutoSelected();
+        setQtd();
+        setValorUni(0);
+        setVlrTotalCalc(0);
+    }
+
+    const closeDialog = () => { limpaCampos(); handleClose() };
+
 	React.useEffect(() => {
         getDataProdutos();
     }, []);
 
     const onConfirm = () => {
-        if (produtoSelected === '') {
+        if (produtoSelected === '' || produtoSelected === undefined) {
             alert(true, 'Código do produto é obrigatório');
             return;
         }
 
-		if (qtd === '') {
+		if (qtd === '' || qtd === 0 || qtd === undefined) {
             alert(true, 'Quantidade é obrigatória');
             return;
         }
 
-		if (valorUni === '') {
+		if (valorUni === 0 || valorUni === '') {
             alert(true, 'Valor unitário é obrigatório');
             return;
         }
 
+        if (vlrTotalCalc === NaN && vlrTotalCalc === 0 && vlrTotalCalc === '') {
+            alert(true, 'Valor total é obrigatório');
+            return;   
+        }
+
         handleFormSubmit(produtoSelected, qtd, valorUni, vlrTotalCalc);
+        limpaCampos();
     }
 
     const handleCloseAlert = (event, reason) => {
@@ -92,13 +107,13 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
         <div>
             <Dialog
                 open={open}
-                onClose={handleClose}
+                onClose={closeDialog}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
                 <Snackbar 
                 open={openAlert} 
-                autoHideDuration={5000} 
+                autoHideDuration={4000} 
                 onClose={handleCloseAlert}
                 anchorOrigin={{vertical: "top", horizontal: "center"}}>
                     <Alert severity="warning" onClose={handleCloseAlert}>
@@ -130,7 +145,7 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
 				    </form>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="secondary" variant="outlined">
+                    <Button onClick={closeDialog} color="secondary" variant="outlined">
                         Cancelar
                     </Button>
                     <Button color="primary" onClick={() => onConfirm()} variant="contained">
