@@ -40,7 +40,6 @@ CREATE TABLE produto(
 CREATE TABLE pedido(
   Ped_Codigo INT PRIMARY KEY AUTO_INCREMENT,
   Cli_Codigo INT NOT NULL,
-  For_Codigo INT NOT NULL,
   Fun_Codigo INT NOT NULL,
   Ped_VlrTotal FLOAT NOT NULL,
   Ped_Situacao CHAR(1) NOT NULL
@@ -55,9 +54,6 @@ CREATE TABLE pedido_itens(
 
 ALTER TABLE pedido ADD CONSTRAINT fk_cli_codigo
 FOREIGN KEY(Cli_Codigo) REFERENCES cliente(Cli_Codigo);
-
-ALTER TABLE pedido ADD CONSTRAINT fk_for_codigo
-FOREIGN KEY(For_Codigo) REFERENCES fornecedor(For_Codigo);
 
 ALTER TABLE pedido ADD CONSTRAINT fk_fun_codigo
 FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);

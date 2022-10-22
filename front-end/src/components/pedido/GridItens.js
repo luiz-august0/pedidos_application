@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AgGridReact } from 'ag-grid-react';
 
 import Grid from '@mui/material/Grid'
@@ -10,6 +10,7 @@ import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 import FormDialogItem from "./DialogItem";
 import { Button, IconButton } from "@mui/material";
+import { createPed, createItemPed } from "../../services/api";
 
 const GridItens = () => {
     const [itens, setItens] = useState([]);
@@ -70,6 +71,67 @@ const GridItens = () => {
         return itemJaExistente;
     }
 
+    const inserePedido = async() => {
+        try {
+            const response = await createPed(localStorage.getItem('cliente'), localStorage.getItem('funcionario'), calculaTotalItens(), localStorage.getItem('situacao'));
+            const createdid = response.data.insertId;
+            console.log(createdid);
+
+            itens.map(async(e) => {
+                await createItemPed(e.codigo, e.qtd, e.valorTotal, createdid);
+            });
+
+            MySwal.fire({
+                html: <i>Pedido inserido com sucesso!</i>,
+                icon: 'success'
+            })
+
+        } catch (error) {
+            MySwal.fire({
+                html: <i>Ops!, Não foi possível inserir o pedido</i>,
+                icon: 'error'
+            })
+            console.log(error);
+        }
+    }
+
+    const handleConfirmation = () => {
+        console.log(localStorage.getItem('cliente') + ' ' + localStorage.getItem('funcionario') + ' ' + localStorage.getItem('situacao'));
+        if (localStorage.getItem('cliente') === '') {
+            MySwal.fire({
+                html: <i>Cliente deve ser informado</i>,
+                icon: 'warning'
+            })
+            return;
+        }
+
+        if (localStorage.getItem('funcionario') === '') {
+            MySwal.fire({
+                html: <i>Funcionário deve ser informado</i>,
+                icon: 'warning'
+            })
+            return;
+        }
+
+        if (localStorage.getItem('situacao') === '') {
+            MySwal.fire({
+                html: <i>Situação do pedido deve ser informada</i>,
+                icon: 'warning'
+            })
+            return;
+        }
+
+        if (itens.length <= 0) {
+            MySwal.fire({
+                html: <i>Deve ser inserido pelo menos um item no pedido</i>,
+                icon: 'warning'
+            })
+            return;
+        }
+
+        inserePedido();
+    }
+
     const handleFormSubmit = (codigo, qtd, valorUni, valorTotal) => {
         if (!verificaItemExistente(codigo)) {
             setItens([...itens, {codigo: codigo, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
@@ -103,7 +165,7 @@ const GridItens = () => {
                 />
             </div>
             <h2 style={{color: '#000', textAlign: 'right'}}>Total do Pedido: R${calculaTotalItens()}</h2>
-            <Button color='primary' variant='contained'>Confirmar</Button>
+            <Button color='primary' variant='contained' onClick={() => handleConfirmation()}>Confirmar</Button>
             <FormDialogItem
             open={open} 
             handleClose={handleClose} 

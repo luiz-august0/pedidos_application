@@ -7,13 +7,11 @@ class PedidoController {
             mysql.getConnection((error, conn) => {
                 conn.query(
                     `SELECT P.Ped_Codigo, CONCAT(P.Cli_Codigo," - ",C.Cli_Nome) AS Cliente,
-                    CONCAT(P.For_Codigo," - ",F.For_Nome) AS Fornecedor,
                     CONCAT(P.Fun_Codigo," - ",FUN.Fun_Nome) AS Funcionario,
                     P.Ped_VlrTotal, 
                     IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao
                     FROM Pedido P
                     INNER JOIN Cliente C ON P.Cli_Codigo = C.Cli_Codigo
-                    INNER JOIN Fornecedor F ON P.For_Codigo = F.For_Codigo
                     INNER JOIN Funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
@@ -29,13 +27,13 @@ class PedidoController {
     }
 
     async createPed(req, res) {
-        const { cod_cli, cod_forn, cod_func, vlrTotal, situacao } = req.body;
+        const { cod_cli, cod_func, vlrTotal, situacao } = req.body;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `INSERT INTO pedido (Cli_Codigo, For_Codigo, Fun_Codigo, Ped_VlrTotal, Ped_Situacao) ` +
-                    `VALUES (${cod_cli}, ${cod_forn}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}")` ,
+                    `INSERT INTO pedido (Cli_Codigo, Fun_Codigo, Ped_VlrTotal, Ped_Situacao) ` +
+                    `VALUES (${cod_cli}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}")` ,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
@@ -84,7 +82,7 @@ class PedidoController {
     }
 
     async updatePed(req, res) {
-        const { cod_cli, cod_forn, cod_func, vlrTotal, situacao } = req.body;
+        const { cod_cli, cod_func, vlrTotal, situacao } = req.body;
         const { id } = req.params;
 
         try {
@@ -98,8 +96,8 @@ class PedidoController {
                             return res.status(404).json("Pedido não existe");
                         } else {
                             conn.query(
-                                `UPDATE pedido SET Cli_Codigo = "${cod_cli}", For_Codigo = ${cod_forn} ` + 
-                                `Fun_Codigo = ${cod_func}, Ped_VlrTotal = ROUND(${vlrTotal},2), Ped_Situacao = "${situacao}" WHERE Ped_Codigo = ${id}`,
+                                `UPDATE pedido SET Cli_Codigo = "${cod_cli}", Fun_Codigo = ${cod_func}, ` + 
+                                `Ped_VlrTotal = ROUND(${vlrTotal},2), Ped_Situacao = "${situacao}" WHERE Ped_Codigo = ${id}`,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
                                     return res.status(201).json(result);

@@ -95,3 +95,11 @@ export const deleteFornecedor = async (fornecedorID) => {
 export const getPedidos = async () => {
     return api.get('/pedido');
 };
+
+export const createPed = async (cod_cli, cod_func, vlrTotal, situacao) => {
+    return api.post('/pedido', {cod_cli, cod_func, vlrTotal, situacao});
+};
+
+export const createItemPed = async (cod_pro, qtd, vlrTotal, idPedido) => {
+    return api.post(`/pedido_item/${idPedido}`, {cod_pro, qtd, vlrTotal});
+};

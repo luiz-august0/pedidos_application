@@ -29,14 +29,17 @@ const ModalPedido = (idPedido) => {
 
     const handleChangeCliente = (event) => {
         setClienteSelected(event.target.value);
+        localStorage.setItem('cliente', event.target.value);
     }
 
     const handleChangeFuncionario = (event) => {
         setFuncionarioSelected(event.target.value);
+        localStorage.setItem('funcionario', event.target.value);
     }
 
     const handleChangeSituacao = (event) => {
         setSituacaoSelected(event.target.value);
+        localStorage.setItem('situacao', event.target.value);
     }
 
     return (

@@ -4,20 +4,16 @@ import { getPedidos} from "../../services/api";
 import ModalPedido from "./ModalPedido";
 
 import Grid from '@mui/material/Grid'
-import IconButton from '@mui/material/IconButton';
-import * as Icon from '@mui/icons-material';
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 
 const GridPedidos = () => {
     const [pedidos, setPedidos] = useState([]);
-    const [openModal, setOpenModal] = useState(false);
 
     const columnDefs = [
         { field: "Ped_Codigo", headerName: "Código"},
         { field: "Cliente", headerName: "Cliente" },
-        { field: "Fornecedor", headerName: "Fornecedor", },
         { field: "Funcionario", headerName: "Funcionário" },
         { field: "Ped_VlrTotal", headerName: "Valor Total" },
         { field: "Situacao", headerName: "Situação" },
