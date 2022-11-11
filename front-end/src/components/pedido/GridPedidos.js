@@ -11,6 +11,10 @@ import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 const GridPedidos = () => {
     const [pedidos, setPedidos] = useState([]);
 
+    const handleRefreshPedidos = () => {
+        refreshGrid();
+    }
+
     const columnDefs = [
         { field: "Ped_Codigo", headerName: "Código"},
         { field: "Cliente", headerName: "Cliente" },
@@ -42,7 +46,7 @@ const GridPedidos = () => {
     return (
         <div className="Grid"> 
             <Grid align="right" marginBottom={1}>
-                <ModalPedido/>
+                <ModalPedido handleRefreshPedidos={handleRefreshPedidos}/>
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px'}}>
                 <AgGridReact 

@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Popup from 'reactjs-popup';
 import { Button, InputLabel, Select, MenuItem } from '@mui/material';
-import { getClientes, getFornecedores, getFuncionarios } from '../../services/api'
+import { getClientes, getFuncionarios } from '../../services/api'
 import './ModalPedido.css';
 import GridItens from './GridItens';
 
-const ModalPedido = (idPedido) => {
+const ModalPedido = ({handleRefreshPedidos}) => {
     const [ clientes, setClientes ] = useState([]);
-    const [ clienteSelected, setClienteSelected ] = useState();
+    const [ clienteSelected, setClienteSelected ] = useState('');
     const [ funcionarios, setFuncionarios ] = useState([]);
-    const [ funcionarioSelected, setFuncionarioSelected ] = useState();
-    const [ situacaoSelected, setSituacaoSelected ] = useState();
+    const [ funcionarioSelected, setFuncionarioSelected ] = useState('');
+    const [ situacaoSelected, setSituacaoSelected ] = useState('A');
+
+    const handleRefresh = () => {
+        handleRefreshPedidos();
+    }
 
     const getDataClientes = async () => {
         const response = await getClientes();
@@ -29,17 +33,14 @@ const ModalPedido = (idPedido) => {
 
     const handleChangeCliente = (event) => {
         setClienteSelected(event.target.value);
-        localStorage.setItem('cliente', event.target.value);
     }
 
     const handleChangeFuncionario = (event) => {
         setFuncionarioSelected(event.target.value);
-        localStorage.setItem('funcionario', event.target.value);
     }
 
     const handleChangeSituacao = (event) => {
         setSituacaoSelected(event.target.value);
-        localStorage.setItem('situacao', event.target.value);
     }
 
     return (
@@ -102,7 +103,10 @@ const ModalPedido = (idPedido) => {
                                     </Select>
                                 </div>
                             </form>
-                            <GridItens/>
+                            <GridItens 
+                            data={[clienteSelected, funcionarioSelected, situacaoSelected]}
+                            closePopup={close}
+                            handleRefresh={handleRefresh}/>
                     </div>
                     <div className="actions">
                     </div>

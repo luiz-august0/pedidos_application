@@ -9,13 +9,17 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 import FormDialogItem from "./DialogItem";
+import FormDialogFechaPedido from "./DialogFechaPedido";
 import { Button, IconButton } from "@mui/material";
 import { createPed, createItemPed } from "../../services/api";
 
-const GridItens = () => {
+const GridItens = ({ data, closePopup, handleRefresh }) => {
     const [itens, setItens] = useState([]);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [openModalFechaPed, setOpenModalFechaPed] = useState(false);
     const MySwal = withReactContent(Swal);
+
+    var vbContinua = false;
 
     const columnDefs = [
         { field: "codigo", headerName: "Código"},
@@ -49,6 +53,14 @@ const GridItens = () => {
         setOpen(false);
     }
 
+    const handleClickOpenFechaPed = () => {
+        setOpenModalFechaPed(true);
+    }
+
+    const handleCloseFechaPed = () => {
+        setOpenModalFechaPed(false);
+    }
+
     const calculaTotalItens = () => {
         let total = 0;
         itens.map((e) => {
@@ -71,20 +83,26 @@ const GridItens = () => {
         return itemJaExistente;
     }
 
-    const inserePedido = async() => {
+    const execFinalizacaoPedido = () => {
+        MySwal.fire({
+            html: <i>Pedido inserido com sucesso!</i>,
+            icon: 'success'
+        });
+
+        closePopup();
+        handleRefresh();
+    };
+
+    const inserePedido = async(cliente, funcionario, situacao) => {
         try {
-            const response = await createPed(localStorage.getItem('cliente'), localStorage.getItem('funcionario'), calculaTotalItens(), localStorage.getItem('situacao'));
+            const response = await createPed(cliente, funcionario, calculaTotalItens(), situacao);
             const createdid = response.data.insertId;
-            console.log(createdid);
 
             itens.map(async(e) => {
                 await createItemPed(e.codigo, e.qtd, e.valorTotal, createdid);
             });
 
-            MySwal.fire({
-                html: <i>Pedido inserido com sucesso!</i>,
-                icon: 'success'
-            })
+            execFinalizacaoPedido();
 
         } catch (error) {
             MySwal.fire({
@@ -96,8 +114,11 @@ const GridItens = () => {
     }
 
     const handleConfirmation = () => {
-        console.log(localStorage.getItem('cliente') + ' ' + localStorage.getItem('funcionario') + ' ' + localStorage.getItem('situacao'));
-        if (localStorage.getItem('cliente') === '') {
+        let cliente = data[0];
+        let funcionario = data[1];
+        let situacao = data[2];
+
+        if (cliente === '') {
             MySwal.fire({
                 html: <i>Cliente deve ser informado</i>,
                 icon: 'warning'
@@ -105,7 +126,7 @@ const GridItens = () => {
             return;
         }
 
-        if (localStorage.getItem('funcionario') === '') {
+        if (funcionario === '') {
             MySwal.fire({
                 html: <i>Funcionário deve ser informado</i>,
                 icon: 'warning'
@@ -113,7 +134,7 @@ const GridItens = () => {
             return;
         }
 
-        if (localStorage.getItem('situacao') === '') {
+        if (situacao === '') {
             MySwal.fire({
                 html: <i>Situação do pedido deve ser informada</i>,
                 icon: 'warning'
@@ -129,7 +150,15 @@ const GridItens = () => {
             return;
         }
 
-        inserePedido();
+        if (situacao === 'F' && !vbContinua) {
+            handleClickOpenFechaPed();
+        } else {
+            vbContinua = true;
+        }
+
+        if (vbContinua) {
+            inserePedido(cliente, funcionario, situacao);
+        }
     }
 
     const handleFormSubmit = (codigo, qtd, valorUni, valorTotal) => {
@@ -137,6 +166,13 @@ const GridItens = () => {
             setItens([...itens, {codigo: codigo, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
         }
         handleClose();
+    }
+
+    const handleSubmitFechaPed = (vbContinuaParam) => {
+        if (vbContinuaParam) {
+            vbContinua = true;
+            handleConfirmation();
+        }
     }
 
     const handleDelete = (id) => {
@@ -156,7 +192,7 @@ const GridItens = () => {
                 <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
             </IconButton>
             </Grid>
-            <div className="ag-theme-material" style={{ height: '400px'}}>
+            <div className="ag-theme-material" style={{ height: '50vh'}}>
                 <AgGridReact 
                     rowData={itens}
                     columnDefs={columnDefs} 
@@ -170,6 +206,12 @@ const GridItens = () => {
             open={open} 
             handleClose={handleClose} 
             handleFormSubmit={handleFormSubmit}
+            />
+            <FormDialogFechaPedido
+            openModalFechaPed={openModalFechaPed} 
+            handleCloseFechaPed={handleCloseFechaPed}
+            handleSubmitFechaPed={handleSubmitFechaPed}
+            valorTotal={calculaTotalItens()}
             />
         </div>
     )
