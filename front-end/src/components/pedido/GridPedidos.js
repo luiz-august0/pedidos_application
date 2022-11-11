@@ -20,7 +20,13 @@ const GridPedidos = () => {
         { field: "Cliente", headerName: "Cliente" },
         { field: "Funcionario", headerName: "Funcionário" },
         { field: "Ped_VlrTotal", headerName: "Valor Total" },
-        { field: "Situacao", headerName: "Situação" },
+        { field: "Situacao", headerName: "Situação", cellStyle: params => {
+            if (params.value === 'FECHADO') {
+                return {color: 'red'};
+            } else {
+                return {color: 'green'};   
+            }}
+        },
         { field: "Ped_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
         </div>}
