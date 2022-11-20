@@ -121,7 +121,7 @@ const DialogEstoque = ({ open, handleClose }) => {
                         >
                             {produtos.map((element) => {
                                 return (
-                                    <MenuItem value={element.Pro_Codigo}>{element.Pro_Codigo} - {element.Pro_Descricao} - Estoque atual:{element.Pro_QtdEst}</MenuItem> 
+                                    <MenuItem value={element.Pro_Codigo}>{element.Pro_Codigo} - {element.Pro_Descricao} - {element.Pro_Unidade} - Estoque atual:{element.Pro_QtdEst}</MenuItem> 
                                 )
                             })}
                         </Select>

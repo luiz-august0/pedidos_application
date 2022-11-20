@@ -115,12 +115,12 @@ class FuncionarioController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM funcionario WHERE Fun_Codigo = ${id}`,
+                    `SELECT * FROM pedido WHERE Fun_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
-                        if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Funcionario não existe");
+                        if (JSON.stringify(result) !== '[]') {
+                            return res.status(404).json("Existem pedidos vinculados a este funcionario!");
                         } else {
                             conn.query(
                                 `DELETE FROM funcionario WHERE Fun_Codigo = ${id}`,

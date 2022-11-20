@@ -31,7 +31,8 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
 
 	const calculaTotalTroco = () => {
         let troco = 0;
-		troco = parseFloat(valorTotalPed) - parseFloat(valorTotalRecebido);
+		troco = parseFloat(valorTotalRecebido) - parseFloat(valorTotalPed);
+        console.log(troco);
         return parseFloat(troco);
     }
 
@@ -69,7 +70,7 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
                     <form>
 						<TextField id="valorTotalPed" required value={valorTotalPed} placeholder="Valor total do pedido" variant="outlined" margin="dense" label="Valor total do pedido" fullWidth type={'number'} property={{readOnly: true}}/>
 						<TextField id="valorTotalRecebido" required value={valorTotalRecebido} onChange={e => handleChangeValorRecebido(e)} placeholder="Valor total recebido" variant="outlined" margin="dense" label="Valor total recebido" fullWidth type={'number'}/>
-						<h2>Troco: R${calculaTotalTroco()}</h2>
+                        <h2 style={{color: '#000'}}>Troco: R${calculaTotalTroco()}</h2>
                     </form>
                 </DialogContent>
                 <DialogActions>

@@ -136,7 +136,7 @@ const GridFornecedor = () => {
                 refreshGrid();
             } catch (error) {
                 MySwal.fire({
-                    html: <i>{JSON.stringify(error.response.data.error).slice(0, -1).slice(1 | 1)}</i>,
+                    html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
                     icon: 'error'
                 })
             }
@@ -175,6 +175,7 @@ const GridFornecedor = () => {
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
                     localeText={AG_GRID_LOCALE_BR}
+                    gridOptions={{paginationAutoPageSize: true, pagination: true}}
                 />
             </div>
             <FormDialog

@@ -139,14 +139,15 @@ class PedidoController {
         }
     }
 
-    async showPedItem(req, res) {
-        const { cod_pro } = req.body;
+    async showPedItens(req, res) {
         const { id } = req.params;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}`,
+                    `SELECT PI.Pro_Codigo, CONCAT(PI.Pro_Codigo," - ",P.Pro_Descricao) AS Produto, P.Pro_Unidade, PI.PedItm_Qtd, PI.PedItm_VlrTotal FROM pedido_itens PI ` + 
+                    `INNER JOIN produto P ON PI.Pro_Codigo = P.Pro_Codigo ` + 
+                    `WHERE PI.Ped_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         

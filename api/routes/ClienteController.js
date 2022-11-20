@@ -117,12 +117,12 @@ class ClienteController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM cliente WHERE Cli_Codigo = ${id}`,
+                    `SELECT * FROM pedido WHERE Cli_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
-                        if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Cliente não existe");
+                        if (JSON.stringify(result) !== '[]') {
+                            return res.status(404).json("Existem pedidos vinculados a este cliente!");
                         } else {
                             conn.query(
                                 `DELETE FROM cliente WHERE Cli_Codigo = ${id}`,

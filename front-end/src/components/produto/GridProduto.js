@@ -12,7 +12,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 
-const initialValue = {descricao: "", unidade: "", valorUni: ""};
+const initialValue = {descricao: "", unidade: "", valorUni: "", fornecedor: ""};
 
 const GridProduto = () => {
 
@@ -29,6 +29,8 @@ const GridProduto = () => {
         { field: "Pro_Unidade", headerName: "Unidade", },
         { field: "Pro_VlrUni", headerName: "Valor Unitário" },
         { field: "Pro_QtdEst", headerName: "Estoque" },
+        { field: "Fornecedor", headerName: "Fornecedor" },
+        { field: "For_Codigo", headerName: "Código Fornecedor", hide:true },
         { field: "Pro_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
             <IconButton style={{ color: 'orange' }} onClick={() => handleUpdate(params.data)}>
@@ -80,10 +82,11 @@ const GridProduto = () => {
         const descricao = formData.descricao;
         const unidade = formData.unidade;
         const valorUni = formData.valorUni;
+        const fornecedor = formData.fornecedor;
 
         if(formData.id) {
             try {            
-                await updateProduto(formData.id, descricao, unidade, valorUni);
+                await updateProduto(formData.id, descricao, unidade, valorUni, fornecedor);
                 refreshGrid();
                 handleClose();
                 MySwal.fire({
@@ -99,7 +102,7 @@ const GridProduto = () => {
             }
         }else {
             try {           
-                await createProduto(descricao, unidade, valorUni);
+                await createProduto(descricao, unidade, valorUni, fornecedor);
                 refreshGrid();
                 handleClose();
                 MySwal.fire({
@@ -117,7 +120,7 @@ const GridProduto = () => {
     }
 
     const handleUpdate = (oldData) => {
-        setFormData({id: oldData.Pro_Codigo, descricao: oldData.Pro_Descricao, unidade: oldData.Pro_Unidade, valorUni: oldData.Pro_VlrUni});
+        setFormData({id: oldData.Pro_Codigo, descricao: oldData.Pro_Descricao, unidade: oldData.Pro_Unidade, valorUni: oldData.Pro_VlrUni, fornecedor: oldData.For_Codigo});
         handleClickOpen();
     }
 
@@ -133,7 +136,7 @@ const GridProduto = () => {
                 refreshGrid();
             } catch (error) {
                 MySwal.fire({
-                    html: <i>{JSON.stringify(error.response.data.error).slice(0, -1).slice(1 | 1)}</i>,
+                    html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
                     icon: 'error'
                 })
             }
@@ -172,6 +175,7 @@ const GridProduto = () => {
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
                     localeText={AG_GRID_LOCALE_BR}
+                    gridOptions={{paginationAutoPageSize: true, pagination: true}}
                 />
             </div>
             <FormDialog

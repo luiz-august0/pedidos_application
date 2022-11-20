@@ -1,7 +1,6 @@
 import React from 'react';
 import './styles.css';
 import GridPedidos from './GridPedidos';
-//import imgProduto from '../../img/produtos.png'
 
 const Pedidos = () => {
 

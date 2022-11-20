@@ -129,12 +129,12 @@ class FornecedorController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM fornecedor WHERE For_Codigo = ${id}`,
+                    `SELECT * FROM produto WHERE For_Codigo = ${id}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
-                        if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Fornecedor não existe");
+                        if (JSON.stringify(result) !== '[]') {
+                            return res.status(404).json("Existem produtos vinculados a este fornecedor!");
                         } else {
                             conn.query(
                                 `DELETE FROM fornecedor WHERE For_Codigo = ${id}`,

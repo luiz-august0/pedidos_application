@@ -198,6 +198,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
                     columnDefs={columnDefs} 
                     defaultColDef={defaultColDef}
                     localeText={AG_GRID_LOCALE_BR}
+                    gridOptions={{paginationAutoPageSize: true, pagination: true}}
                 />
             </div>
             <h2 style={{color: '#000', textAlign: 'right'}}>Total do Pedido: R${calculaTotalItens()}</h2>

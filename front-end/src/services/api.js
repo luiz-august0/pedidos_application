@@ -23,12 +23,12 @@ export const getProduto = async (produtoID) => {
     return api.get(`/produto/${produtoID}`);
 };
 
-export const createProduto = async (descricao, unidade, valorUni) => {
-    return api.post('/produto', { descricao, unidade, valorUni });
+export const createProduto = async (descricao, unidade, valorUni, fornecedor) => {
+    return api.post('/produto', { descricao, unidade, valorUni, fornecedor });
 };
 
-export const updateProduto = async (produtoID, descricao, unidade, valorUni) => {
-    return api.put(`/produto/${produtoID}`, { descricao, unidade, valorUni });
+export const updateProduto = async (produtoID, descricao, unidade, valorUni, fornecedor) => {
+    return api.put(`/produto/${produtoID}`, { descricao, unidade, valorUni, fornecedor });
 };
 
 export const deleteProduto = async (produtoID) => {
@@ -94,6 +94,10 @@ export const deleteFornecedor = async (fornecedorID) => {
 //Rotas de pedidos
 export const getPedidos = async () => {
     return api.get('/pedido');
+};
+
+export const getItensPed = async (idPedido) => {
+    return api.get(`/pedido_item/${idPedido}`);
 };
 
 export const createPed = async (cod_cli, cod_func, vlrTotal, situacao) => {

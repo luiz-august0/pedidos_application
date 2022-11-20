@@ -34,7 +34,8 @@ CREATE TABLE produto(
   Pro_Descricao VARCHAR(55) NOT NULL,
   Pro_Unidade VARCHAR(10) NOT NULL,
   Pro_VlrUni FLOAT NOT NULL,
-  Pro_QtdEst FLOAT NOT NULL
+  Pro_QtdEst FLOAT NOT NULL,
+  For_Codigo INT NOT NULL
 );
 
 CREATE TABLE pedido(
@@ -51,6 +52,9 @@ CREATE TABLE pedido_itens(
   PedItm_Qtd FLOAT NOT NULL,
   PedItm_VlrTotal FLOAT NOT NULL
 );
+
+ALTER TABLE produto ADD CONSTRAINT fk_for_codigo
+FOREIGN KEY(For_Codigo) REFERENCES fornecedor(For_Codigo);
 
 ALTER TABLE pedido ADD CONSTRAINT fk_cli_codigo
 FOREIGN KEY(Cli_Codigo) REFERENCES cliente(Cli_Codigo);

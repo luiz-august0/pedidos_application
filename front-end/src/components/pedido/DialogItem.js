@@ -135,7 +135,7 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
                         >
                             {produtos.map((element) => {
                                 return (
-                                    <MenuItem value={element.Pro_Codigo}>{element.Pro_Codigo} - {element.Pro_Descricao}</MenuItem> 
+                                    <MenuItem value={element.Pro_Codigo}>{element.Pro_Codigo} - {element.Pro_Descricao} - {element.Pro_Unidade}</MenuItem> 
                                 )
                             })}
                         </Select>

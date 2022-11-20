@@ -14,18 +14,31 @@ import
     MenuItem,
     InputLabel
 } from '@mui/material';
+import { getFornecedores } from '../../services/api';
 
 
 const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => {
-    const { id, descricao, unidade, valorUni } = data;
+    const { id, descricao, unidade, valorUni, fornecedor } = data;
+    const [ fornecedores, setFornecedores ] = React.useState([]);
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
     const [ unidadeSelected, setUnidadeSelected] = React.useState();
+    const [ fornecedorSelected, setFornecedorSelected] = React.useState();
 
     const alert = (open,msg) => {
         setMsgAlert(msg);
         setOpenAlert(open);
     }
+
+    const getDataFornecedores = async () => {
+        const response = await getFornecedores();
+        console.log(response.data);
+        setFornecedores(response.data);
+    };
+
+    React.useEffect(() => {
+        getDataFornecedores();
+    }, []);
 
     const onConfirm = () => {
         if (descricao === '') {
@@ -43,7 +56,14 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
             return;
         }
 
-        handleFormSubmit()
+        if (fornecedor === '') {
+            alert(true, 'Fornecedor é obrigatório');
+            return;
+        }
+
+        handleFormSubmit();
+        setUnidadeSelected();
+        setFornecedorSelected();
     }
 
     const handleCloseAlert = (event, reason) => {
@@ -54,9 +74,14 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
         alert(false);
     };  
 
-    const handleChange = (event) => {
+    const handleChangeUnidade = (event) => {
         data.unidade = event.target.value;
         setUnidadeSelected(data.unidade);
+    } 
+
+    const handleChangeFornecedor = (event) => {
+        data.fornecedor = event.target.value;
+        setFornecedorSelected(data.fornecedor);
     } 
 
     return (
@@ -81,7 +106,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                 <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{id?"Editar Produto":"Cadastrar Produto"}</DialogTitle>
                 <DialogContent>
                     <form>
-                    <TextField id="descricao" required value={descricao} onChange={e => onChange(e)} placeholder="Descrição" variant="outlined" margin="dense" label="Descrição" fullWidth type={'text'}/>
+                        <TextField id="descricao" required value={descricao} onChange={e => onChange(e)} placeholder="Descrição" variant="outlined" margin="dense" label="Descrição" fullWidth type={'text'}/>
                         <InputLabel required id="demo-simple-select-label">Unidade</InputLabel>
                         <Select
                         labelId="demo-simple-select-label"
@@ -89,13 +114,28 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                         defaultValue={data.unidade !== ''?data.unidade:null}
                         value={data.unidade}
                         label="Unidade"
-                        onChange={handleChange}
+                        onChange={handleChangeUnidade}
                         >
                             <MenuItem value={'UN'}>Unidade</MenuItem> 
                             <MenuItem value={'KG'}>Kilograma</MenuItem> 
                             <MenuItem value={'PCT'}>Pacote</MenuItem> 
                         </Select>
                         <TextField id="valorUni" required value={valorUni} onChange={e => onChange(e)} placeholder="Valor Unitário" variant="outlined" label="Valor Unitário" margin="dense" fullWidth type={'number'}/>
+                        <InputLabel required id="demo-simple-select-label">Fornecedor</InputLabel>
+                        <Select
+                        labelId="demo-simple-select-label"
+                        id="fornecedor"
+                        defaultValue={data.fornecedor !== ''?data.fornecedor:null}
+                        value={data.fornecedor}
+                        label="Fornecedor"
+                        onChange={handleChangeFornecedor}
+                        >
+                            {fornecedores.map((element) => {
+                                return (
+                                    <MenuItem value={element.For_Codigo}>{element.For_Codigo} - {element.For_Nome}</MenuItem> 
+                                )
+                            })}
+                        </Select>
                     </form>
                 </DialogContent>
                 <DialogActions>
