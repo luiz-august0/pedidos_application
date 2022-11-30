@@ -114,6 +114,27 @@ class PedidoController {
         }
     }
 
+    async updatePedSituacao(req, res) {
+        const { id } = req.params;
+        const { situacao } = req.body;
+
+        try {
+            mysql.getConnection((error, conn) => {
+                conn.query(
+                    `UPDATE pedido SET Ped_Situacao = "${situacao}" WHERE Ped_Codigo = ${id}`,
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                        return res.status(201).json(result);
+                    }
+                )
+                conn.release();
+            })
+        } catch(err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal server error." })
+        }
+    }
+
     async showPed(req, res) {
         const { id } = req.params;
 

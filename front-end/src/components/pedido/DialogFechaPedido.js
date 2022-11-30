@@ -7,7 +7,7 @@ import withReactContent from 'sweetalert2-react-content'
 
 const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleSubmitFechaPed, valorTotal }) => {
 	const valorTotalPed = valorTotal;
-	const [ valorTotalRecebido, setValorTotalRecebido ] = React.useState(0);
+	const [ valorTotalRecebido, setValorTotalRecebido ] = React.useState();
 	const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
 	const MySwal = withReactContent(Swal);
@@ -32,14 +32,18 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
 	const calculaTotalTroco = () => {
         let troco = 0;
 		troco = parseFloat(valorTotalRecebido) - parseFloat(valorTotalPed);
-        console.log(troco);
-        return parseFloat(troco);
+        if (parseFloat(troco).toString() !== 'NaN') {
+            return parseFloat(troco);
+        } else {
+            return parseFloat(-valorTotalPed);
+        }
     }
 
 	const handleConfirmSubmit = () => {
 		if (valorTotalRecebido >= valorTotalPed) {
 			handleSubmitFechaPed(true);
 			handleCloseAlert();
+            setValorTotalRecebido();
 		} else {
 			handleSubmitFechaPed(false);
 			alert(true, 'Valor total recebido deve ser maior ou igual o valor total do pedido');

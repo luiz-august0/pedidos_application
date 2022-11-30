@@ -1,17 +1,100 @@
 import React, { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
-import { getPedidos} from "../../services/api";
+import { getPedidos, updatePedSituacao, deletePedido, addEstoqueProd, getItensPed } from "../../services/api";
 import ModalPedido from "./ModalPedido";
 import ModalPedidoItens from "./ModalPedidoItens";
+import FormDialogFechaPedido from "./DialogFechaPedido";
 
 import Grid from '@mui/material/Grid'
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 import { Button } from "@mui/material";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 const GridPedidos = () => {
     const [pedidos, setPedidos] = useState([]);
+    const [valorTotalFechamento, setValorTotalFechamento] = useState();
+    const [idPedidoFechamento, setIdPedidoFechamento] = useState();
+    const [openModalFechaPed, setOpenModalFechaPed] = useState(false);
+    const MySwal = withReactContent(Swal);
+
+    const handleDeletePed = async(idPedido) => {
+        const deleteRegister = async() => {
+            const responseItens = await getItensPed(idPedido);
+            const itens = responseItens.data;
+    
+            itens.map(async(e) => {
+                try {
+                    await addEstoqueProd(e.Pro_Codigo, e.PedItm_Qtd);   
+                } catch (error) {
+                    alert(error);
+                }
+            })
+    
+            try {
+                await deletePedido(idPedido);
+                MySwal.fire({
+                    html: <i>Pedido excluido com sucesso!</i>,
+                    icon: 'success'
+                })
+                refreshGrid();
+            } catch (error) {
+                MySwal.fire({
+                    html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
+                    icon: 'error'
+                })
+            }
+        }
+
+        MySwal.fire({
+            title: 'Confirma a exclusão do Pedido?',
+            showDenyButton: true,
+            confirmButtonText: 'Sim',
+            denyButtonText: 'Não',
+            customClass: {
+            actions: 'my-actions',
+            cancelButton: 'order-1 right-gap',
+            confirmButton: 'order-2',
+            denyButton: 'order-3',
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+                deleteRegister();
+            }
+        })
+    }
+
+    const handleCallFechamento = (idPedido, valorTotalPed) => {
+        setIdPedidoFechamento(idPedido);
+        setValorTotalFechamento(valorTotalPed);
+        setOpenModalFechaPed(true);
+    }
+
+    const handleCloseFechaPed = () => {
+        setOpenModalFechaPed(false);
+    }
+
+    const handleSubmitFechaPed = async(vbAllowed) => {
+        if (vbAllowed) {
+            try {            
+                await updatePedSituacao(idPedidoFechamento, "F");
+                refreshGrid();
+                handleCloseFechaPed();
+                MySwal.fire({
+                    html: <i>Situação do pedido alterada com sucesso!</i>,
+                    icon: 'success'
+                })
+            } catch (error) {
+                handleCloseFechaPed();
+                MySwal.fire({
+                    html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
+                    icon: 'error'
+                })
+            }
+        }
+    }
 
     const handleRefreshPedidos = () => {
         refreshGrid();
@@ -32,7 +115,12 @@ const GridPedidos = () => {
         { field: "Ped_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
             <ModalPedidoItens idPedido={params.value} situacaoPed={params.data.Situacao}/>
-            <Button variant="outlined" color="secondary">Excluir</Button>
+            <Button variant="outlined" color="secondary" onClick={() => handleDeletePed(params.value)}>Excluir</Button>
+        </div>},
+        { cellRendererFramework:(params) => 
+        <div>
+            {params.data.Situacao === 'ABERTO'?
+            <Button variant="outlined" color="secondary" onClick={() => handleCallFechamento(params.data.Ped_Codigo,params.data.Ped_VlrTotal)}>Fechamento</Button>:null}
         </div>}
     ];
 
@@ -67,6 +155,12 @@ const GridPedidos = () => {
                     gridOptions={{paginationAutoPageSize: true, pagination: true}}
                 />
             </div>
+            <FormDialogFechaPedido
+            openModalFechaPed={openModalFechaPed} 
+            handleCloseFechaPed={handleCloseFechaPed}
+            handleSubmitFechaPed={handleSubmitFechaPed}
+            valorTotal={valorTotalFechamento}
+            />
         </div>
     )
 }

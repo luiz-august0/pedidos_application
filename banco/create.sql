@@ -64,3 +64,13 @@ FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);
 
 ALTER TABLE pedido_itens ADD CONSTRAINT pk_pedido_produto
 PRIMARY KEY (Ped_Codigo, Pro_Codigo);
+
+DELIMITER $$
+
+CREATE TRIGGER before_pedido_delete 
+BEFORE DELETE ON pedido FOR EACH ROW
+BEGIN
+    DELETE FROM pedido_itens WHERE Ped_Codigo = OLD.Ped_Codigo;
+END$$    
+
+DELIMITER ;
