@@ -38,9 +38,10 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
 				<IconButton style={{ color: 'orange' }}>
 					<Icon.ModeEdit/>
 				</IconButton>
-				<IconButton style={{ color: 'red' }} onClick={() => handleDelete(params.value)}>
-                <Icon.Delete/>
-            	</IconButton>
+                {itens.length > 1 ? 
+                <IconButton style={{ color: 'red' }} onClick={() => handleDelete(params.value)}>
+                    <Icon.Delete/>
+                </IconButton>:null}
 			</div>:null}
         </div>}
     ];

@@ -128,8 +128,7 @@ const GridPedidos = () => {
         sortable: true,
         filter: true,
         floatingFilter: true,
-        resizable: true,
-        flex: flexOnOrNot()
+        resizable: true
     }
     
     const refreshGrid = async () => {

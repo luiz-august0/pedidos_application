@@ -16,9 +16,16 @@ export const AuthProvider = ({ children }) => {
         const usuarioRecuperado = localStorage.getItem("usuario");
         const token = localStorage.getItem('token');
 
+        const getDataFuncionario = async(idUsuario) => {
+            const responseUsuario = await getUsuario(idUsuario);
+            const usuarioData = responseUsuario.data;
+            localStorage.setItem("isFuncionario", usuarioData[0].Usr_Funcionario);
+        }
+
         if(usuarioRecuperado && token) {
             setUsuario(JSON.parse(usuarioRecuperado));
             api.defaults.headers.Authorization = `Bearer ${token}`;
+            getDataFuncionario(JSON.parse(usuarioRecuperado).id);
         }
 
         setLoading(false);

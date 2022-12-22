@@ -43,8 +43,7 @@ const GridFuncionario = () => {
         sortable: true,
         filter: true,
         floatingFilter: true,
-        resizable: true,
-        flex: flexOnOrNot()
+        resizable: true
     }
 
     const handleClickOpen = () => {
