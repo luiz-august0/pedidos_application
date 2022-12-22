@@ -109,7 +109,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
 			<Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
 			</IconButton>:null}
             </Grid>
-            <div className="ag-theme-material" style={{ height: '400px', width: '100vh'}}>
+            <div className="ag-theme-material" style={{ display: 'table-cell', height: '400px', width: '100vh'}}>
                 <AgGridReact 
                     rowData={itens}
                     columnDefs={columnDefs} 

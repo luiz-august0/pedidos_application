@@ -56,57 +56,57 @@ const ModalPedido = ({handleRefreshPedidos}) => {
                     </button>
                     <div className="header">Pedido</div>
                     <div className="content">
-                            <form>
-                                <div>
-                                    <InputLabel required id="demo-simple-select-label">Cliente</InputLabel>
-                                    <Select
-                                    id="cliente" 
-                                    value={clienteSelected}
-                                    label="Cliente"
-                                    onChange={handleChangeCliente}
-                                    style={{width: '250px'}}
-                                    >
-                                        {clientes.map((element) => {
-                                            return (
-                                                <MenuItem value={element.Cli_Codigo}>{element.Cli_Codigo} - {element.Cli_Nome}</MenuItem> 
-                                            )
-                                        })}
-                                    </Select>
-                                </div>
-                                <div>
-                                    <InputLabel required id="demo-simple-select-label">Funcionário</InputLabel>
-                                    <Select
-                                    id="funcionario" 
-                                    value={funcionarioSelected}
-                                    label="Funcionário"
-                                    onChange={handleChangeFuncionario}
-                                    style={{width: '250px'}}
-                                    >
-                                        {funcionarios.map((element) => {
-                                            return (
-                                                <MenuItem value={element.Fun_Codigo}>{element.Fun_Codigo} - {element.Fun_Nome}</MenuItem> 
-                                            )
-                                        })}
-                                    </Select>
-                                </div>
-                                <div>
-                                    <InputLabel required id="demo-simple-select-label">Situação do Pedido</InputLabel>
-                                    <Select
-                                    id="situacao" 
-                                    value={situacaoSelected}
-                                    label="Situação"
-                                    onChange={handleChangeSituacao}
-                                    style={{width: '250px'}}
-                                    >
-                                        <MenuItem value={"A"}>A - ABERTO</MenuItem> 
-                                        <MenuItem value={"F"}>F - FECHADO</MenuItem>            
-                                    </Select>
-                                </div>
-                            </form>
-                            <GridItens 
-                            data={[clienteSelected, funcionarioSelected, situacaoSelected]}
-                            closePopup={close}
-                            handleRefresh={handleRefresh}/>
+                        <form>
+                            <div className='input-div'>
+                                <InputLabel required id="demo-simple-select-label">Cliente</InputLabel>
+                                <Select
+                                id="cliente" 
+                                value={clienteSelected}
+                                label="Cliente"
+                                onChange={handleChangeCliente}
+                                className='select'
+                                >
+                                    {clientes.map((element) => {
+                                        return (
+                                            <MenuItem value={element.Cli_Codigo}>{element.Cli_Codigo} - {element.Cli_Nome}</MenuItem> 
+                                        )
+                                    })}
+                                </Select>
+                            </div>
+                            <div className='input-div'>
+                                <InputLabel required id="demo-simple-select-label">Funcionário</InputLabel>
+                                <Select
+                                id="funcionario" 
+                                value={funcionarioSelected}
+                                label="Funcionário"
+                                onChange={handleChangeFuncionario}
+                                className='select'
+                                >
+                                    {funcionarios.map((element) => {
+                                        return (
+                                            <MenuItem value={element.Fun_Codigo}>{element.Fun_Codigo} - {element.Fun_Nome}</MenuItem> 
+                                        )
+                                    })}
+                                </Select>
+                            </div>
+                            <div className='input-div'>
+                                <InputLabel required id="demo-simple-select-label">Situação do Pedido</InputLabel>
+                                <Select
+                                id="situacao" 
+                                value={situacaoSelected}
+                                label="Situação"
+                                onChange={handleChangeSituacao}
+                                className='select'
+                                >
+                                    <MenuItem value={"A"}>A - ABERTO</MenuItem> 
+                                    <MenuItem value={"F"}>F - FECHADO</MenuItem>            
+                                </Select>
+                            </div>
+                        </form>
+                        <GridItens 
+                        data={[clienteSelected, funcionarioSelected, situacaoSelected]}
+                        closePopup={close}
+                        handleRefresh={handleRefresh}/>
                     </div>
                     <div className="actions">
                     </div>
