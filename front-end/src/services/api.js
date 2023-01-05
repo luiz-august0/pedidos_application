@@ -5,8 +5,24 @@ export const api = axios.create({
 });
 
 //Rota de usuário
-export const getUsuario = async (usuarioID) => {
+export const getUsuario = async () => {
+    return api.get('/usuario');
+};
+
+export const showUsuario = async (usuarioID) => {
     return api.get(`/usuario/${usuarioID}`);
+};
+
+export const createUsuario = async (usuario, senha, codFuncionario) => {
+    return api.post('/usuario', { usuario, senha, codFuncionario });
+};
+
+export const updateUsuario = async (usuarioID, usuario, senha, codFuncionario) => {
+    return api.put(`/usuario/${usuarioID}`, { usuario, senha, codFuncionario });
+};
+
+export const deleteUsuario = async (usuarioID) => {
+    return api.delete(`/usuario/${usuarioID}`);
 };
 
 //Rota de sessão

@@ -2,7 +2,7 @@ CREATE TABLE usuario(
     Usr_Codigo INT PRIMARY KEY AUTO_INCREMENT,
     Usr_Login VARCHAR(55) NOT NULL,
     Usr_Senha VARCHAR(255) NOT NULL,
-    Usr_Funcionario CHAR(1) NOT NULL
+    Fun_Codigo INT
 );
 
 CREATE TABLE cliente(
@@ -64,6 +64,9 @@ FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);
 
 ALTER TABLE pedido_itens ADD CONSTRAINT pk_pedido_produto
 PRIMARY KEY (Ped_Codigo, Pro_Codigo);
+
+ALTER TABLE usuario ADD CONSTRAINT fk_funcionario
+FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);
 
 DELIMITER $$
 

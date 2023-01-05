@@ -32,7 +32,6 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
 
     const getDataFornecedores = async () => {
         const response = await getFornecedores();
-        console.log(response.data);
         setFornecedores(response.data);
     };
 

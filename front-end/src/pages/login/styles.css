@@ -5,7 +5,7 @@
     justify-content: center;
     min-height: 100vh;
     padding: 0 2rem;
-    background-color: #b30000;
+    background-color: #ffffff;
 }
 #login .p {
     font-weight: bold;
@@ -71,7 +71,7 @@
     border-radius: 10px;
     outline: none;
     border: none;
-    background-color: #b30000;
+    background-color: #6bbf79;
     cursor: pointer;
     font-weight: bold;
     color: white;
@@ -79,6 +79,6 @@
 }
 
 #login .actions button:hover {
-    background-color: #4d0000;
+    background-color: #396340;
 }
 

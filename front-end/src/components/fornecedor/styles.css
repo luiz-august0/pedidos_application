@@ -5,13 +5,13 @@
     margin-inline-start: 0px;
     margin-inline-end: 0px;
     font-weight: bold;
-    color: #fff;
+    color: #000;
 }
 
 .main-container {
     min-height: 100vh;
     padding: 0;
-    background-color: #b30000;
+    background-color: #f0f0f0;
 }
 
 .cont-second  h2{

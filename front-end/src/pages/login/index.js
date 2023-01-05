@@ -27,7 +27,7 @@ const Login = () => {
       
     return (
         <div id="login">
-            <h1>Restaurant</h1>
+            <h1>Sistema de pedidos V1.0</h1>
             <form className="form" onSubmit={handleSubmit}>
                 <div className="field">
                     <label className="lbUsuario" htmlFor="usuario">Usuario</label>

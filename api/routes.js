@@ -17,6 +17,7 @@ routes.use(auth);
 
 //Rotas usuário
 routes.get('/usuario/:id', UsuarioController.show);
+routes.get('/usuario', UsuarioController.index)
 routes.put('/usuario/:id', UsuarioController.update);
 routes.delete('/usuario/:id', UsuarioController.destroy);
 

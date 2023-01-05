@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useNavigate } from "react-router-dom";
 
-import { api, createSession, getUsuario } from "../services/api";
+import { api, createSession, showUsuario } from "../services/api";
 
 export const AuthContext = createContext();
 
@@ -17,9 +17,14 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
 
         const getDataFuncionario = async(idUsuario) => {
-            const responseUsuario = await getUsuario(idUsuario);
+            const responseUsuario = await showUsuario(idUsuario);
             const usuarioData = responseUsuario.data;
-            localStorage.setItem("isFuncionario", usuarioData[0].Usr_Funcionario);
+            let isFuncionario = false;
+            const idFunc = usuarioData[0].Fun_Codigo;
+            if (idFunc) {
+                isFuncionario = true
+            }
+            localStorage.setItem("isFuncionario", isFuncionario);
         }
 
         if(usuarioRecuperado && token) {
@@ -43,9 +48,14 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("token", token);
             api.defaults.headers.Authorization = `Bearer ${token}`;
             
-            const responseUsuario = await getUsuario(usuarioLogado.id);
+            const responseUsuario = await showUsuario(usuarioLogado.id);
             const usuarioData = responseUsuario.data;
-            localStorage.setItem("isFuncionario", usuarioData[0].Usr_Funcionario);
+            let isFuncionario = false;
+            const idFunc = usuarioData[0].Fun_Codigo;
+            if (idFunc) {
+                isFuncionario = true
+            }
+            localStorage.setItem("isFuncionario", isFuncionario);
             
             setUsuario(usuarioLogado);
             navigate("/");
