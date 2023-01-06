@@ -71,7 +71,7 @@ const Home = () => {
                         ?<MenuItem icon={<ImBoxAdd/>} onClick={() => setOpen(true)}>Adicionar Estoque</MenuItem>
                         :null}
                         {localStorage.getItem('isFuncionario') === 'false'
-                        ?<MenuItem icon={<ImBoxAdd/>} onClick={() => setSelectedComponent(Usuario)}>Usuários</MenuItem>
+                        ?<MenuItem icon={<BsPeopleFill/>} onClick={() => setSelectedComponent(Usuario)}>Usuários</MenuItem>
                         :null}
                     </Menu>
                 </SidebarContent>

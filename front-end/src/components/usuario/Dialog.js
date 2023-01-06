@@ -17,16 +17,21 @@ import
 import { getFuncionarios } from '../../services/api';
 
 const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => {
-    const { id, usuario, senha, codFuncionario } = data;
+    const { id, usuario, senha, codFuncionario, tipoUsuarioDefault } = data;
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
-    const [ tipoUsuario, setTipoUsuario ] = React.useState();
-    const [ funcionarioSelected, setFuncionarioSelected] = React.useState();
+    const [ tipoUsuarioSelected, setTipoUsuarioSelected ] = React.useState();
+    const [ funcionarioSelected, setFuncionarioSelected ] = React.useState();
     const [ funcionarios, setFuncionarios ] = React.useState([]);
 
     const alert = (open,msg) => {
         setMsgAlert(msg);
         setOpenAlert(open);
+    }
+
+    const onClose = () => {
+        handleClose();
+        alert(false, '');
     }
 
     const getDataFuncionarios = async () => {
@@ -35,14 +40,6 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
     };
 
     React.useEffect(() => {
-        if (id) {
-            if (codFuncionario !== '') {
-                setTipoUsuario("FUNC")
-            } else {
-                setTipoUsuario("ADM")
-            }
-        }
-
         getDataFuncionarios();
     }, []);
 
@@ -57,13 +54,20 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
             return;
         }
 
-        if (tipoUsuario !== "ADM" && codFuncionario === "") {
+        if (tipoUsuarioDefault !== "ADM" && codFuncionario === null) {
             alert(true, 'Funcionário é obrigatório para cadastros que não forem administrativos');
             return;
         }
 
+        if (tipoUsuarioDefault === "ADM") {
+            setFuncionarioSelected('');
+            data.codFuncionario = '';
+        }
+
         handleFormSubmit();
         setFuncionarioSelected();
+        setTipoUsuarioSelected();
+        alert(false, '');
     }
 
     const handleCloseAlert = (event, reason) => {
@@ -75,7 +79,12 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
     };  
 
     const handleChangeTipo = (event) => {
-        setTipoUsuario(event.target.value);
+        data.tipoUsuarioDefault = event.target.value;
+        setTipoUsuarioSelected(data.tipoUsuarioDefault);
+        if (event.target.value === "ADM") {
+            setFuncionarioSelected('');
+            data.codFuncionario = '';
+        }
     } 
 
     const handleChangeFuncionario = (event) => {
@@ -87,7 +96,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
         <div>
             <Dialog
                 open={open}
-                onClose={handleClose}
+                onClose={onClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -110,23 +119,22 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                         <InputLabel required id="demo-simple-select-label">Tipo do Usuário</InputLabel>
                         <Select
                         labelId="demo-simple-select-label"
-                        id="unidade"
-                        value={tipoUsuario}
+                        id="tipo"
+                        value={data.tipoUsuarioDefault}
                         label="Tipo do Usuário"
-                        defaultValue={codFuncionario !== '' ? "FUNC":"ADM"}
                         onChange={handleChangeTipo}
                         >
                             <MenuItem value={'ADM'}>Administrador</MenuItem> 
                             <MenuItem value={'FUNC'}>Funcionário</MenuItem> 
                         </Select>
-                        {tipoUsuario !== 'ADM' ?
+                        {data.tipoUsuarioDefault !== 'ADM'?
                             <div>
                                 <InputLabel required id="demo-simple-select-label">Funcionário</InputLabel>
                                 <Select
                                 labelId="demo-simple-select-label"
                                 id="funcionario"
-                                defaultValue={data.funcionario !== ''?data.funcionario:null}
-                                value={data.funcionario}
+                                defaultValue={data.codFuncionario !== ''?data.codFuncionario:null}
+                                value={data.codFuncionario}
                                 label="Funcionário"
                                 onChange={handleChangeFuncionario}
                                 >
@@ -141,7 +149,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                     </form>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="secondary" variant="outlined">
+                    <Button onClick={onClose} color="secondary" variant="outlined">
                         Cancelar
                     </Button>
                     <Button color="primary" onClick={() => onConfirm()} variant="contained">

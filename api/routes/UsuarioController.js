@@ -7,7 +7,8 @@ class UsuarioController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT Usr_Codigo, Usr_Login, Fun_Codigo FROM usuario`,
+                    `SELECT USR.Usr_Codigo, USR.Usr_Login, USR.Fun_Codigo, CONCAT(USR.Fun_Codigo, " - ", FUN.Fun_Nome) AS Funcionario FROM usuario USR ` + 
+                    `LEFT JOIN funcionario FUN ON USR.Fun_Codigo = FUN.Fun_Codigo`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
@@ -49,10 +50,19 @@ class UsuarioController {
             
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `INSERT INTO usuario (Usr_Login, Usr_Senha, Fun_Codigo) VALUES ("${usuario}","${encryptedPassword}", ${codFuncionario!=''&&codFuncionario!=null?`${codFuncionario}`:'NULL'})`,
+                    `SELECT Usr_Codigo FROM usuario WHERE Usr_Login = "${usuario}"`,
                     (error, result, fields) => {
-                        if (error) { return res.status(500).send({ error: error }) }
-                        return res.status(201).json(result);
+                        if (JSON.stringify(result) !== '[]') {
+                            return res.status(406).json();
+                        } else {
+                            conn.query(
+                                `INSERT INTO usuario (Usr_Login, Usr_Senha, Fun_Codigo) VALUES ("${usuario}","${encryptedPassword}", ${codFuncionario!=''&&codFuncionario!=null?`${codFuncionario}`:'NULL'})`,
+                                (error, result, fields) => {
+                                    if (error) { return res.status(500).send({ error: error }) }
+                                    return res.status(201).json(result);
+                                }
+                            )
+                        }
                     }
                 )
                 conn.release();
@@ -71,12 +81,12 @@ class UsuarioController {
 
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM usuario WHERE Usr_Codigo = "${id}"`,
+                    `SELECT Usr_Codigo FROM usuario WHERE Usr_Codigo <> ${id} AND Usr_Login = "${usuario}"`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
 
-                        if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json();
+                        if (JSON.stringify(result) !== '[]') {
+                            return res.status(406).json();
                         }
                         else {
                             conn.query(

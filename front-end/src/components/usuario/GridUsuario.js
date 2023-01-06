@@ -12,7 +12,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR } from "../../globalFunctions";
 
-const initialValue = {usuario: "", senha: "", codFuncionario: ""};
+const initialValue = {usuario: "", senha: "", codFuncionario: "", tipoUsuarioDefault: "FUNC"};
 
 const GridUsuario = () => {
     const MySwal = withReactContent(Swal);
@@ -25,15 +25,17 @@ const GridUsuario = () => {
     const columnDefs = [
         { field: "Usr_Codigo", headerName: "Código"},
         { field: "Usr_Login", headerName: "Usuário" },
-        { field: "Fun_Codigo", headerName: "Código de funcionário", },
+        { field: "Fun_Codigo", headerName: "Código de funcionário", hide: true},
+        { field: "Funcionario", headerName: "Funcionário" },
         { field: "Usr_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
             <IconButton style={{ color: 'orange' }} onClick={() => handleUpdate(params.data)}>
                 <Icon.ModeEdit/>
             </IconButton>
+            {usuarios.length > 1? 
             <IconButton style={{ color: 'red' }} onClick={() => handleDelete(params.value)}>
-                <Icon.Delete/>
-            </IconButton>
+            <Icon.Delete/>
+            </IconButton>:null}
         </div>}
     ];
 
@@ -41,7 +43,8 @@ const GridUsuario = () => {
         sortable: true,
         filter: true,
         floatingFilter: true,
-        resizable: true
+        resizable: true,
+        flex: 1
     }
 
     const handleClickOpen = () => {
@@ -89,7 +92,7 @@ const GridUsuario = () => {
             } catch (error) {
                 handleClose();
                 MySwal.fire({
-                    html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
+                    html: <i>Usuário informado já existe cadastro</i>,
                     icon: 'error'
                 })
             }
@@ -105,7 +108,7 @@ const GridUsuario = () => {
             } catch (error) {
                 handleClose();
                 MySwal.fire({
-                    html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
+                    html: <i>Usuário informado já existe cadastro</i>,
                     icon: 'error'
                 })
             }
@@ -113,7 +116,11 @@ const GridUsuario = () => {
     }
 
     const handleUpdate = (oldData) => {
-        setFormData({id: oldData.Usr_Codigo, usuario: oldData.Usr_Login, senha: "", codFuncionario: oldData.Fun_Codigo});
+        let tipo = "ADM"
+        if (oldData.Fun_Codigo !== null) {
+            tipo = "FUNC"
+        }
+        setFormData({id: oldData.Usr_Codigo, usuario: oldData.Usr_Login, senha: "", codFuncionario: oldData.Fun_Codigo, tipoUsuarioDefault: tipo});
         handleClickOpen();
     }
 

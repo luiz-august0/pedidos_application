@@ -192,7 +192,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
                 <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
             </IconButton>
             </Grid>
-            <div className="ag-theme-material" style={{ display: 'table-cell', height: '20rem', width: '50rem'}}>
+            <div className="ag-theme-material" style={{ height: '20rem', width: '50rem'}}>
                 <AgGridReact 
                     rowData={itens}
                     columnDefs={columnDefs} 
