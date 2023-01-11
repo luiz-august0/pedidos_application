@@ -13,8 +13,11 @@ import FormDialogFechaPedido from "./DialogFechaPedido";
 import { Button, IconButton } from "@mui/material";
 import { createPed, createItemPed } from "../../services/api";
 
+const initialValue = {codigo: "", qtdProd: "", valorUni: 0, valorTotal: 0, editMode: false};
+
 const GridItens = ({ data, closePopup, handleRefresh }) => {
     const [itens, setItens] = useState([]);
+    const [formData, setFormData] = useState(initialValue);
     const [open, setOpen] = useState(false);
     const [openModalFechaPed, setOpenModalFechaPed] = useState(false);
     const MySwal = withReactContent(Swal);
@@ -22,14 +25,15 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
     var vbContinua = false;
 
     const columnDefs = [
-        { field: "codigo", headerName: "Código"},
+        { field: "codigo", headerName: "Código", hide: true},
+        { field: "produto", headerName: "Produto" },
         { field: "qtd", headerName: "Quantidade" },
         { field: "valorUni", headerName: "Valor Uni", },
         { field: "valorTotal", headerName: "Valor Total" },
         { field: "codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
             <IconButton style={{ color: 'orange' }}>
-                <Icon.ModeEdit/>
+                <Icon.ModeEdit onClick={() => handleUpdate(params.data)}/>
             </IconButton>
             <IconButton style={{ color: 'red' }} onClick={() => handleDelete(params.value)}>
                 <Icon.Delete/>
@@ -51,6 +55,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
 
     const handleClose = () => {
         setOpen(false);
+        setFormData(initialValue);
     }
 
     const handleClickOpenFechaPed = () => {
@@ -59,6 +64,10 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
 
     const handleCloseFechaPed = () => {
         setOpenModalFechaPed(false);
+    }
+    
+    const onChange = (field, value) => {
+        setFormData({...formData,[field]:value})
     }
 
     const calculaTotalItens = () => {
@@ -109,7 +118,6 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
                 html: <i>Ops!, Não foi possível inserir o pedido</i>,
                 icon: 'error'
             })
-            console.log(error);
         }
     }
 
@@ -161,9 +169,9 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
         }
     }
 
-    const handleFormSubmit = (codigo, qtd, valorUni, valorTotal) => {
+    const handleFormSubmit = (codigo, produto, qtd, valorUni, valorTotal) => {
         if (!verificaItemExistente(codigo)) {
-            setItens([...itens, {codigo: codigo, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
+            setItens([...itens, {codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
         }
         handleClose();
     }
@@ -175,11 +183,16 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
         }
     }
 
+    const handleUpdate = (oldData) => {
+        setFormData({codigo: oldData.codigo, qtd: oldData.qtd, valorUni: oldData.valorUni, valorTotal: oldData.valorTotal, editMode: true});
+        handleClickOpen();
+    }
+
     const handleDelete = (id) => {
         let newArrayItens = [];
         itens.map((e) => {
             if (e.codigo !== id) {
-                newArrayItens.push({codigo: e.codigo, qtd: e.qtd, valorUni: e.valorUni, valorTotal: e.valorTotal});
+                newArrayItens.push({codigo: e.codigo, produto: e.produto, qtd: e.qtd, valorUni: e.valorUni, valorTotal: e.valorTotal});
             }
         });
         setItens(newArrayItens);
@@ -207,6 +220,8 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
             open={open} 
             handleClose={handleClose} 
             handleFormSubmit={handleFormSubmit}
+            onChange={onChange}
+            data={formData}
             />
             <FormDialogFechaPedido
             openModalFechaPed={openModalFechaPed} 

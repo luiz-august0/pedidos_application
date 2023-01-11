@@ -17,11 +17,9 @@ import
 
 import { getProdutos, getProduto } from '../../services/api';
 
-const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
-	const [ qtd, setQtd ] = React.useState();
-	const [ valorUni, setValorUni ] = React.useState(0);
+const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data }) => {
+    const {codigo, qtd, valorUni, valorTotal, editMode} = data;
 	const [ produtoSelected, setProdutoSelected ] = React.useState();
-	const [ vlrTotalCalc, setVlrTotalCalc ] = React.useState(0);
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
 	const [ produtos, setProdutos ] = React.useState([]);
@@ -38,25 +36,27 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
 
     const limpaCampos = () => {
         setProdutoSelected();
-        setQtd();
-        setValorUni(0);
-        setVlrTotalCalc(0);
-    }
+    };
 
-    const closeDialog = () => { limpaCampos(); handleClose() };
+    const closeDialog = () => { limpaCampos(); handleClose(); };
 
 	React.useEffect(() => {
         getDataProdutos();
     }, []);
 
     const onConfirm = () => {
-        if (produtoSelected === '' || produtoSelected === undefined) {
+        if (codigo === '' || codigo === undefined) {
             alert(true, 'Código do produto é obrigatório');
             return;
         }
 
-		if (qtd === '' || qtd === 0 || qtd === undefined) {
+		if (qtd === '' || qtd === undefined) {
             alert(true, 'Quantidade é obrigatória');
+            return;
+        }
+
+        if (qtd <= 0) {
+            alert(true, 'Quantidade não deve ser menor ou igual a 0');
             return;
         }
 
@@ -65,13 +65,24 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
             return;
         }
 
-        if (vlrTotalCalc === NaN && vlrTotalCalc === 0 && vlrTotalCalc === '') {
+        if (valorUni <= 0) {
+            alert(true, 'Valor unitário não deve ser menor ou igual a 0');
+            return;
+        }
+
+        if (valorTotal === NaN && valorTotal === 0 && valorTotal === '') {
             alert(true, 'Valor total é obrigatório');
             return;   
         }
 
-        handleFormSubmit(produtoSelected, qtd, valorUni, vlrTotalCalc);
-        limpaCampos();
+        const finalizeSubmit = async() => {
+            const response = await getProduto(codigo);
+            const prodInfo = response.data[0].Pro_Codigo + ' - ' + response.data[0].Pro_Descricao + ' - ' + response.data[0].Pro_Unidade
+            handleFormSubmit(codigo, prodInfo, qtd, valorUni, valorTotal);
+            limpaCampos();
+        }
+
+        finalizeSubmit();
     }
 
     const handleCloseAlert = (event, reason) => {
@@ -83,23 +94,28 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
     };  
 
 	const calculateValorTotal = (qtd, valorUni) => {
-		setVlrTotalCalc((qtd * valorUni).toFixed(2));
+        data.valorTotal = (qtd * valorUni).toFixed(2);
+        onChange(valorTotal, (qtd * valorUni).toFixed(2));
 	}
 
 	const handleChangeProduto = async (event) => {
-		setProdutoSelected(event.target.value);
+        data.codigo = event.target.value;
+		setProdutoSelected(data.codigo);
 		const response = await getProduto(event.target.value);
-		setValorUni(response.data[0].Pro_VlrUni);
+        data.valorUni = response.data[0].Pro_VlrUni;
+        onChange(valorUni, response.data[0].Pro_VlrUni);
 		calculateValorTotal(qtd, response.data[0].Pro_VlrUni);
     };
 
 	const handleChangeQtd = async (event) => {
-		setQtd(event.target.value);
+        data.qtd = event.target.value;
+        onChange(qtd, event.target.value);
 		calculateValorTotal(event.target.value, valorUni);
 	}
 
 	const handleChangeValorUni = async (event) => {
-		setValorUni(event.target.value);
+        data.valorUni = event.target.value;
+        onChange(valorUni, event.target.value)
 		calculateValorTotal(qtd, event.target.value);
 	}
 
@@ -122,13 +138,14 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
                     </Alert>
                 </Snackbar>
 
-                <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{"Adicionar Item"}</DialogTitle>
+                <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{editMode?"Editar Item":"Adicionar Item"}</DialogTitle>
                 <DialogContent>
                     <form>
 						<InputLabel required id="demo-simple-select-label">Produto</InputLabel>
                         <Select
-                        id="produto" 
-                        value={produtoSelected}
+                        id="codigo" 
+                        defaultValue={data.codigo !== ''?data.codigo:null}
+                        value={data.codigo}
                         label="Produto"
                         onChange={handleChangeProduto}
                         style={{width: '250px'}}
@@ -141,7 +158,7 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit }) => {
                         </Select>
                         <TextField id="qtd" required value={qtd} onChange={e => handleChangeQtd(e)} placeholder="Quantidade" variant="outlined" margin="dense" label="Quantidade" fullWidth type={'number'}/>
 						<TextField id="valorUni" required value={valorUni} onChange={e => handleChangeValorUni(e)} placeholder="Valor Unitário" variant="outlined" margin="dense" label="Valor Unitário" fullWidth type={'number'}/>
-						<TextField id="valorTotal" value={vlrTotalCalc} placeholder="Valor Total" variant="outlined" margin="dense" label="Valor Total" fullWidth type={'number'} inputProps={{readOnly: true}}/>
+						<TextField id="valorTotal" value={valorTotal} placeholder="Valor Total" variant="outlined" margin="dense" label="Valor Total" fullWidth type={'number'} inputProps={{readOnly: true}}/>
 				    </form>
                 </DialogContent>
                 <DialogActions>
