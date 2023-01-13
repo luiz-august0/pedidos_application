@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+import * as mysql from 'mysql2';
 require('dotenv').config();
 
 var pool = mysql.createPool({
@@ -6,7 +6,7 @@ var pool = mysql.createPool({
     "password" : process.env.PASSWORD,
     "database" : process.env.DATABASE,
     "host" : process.env.HOST,
-    "port" : process.env.PORT
+    "port" : process.env.PORTBASE
 })
 
 exports.pool = pool;
