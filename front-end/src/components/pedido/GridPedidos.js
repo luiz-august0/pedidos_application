@@ -140,7 +140,7 @@ const GridPedidos = () => {
        }},
         { field: "Ped_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
-            <ModalPedidoItens idPedido={params.value} situacaoPed={params.data.Situacao}/>
+            <ModalPedidoItens idPedido={params.value} situacaoPed={params.data.Situacao} refreshGrid={refreshGrid}/>
             <Button variant="outlined" color="secondary" onClick={() => handleDeletePed(params.value)}>Excluir</Button>
         </div>},
         { cellRendererFramework:(params) => 

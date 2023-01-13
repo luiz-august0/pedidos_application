@@ -124,6 +124,10 @@ export const createItemPed = async (cod_pro, qtd, vlrTotal, idPedido) => {
     return api.post(`/pedido_item/${idPedido}`, {cod_pro, qtd, vlrTotal});
 };
 
+export const deleteItemPed = async (idPedido, cod_pro) => {
+    return api.delete(`/pedido_item/${idPedido}/${cod_pro}`);
+};
+
 export const updatePedSituacao = async (idPedido, situacao) => {
     return api.put(`/pedido_situacao/${idPedido}`, { situacao });
 };

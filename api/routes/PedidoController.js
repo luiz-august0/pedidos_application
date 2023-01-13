@@ -1,5 +1,43 @@
 const mysql = require('../mysql/mysql').pool;
-import EstoqueController from './EstoqueController';
+import { atualizaEstoque, EstoqueController } from './EstoqueController';
+
+//Funções gerais
+const deleteItmPed = async(idPedido, cod_pro) => {
+    try {
+        mysql.getConnection((error, conn) => {
+            conn.query(
+                `DELETE FROM pedido_itens WHERE Ped_Codigo = ${idPedido} AND Pro_Codigo = ${cod_pro}`,
+                (error, result, fields) => {
+                    if (error) { return console.log(error) } 
+                    updateValorTotalPedido(idPedido);
+                    return;
+                }
+            )
+            conn.release();
+        })
+    } catch(err) {
+        return console.log(err)
+    }
+}
+
+const updateValorTotalPedido = async(idPedido) => {
+    try {
+        mysql.getConnection((error, conn) => {
+            conn.query(
+                `UPDATE pedido SET Ped_VlrTotal = (SELECT ROUND(SUM(PedItm_VlrTotal),2) FROM pedido_itens WHERE Ped_Codigo = ${idPedido}) ` + 
+                `WHERE Ped_Codigo = ${idPedido}`,
+                (error, result, fields) => {
+                    if (error) { return console.log(error) } 
+                    return;
+                }
+            )
+            conn.release();
+        })
+    } catch(err) {
+        return console.log(err)
+    }
+}
+//Fim Funções gerais
 
 class PedidoController {   
     async index(req, res) {
@@ -66,7 +104,7 @@ class PedidoController {
                                 `VALUES (${id}, ${cod_pro}, ${qtd}, ROUND(${vlrTotal},2))` ,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
-                                    EstoqueController.dimEstoque(qtd, cod_pro);
+                                    atualizaEstoque(qtd, cod_pro, 'dim');
                                     return res.status(201).json(result);
                                 }
                             )
@@ -188,25 +226,17 @@ class PedidoController {
     }
 
     async deleteItemPed(req, res) {
-        const { id } = req.params;
+        const { id, cod_pro } = req.params;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM pedido WHERE Ped_Codigo = ${id}`,
+                    `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}`,
                     (error, result, fields) => {
-                        if (error) { return res.status(500).send({ error: error }) }
-                        
-                        if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json("Pedido não existe");
-                        } else {
-                            conn.query(
-                                `DELETE FROM pedido_itens WHERE Ped_Codigo = ${id}`,
-                                (error, result, fields) => {
-                                    return res.status(201).json(result);
-                                }
-                            )
-                        }
+                        if (error) { return res.status(500).send({ error: error }) } 
+                            atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
+                            deleteItmPed(id, cod_pro);
+                            return res.status(201).json('Item deletado');
                     }
                 )
                 conn.release();

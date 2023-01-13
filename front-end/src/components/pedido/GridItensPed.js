@@ -8,13 +8,15 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 import { IconButton } from "@mui/material";
-import { getItensPed } from "../../services/api";
+import { getItensPed, deleteItemPed } from "../../services/api";
+
+const initialValue = {codigo: "", qtdProd: "", valorUni: 0, valorTotal: 0, editMode: false};
 
 const GridItensPed = ({idPedido, situacaoPed}) => {
 	const [gridApi, setGridApi] = useState(null);
     const [itens, setItens] = useState([]);
+    const [formData, setFormData] = useState(initialValue);
     const [open, setOpen] = useState(false);
-    const [openModalFechaPed, setOpenModalFechaPed] = useState(false);
     const MySwal = withReactContent(Swal);
 
     const columnDefs = [
@@ -31,7 +33,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
             )
         }},
         { field: "PedItm_VlrTotal", headerName: "Valor Total" },
-        { field: "codigo", headerName:"Ações", cellRendererFramework:(params) => 
+        { field: "Pro_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
 			{situacaoPed === 'ABERTO'?
 			<div>
@@ -63,20 +65,25 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
         flex: flexOnOrNot()
     }
 
+    const calculaTotalItens = () => {
+        let total = 0;
+        itens.map((e) => {
+            total = parseFloat(total) + parseFloat(e.PedItm_VlrTotal);
+        });
+        return parseFloat(total).toFixed(2);
+    }
+
     const handleClickOpen = () => {
         setOpen(true);
     }
 
     const handleClose = () => {
         setOpen(false);
+        setFormData(initialValue);
     }
 
-    const handleClickOpenFechaPed = () => {
-        setOpenModalFechaPed(true);
-    }
-
-    const handleCloseFechaPed = () => {
-        setOpenModalFechaPed(false);
+    const onChange = (field, value) => {
+        setFormData({...formData,[field]:value})
     }
 
     const verificaItemExistente = (id) => {
@@ -93,12 +100,75 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
         return itemJaExistente;
     }
 
+    const handleFormSubmit = (codigo, produto, qtd, valorUni, valorTotal, editMode) => {
+        const postItem = () => {
+            setItens([...itens, {codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
+        }
+
+        const editItem = () => {
+            let newArrayItens = [];
+            itens.map((e) => {
+                if (e.codigo !== codigo) {
+                    newArrayItens.push({codigo: e.codigo, produto: e.produto, qtd: e.qtd, valorUni: e.valorUni, valorTotal: e.valorTotal});
+                }
+            });
+            newArrayItens.push({codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal});
+            setItens(newArrayItens);
+        }
+
+        if (!editMode) {
+            if (!verificaItemExistente(codigo)) {
+                postItem()
+            }
+        } else {
+            editItem()
+        }
+        handleClose();
+        refreshGrid();
+    }
+
 	const onGridReady = (params) => {
         setGridApi(params)
     }
 
-    const handleDelete = (id) => {
+    const handleUpdate = (oldData) => {
+        setFormData({codigo: oldData.codigo, qtd: oldData.qtd, valorUni: oldData.valorUni, valorTotal: oldData.valorTotal, editMode: true});
+        handleClickOpen();
+    }
 
+    const handleDelete = async(id) => {
+        const deleteRegister = async () => {
+            try {
+                await deleteItemPed(idPedido, id);
+                MySwal.fire({
+                    html: <i>Item excluido com sucesso!</i>,
+                    icon: 'success'
+                })
+                refreshGrid();
+            } catch (error) {
+                MySwal.fire({
+                    html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
+                    icon: 'error'
+                })
+            }
+        }
+
+        MySwal.fire({
+            title: 'Confirma a exclusão do Item?',
+            showDenyButton: true,
+            confirmButtonText: 'Sim',
+            denyButtonText: 'Não',
+            customClass: {
+            actions: 'my-actions',
+            cancelButton: 'order-1 right-gap',
+            confirmButton: 'order-2',
+            denyButton: 'order-3',
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+                deleteRegister();
+            }
+        })
     }
 
     return (
@@ -119,6 +189,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
 					gridOptions={{paginationAutoPageSize: true, pagination: true}}
                 />
             </div>
+            <h2 style={{color: '#000', textAlign: 'right'}}>Total do Pedido: R${calculaTotalItens()}</h2>
         </div>
     )
 }

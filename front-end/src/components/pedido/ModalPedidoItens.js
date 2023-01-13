@@ -4,7 +4,7 @@ import { Button} from '@mui/material';
 import './ModalPedidoItens.css';
 import GridItensPed from './GridItensPed';
 
-const ModalPedidoItens = ({idPedido, situacaoPed}) => {
+const ModalPedidoItens = ({idPedido, situacaoPed, refreshGrid}) => {
     return (
         <Popup 
             trigger={<Button color='primary' variant='outlined'>Itens</Button>}
@@ -13,7 +13,7 @@ const ModalPedidoItens = ({idPedido, situacaoPed}) => {
             >
             {close => (
                 <div className="modal">
-                    <button className="close" onClick={close}>
+                    <button className="close" onClick={() => {close(); refreshGrid();}}>
                         &times;
                     </button>
                     <div className="header">Itens do Pedido</div>
