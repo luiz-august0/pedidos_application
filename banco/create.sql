@@ -43,7 +43,8 @@ CREATE TABLE pedido(
   Cli_Codigo INT NOT NULL,
   Fun_Codigo INT NOT NULL,
   Ped_VlrTotal FLOAT NOT NULL,
-  Ped_Situacao CHAR(1) NOT NULL
+  Ped_Situacao CHAR(1) NOT NULL,
+  Ped_Data DATE NOT NULL
 );
 
 CREATE TABLE pedido_itens(
@@ -64,6 +65,12 @@ FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);
 
 ALTER TABLE pedido_itens ADD CONSTRAINT pk_pedido_produto
 PRIMARY KEY (Ped_Codigo, Pro_Codigo);
+
+ALTER TABLE pedidos_itens ADD CONSTRAINT fk_pedido
+FOREIGN KEY (Ped_Codigo) REFERENCES pedido(Ped_Codigo);
+
+ALTER TABLE pedidos_itens ADD CONSTRAINT fk_produto
+FOREIGN KEY (Pro_Codigo) REFERENCES produto(Pro_Codigo);
 
 ALTER TABLE usuario ADD CONSTRAINT fk_funcionario
 FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);

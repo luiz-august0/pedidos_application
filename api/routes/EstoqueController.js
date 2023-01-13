@@ -8,7 +8,7 @@ class EstoqueController {
                     `UPDATE produto SET Pro_QtdEst = (Pro_QtdEst - ${qtd}) WHERE Pro_Codigo = ${id} `,
                     (error, result, fields) => {
                         if (error) { return console.log(error); }
-                        return console.log(result);
+                        return console.log("ID: " + id + " QTDE: " + qtd);
                     }
                 )
                 conn.release();

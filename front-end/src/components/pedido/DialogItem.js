@@ -36,6 +36,8 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
 
     const limpaCampos = () => {
         setProdutoSelected();
+        setMsgAlert('');
+        setOpenAlert(false);
     };
 
     const closeDialog = () => { limpaCampos(); handleClose(); };
@@ -78,7 +80,7 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
         const finalizeSubmit = async() => {
             const response = await getProduto(codigo);
             const prodInfo = response.data[0].Pro_Codigo + ' - ' + response.data[0].Pro_Descricao + ' - ' + response.data[0].Pro_Unidade
-            handleFormSubmit(codigo, prodInfo, qtd, valorUni, valorTotal);
+            handleFormSubmit(codigo, prodInfo, qtd, valorUni, valorTotal, editMode);
             limpaCampos();
         }
 
@@ -99,10 +101,12 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
 	}
 
 	const handleChangeProduto = async (event) => {
+        data.editMode = false;
         data.codigo = event.target.value;
 		setProdutoSelected(data.codigo);
 		const response = await getProduto(event.target.value);
         data.valorUni = response.data[0].Pro_VlrUni;
+        onChange(editMode, false);
         onChange(valorUni, response.data[0].Pro_VlrUni);
 		calculateValorTotal(qtd, response.data[0].Pro_VlrUni);
     };

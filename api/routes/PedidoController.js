@@ -9,7 +9,7 @@ class PedidoController {
                     `SELECT P.Ped_Codigo, CONCAT(P.Cli_Codigo," - ",C.Cli_Nome) AS Cliente,
                     CONCAT(P.Fun_Codigo," - ",FUN.Fun_Nome) AS Funcionario,
                     P.Ped_VlrTotal, 
-                    IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao
+                    IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao, Ped_Data
                     FROM Pedido P
                     INNER JOIN Cliente C ON P.Cli_Codigo = C.Cli_Codigo
                     INNER JOIN Funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo`,
@@ -32,8 +32,8 @@ class PedidoController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `INSERT INTO pedido (Cli_Codigo, Fun_Codigo, Ped_VlrTotal, Ped_Situacao) ` +
-                    `VALUES (${cod_cli}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}")` ,
+                    `INSERT INTO pedido (Cli_Codigo, Fun_Codigo, Ped_VlrTotal, Ped_Situacao, Ped_Data) ` +
+                    `VALUES (${cod_cli}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}", NOW())` ,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);

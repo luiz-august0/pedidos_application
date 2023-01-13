@@ -31,7 +31,7 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
 
 	const calculaTotalTroco = () => {
         let troco = 0;
-		troco = parseFloat(valorTotalRecebido) - parseFloat(valorTotalPed);
+		troco = (parseFloat(valorTotalRecebido) - parseFloat(valorTotalPed)).toFixed(2);
         if (parseFloat(troco).toString() !== 'NaN') {
             return parseFloat(troco);
         } else {

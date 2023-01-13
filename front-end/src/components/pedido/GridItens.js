@@ -75,7 +75,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
         itens.map((e) => {
             total = parseFloat(total) + parseFloat(e.valorTotal);
         });
-        return parseFloat(total);
+        return parseFloat(total).toFixed(2);
     }
 
     const verificaItemExistente = (id) => {
@@ -169,9 +169,28 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
         }
     }
 
-    const handleFormSubmit = (codigo, produto, qtd, valorUni, valorTotal) => {
-        if (!verificaItemExistente(codigo)) {
+    const handleFormSubmit = (codigo, produto, qtd, valorUni, valorTotal, editMode) => {
+        const postItem = () => {
             setItens([...itens, {codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
+        }
+
+        const editItem = () => {
+            let newArrayItens = [];
+            itens.map((e) => {
+                if (e.codigo !== codigo) {
+                    newArrayItens.push({codigo: e.codigo, produto: e.produto, qtd: e.qtd, valorUni: e.valorUni, valorTotal: e.valorTotal});
+                }
+            });
+            newArrayItens.push({codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal});
+            setItens(newArrayItens);
+        }
+
+        if (!editMode) {
+            if (!verificaItemExistente(codigo)) {
+                postItem()
+            }
+        } else {
+            editItem()
         }
         handleClose();
     }

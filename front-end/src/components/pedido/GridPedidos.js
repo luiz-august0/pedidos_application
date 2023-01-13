@@ -12,6 +12,7 @@ import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 import { Button } from "@mui/material";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import moment from 'moment';
 
 const GridPedidos = () => {
     const [pedidos, setPedidos] = useState([]);
@@ -112,6 +113,31 @@ const GridPedidos = () => {
                 return {color: 'green'};   
             }}
         },
+        { field: "Ped_Data", headerName: "Data", filter: 'agDateColumnFilter',
+        valueFormatter: function (params) { return moment(params.data.Ped_Data).format('DD/MM/YYYY')},
+        filterParams: {
+           debounceMs: 500,
+           suppressAndOrCondition: true,
+           comparator: function(filterLocalDateAtMidnight, cellValue) {
+             if (cellValue == null) {
+               return 0;
+             }
+             var cellValueFormated = moment(cellValue).format('DD/MM/YYYY');
+             var dateParts = cellValueFormated.split('/');
+             var year = Number(dateParts[2]);
+             var month = Number(dateParts[1]) - 1;
+             var day = Number(dateParts[0]);
+             var cellDate = new Date(year, month, day);
+   
+             if (cellDate < filterLocalDateAtMidnight) {
+               return -1;
+             } else if (cellDate > filterLocalDateAtMidnight) {
+               return 1;
+             } else {
+               return 0;
+             }
+           }
+       }},
         { field: "Ped_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
         <div>
             <ModalPedidoItens idPedido={params.value} situacaoPed={params.data.Situacao}/>
