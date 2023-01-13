@@ -19,6 +19,10 @@
     "morgan": "^1.10.0",
     "mysql2": "^3.0.1",
     "nodemon": "^2.0.19",
-    "sucrase": "^3.25.0"
+    "sucrase": "^3.25.0",
+    "vercel": "^28.12.4"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
