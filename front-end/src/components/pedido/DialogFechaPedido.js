@@ -40,14 +40,19 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
     }
 
 	const handleConfirmSubmit = () => {
-		if (parseFloat(valorTotalRecebido).toFixed(2) >= parseFloat(valorTotalPed).toFixed(2)) {
-			handleSubmitFechaPed(true);
-			handleCloseAlert();
-            setValorTotalRecebido();
-		} else {
-			handleSubmitFechaPed(false);
-			alert(true, 'Valor total recebido deve ser maior ou igual o valor total do pedido');
-		}
+        if (parseFloat(valorTotalRecebido).toFixed(2) !== 'NaN') {
+            if (parseFloat(valorTotalRecebido).toFixed(2) >= parseFloat(valorTotalPed).toFixed(2)) {
+                handleSubmitFechaPed(true);
+                handleCloseAlert();
+                setValorTotalRecebido();
+            } else {
+                handleSubmitFechaPed(false);
+                alert(true, 'Valor total recebido deve ser maior ou igual o valor total do pedido');
+            }
+        } else {
+            handleSubmitFechaPed(false);
+            alert(true, 'Valor total recebido deve ser informado');   
+        }
 	}
 
     return (

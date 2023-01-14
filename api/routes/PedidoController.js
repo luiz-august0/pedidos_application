@@ -50,7 +50,8 @@ class PedidoController {
                     IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao, Ped_Data
                     FROM pedido P
                     INNER JOIN cliente C ON P.Cli_Codigo = C.Cli_Codigo
-                    INNER JOIN funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo`,
+                    INNER JOIN funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo
+                    ORDER BY P.Ped_Codigo DESC`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);

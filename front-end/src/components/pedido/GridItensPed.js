@@ -140,11 +140,11 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
         const deleteRegister = async () => {
             try {
                 await deleteItemPed(idPedido, id);
+                await refreshGrid();
                 MySwal.fire({
                     html: <i>Item excluido com sucesso!</i>,
                     icon: 'success'
                 })
-                refreshGrid();
             } catch (error) {
                 MySwal.fire({
                     html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,

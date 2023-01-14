@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: 'https://api-pedidos-luiz-august0.vercel.app'
+    baseURL: process.env.REACT_APP_BASEURL
 });
 
 //Rota de usuário
