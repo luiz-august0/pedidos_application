@@ -35,12 +35,12 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
         if (parseFloat(troco).toString() !== 'NaN') {
             return parseFloat(troco);
         } else {
-            return parseFloat(-valorTotalPed);
+            return parseFloat(-valorTotalPed).toFixed(2);
         }
     }
 
 	const handleConfirmSubmit = () => {
-		if (valorTotalRecebido >= valorTotalPed) {
+		if (parseFloat(valorTotalRecebido).toFixed(2) >= parseFloat(valorTotalPed).toFixed(2)) {
 			handleSubmitFechaPed(true);
 			handleCloseAlert();
             setValorTotalRecebido();

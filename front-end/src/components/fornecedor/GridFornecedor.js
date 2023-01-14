@@ -162,7 +162,7 @@ const GridFornecedor = () => {
     return (
         <div className="Grid"> 
             <Grid align="right" marginBottom={1}>
-            <IconButton style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold'}} onClick={handleClickOpen}>
+            <IconButton style={{ color: '#000', fontSize: '18px', fontWeight: 'bold'}} onClick={handleClickOpen}>
                 Adicionar
                 <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
             </IconButton>

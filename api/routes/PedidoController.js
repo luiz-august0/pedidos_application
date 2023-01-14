@@ -48,9 +48,9 @@ class PedidoController {
                     CONCAT(P.Fun_Codigo," - ",FUN.Fun_Nome) AS Funcionario,
                     P.Ped_VlrTotal, 
                     IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao, Ped_Data
-                    FROM Pedido P
-                    INNER JOIN Cliente C ON P.Cli_Codigo = C.Cli_Codigo
-                    INNER JOIN Funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo`,
+                    FROM pedido P
+                    INNER JOIN cliente C ON P.Cli_Codigo = C.Cli_Codigo
+                    INNER JOIN funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);

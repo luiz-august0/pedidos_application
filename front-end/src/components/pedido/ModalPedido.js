@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Popup from 'reactjs-popup';
-import { Button, InputLabel, Select, MenuItem } from '@mui/material';
+import { IconButton, Button, InputLabel, Select, MenuItem } from '@mui/material';
 import { getClientes, getFuncionarios } from '../../services/api'
+import * as Icon from '@mui/icons-material';
 import './ModalPedido.css';
 import GridItens from './GridItens';
 
@@ -45,7 +46,10 @@ const ModalPedido = ({handleRefreshPedidos}) => {
 
     return (
         <Popup 
-            trigger={<Button color='primary' variant='contained'>Adicionar</Button>}
+            trigger={<IconButton style={{ color: '#000', fontSize: '18px', fontWeight: 'bold'}}>
+                        Adicionar
+                        <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
+                    </IconButton>}
             modal
             nested
             >
