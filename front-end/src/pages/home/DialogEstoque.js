@@ -17,23 +17,13 @@ import
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-import { addEstoqueProd, getProdutos } from '../../services/api';
+import { addEstoqueProd } from '../../services/api';
 
-const DialogEstoque = ({ open, handleClose }) => {
-    const [ produtos, setProdutos ] = React.useState([]);
+const DialogEstoque = ({ open, handleClose, dataProd }) => {
     const [ produtoSelected, setProdutoSelected ] = React.useState();
     const [ quantidade, setQuantidade ] = React.useState();
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
-
-    React.useEffect(() => {
-        getDataProdutos();
-    }, []);
-
-    const getDataProdutos = async () => {
-        const response = await getProdutos();
-        setProdutos(response.data);
-    }
 
     const MySwal = withReactContent(Swal);
 
@@ -58,7 +48,6 @@ const DialogEstoque = ({ open, handleClose }) => {
             })
         }
 
-        getDataProdutos();
         setProdutoSelected();
         setQuantidade();   
     }
@@ -119,7 +108,7 @@ const DialogEstoque = ({ open, handleClose }) => {
                         onChange={handleChangeProduto}
                         style={{width: '250px'}}
                         >
-                            {produtos.map((element) => {
+                            {dataProd.map((element) => {
                                 return (
                                     <MenuItem value={element.Pro_Codigo}>{element.Pro_Codigo} - {element.Pro_Descricao} - {element.Pro_Unidade} - Estoque atual:{element.Pro_QtdEst}</MenuItem> 
                                 )

@@ -16,24 +16,32 @@ import 'react-pro-sidebar/dist/css/styles.css';
 import './styles.css';
 
 import DialogEstoque from './DialogEstoque';
+import { getProdutos } from '../../services/api';
 
 const Home = () => {
-
     const [menuCollapse, setMenuCollapse] = useState(false);
+    const [ selectedComponent, setSelectedComponent ] = useState(<Pedidos/>);
+    const { logout } = useContext(AuthContext);
+    const [open, setOpen] = useState(false);
+    const [dataProd, setDataProd] = useState([]);
 
     const menuIconClick = () => {
         menuCollapse ? setMenuCollapse(false) : setMenuCollapse(true);
     };
 
-    const [ selectedComponent, setSelectedComponent ] = useState(<Pedidos/>);
-
-    const { logout } = useContext(AuthContext);
+    const getDataProdutos = async () => {
+        const response = await getProdutos();
+        setDataProd(response.data);
+    }
 
     const handleLogout = () => {
         logout();
     };
 
-    const [open, setOpen] = useState(false);
+    const handleOpen = () => {
+        getDataProdutos();
+        setOpen(true);
+    }
 
     const handleClose = () => {
         setOpen(false);
@@ -68,7 +76,7 @@ const Home = () => {
                         :null}
                         <MenuItem icon={<BsCart3/>} onClick={() => setSelectedComponent(Pedidos)}>Pedidos</MenuItem>
                         {localStorage.getItem('isFuncionario') === 'false'
-                        ?<MenuItem icon={<ImBoxAdd/>} onClick={() => setOpen(true)}>Adicionar Estoque</MenuItem>
+                        ?<MenuItem icon={<ImBoxAdd/>} onClick={() => handleOpen()}>Adicionar Estoque</MenuItem>
                         :null}
                         {localStorage.getItem('isFuncionario') === 'false'
                         ?<MenuItem icon={<BsPeopleFill/>} onClick={() => setSelectedComponent(Usuario)}>Usuários</MenuItem>
@@ -87,6 +95,7 @@ const Home = () => {
             <DialogEstoque
             open={open} 
             handleClose={handleClose} 
+            dataProd={dataProd}
             />
         </div>
     );
