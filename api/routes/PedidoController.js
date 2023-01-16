@@ -47,7 +47,7 @@ class PedidoController {
                     `SELECT P.Ped_Codigo, CONCAT(P.Cli_Codigo," - ",C.Cli_Nome) AS Cliente,
                     CONCAT(P.Fun_Codigo," - ",FUN.Fun_Nome) AS Funcionario,
                     P.Ped_VlrTotal, 
-                    IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao, Ped_Data
+                    IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao, CONVERT(Ped_Data, CHAR) AS Ped_Data
                     FROM pedido P
                     INNER JOIN cliente C ON P.Cli_Codigo = C.Cli_Codigo
                     INNER JOIN funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo
@@ -67,12 +67,17 @@ class PedidoController {
 
     async createPed(req, res) {
         const { cod_cli, cod_func, vlrTotal, situacao } = req.body;
+        let data = new Date();
+        let dia = String(data.getDate().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"})).padStart(2, '0');
+        let mes = String(data.getMonth().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"}) + 1).padStart(2, '0');
+        let ano = data.getFullYear();
+        let dataToSQL = ano + '-' + mes + '-' + dia;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
                     `INSERT INTO pedido (Cli_Codigo, Fun_Codigo, Ped_VlrTotal, Ped_Situacao, Ped_Data) ` +
-                    `VALUES (${cod_cli}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}", NOW())` ,
+                    `VALUES (${cod_cli}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}", "${dataToSQL}")` ,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
