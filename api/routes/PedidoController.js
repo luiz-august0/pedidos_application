@@ -240,10 +240,19 @@ class PedidoController {
                     `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) } 
-                            atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
-                            deleteItmPed(id, cod_pro);
-                            updateValorTotalPedido(id);
-                            return res.status(201).send('Completo');
+                            const updateDados = async() => {
+                                await atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
+                                await deleteItmPed(id, cod_pro);
+                                await updateValorTotalPedido(id);
+                            }
+                            updateDados()
+                                .then(() => {
+                                    return res.status(201).json('Success');
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                    return res.status(401).json(error);
+                                })
                     }
                 )
                 conn.release();
