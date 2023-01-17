@@ -37,7 +37,7 @@ const DialogEstoque = ({ open, handleClose, dataProd }) => {
             await addEstoqueProd(produtoSelected, quantidade);
             handleClose();
             MySwal.fire({
-                html: <i>Adicionado {quantidade} quantidade(s) no estoque do produto {produtoSelected}</i>,
+                html: <i>{quantidade < 0?"Diminuido":"Adicionado"} {quantidade < 0?(quantidade * -1):quantidade} quantidade(s) no estoque do produto {produtoSelected}</i>,
                 icon: 'success'
             })
         } catch (error) {
@@ -97,7 +97,7 @@ const DialogEstoque = ({ open, handleClose, dataProd }) => {
                     </Alert>
                 </Snackbar>
 
-                <DialogTitle style={{color: '#000'}} id="alert-dialog-title">{"Adicionar estoque de produto"}</DialogTitle>
+                <DialogTitle style={{color: '#000'}} id="alert-dialog-title">Manutenção de estoque de produtos</DialogTitle>
                 <DialogContent>
                     <form>
                         <InputLabel required id="demo-simple-select-label">Produto</InputLabel>

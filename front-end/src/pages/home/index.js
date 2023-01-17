@@ -76,7 +76,7 @@ const Home = () => {
                         :null}
                         <MenuItem icon={<BsCart3/>} onClick={() => setSelectedComponent(Pedidos)}>Pedidos</MenuItem>
                         {localStorage.getItem('isFuncionario') === 'false'
-                        ?<MenuItem icon={<ImBoxAdd/>} onClick={() => handleOpen()}>Adicionar Estoque</MenuItem>
+                        ?<MenuItem icon={<ImBoxAdd/>} onClick={() => handleOpen()}>Manutenção de estoque</MenuItem>
                         :null}
                         {localStorage.getItem('isFuncionario') === 'false'
                         ?<MenuItem icon={<BsPeopleFill/>} onClick={() => setSelectedComponent(Usuario)}>Usuários</MenuItem>
