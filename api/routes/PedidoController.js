@@ -1,5 +1,5 @@
 const mysql = require('../mysql/mysql').pool;
-import { atualizaEstoque, EstoqueController } from './EstoqueController';
+import { atualizaEstoque } from './EstoqueController';
 
 //Funções gerais
 const deleteItmPed = async(idPedido, cod_pro) => {
@@ -9,7 +9,6 @@ const deleteItmPed = async(idPedido, cod_pro) => {
                 `DELETE FROM pedido_itens WHERE Ped_Codigo = ${idPedido} AND Pro_Codigo = ${cod_pro}`,
                 (error, result, fields) => {
                     if (error) { return console.log(error) } 
-                    updateValorTotalPedido(idPedido);
                     return;
                 }
             )
@@ -67,17 +66,18 @@ class PedidoController {
 
     async createPed(req, res) {
         const { cod_cli, cod_func, vlrTotal, situacao } = req.body;
-        let data = new Date();
-        let dia = String(data.getDate().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"})).padStart(2, '0');
-        let mes = String(data.getMonth().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"}) + 1).padStart(2, '0');
-        let ano = data.getFullYear();
-        let dataToSQL = ano + '-' + mes + '-' + dia;
+        let data = new Date().toLocaleDateString("pt-BR", {timeZone: "America/Sao_Paulo"});
+        let dateParts = data.split('/');
+        let year = Number(dateParts[2]);
+        let month = Number(dateParts[1]);
+        let day = Number(dateParts[0]);
+        let dateSQL = year + '-' + month + '-' + day;
 
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
                     `INSERT INTO pedido (Cli_Codigo, Fun_Codigo, Ped_VlrTotal, Ped_Situacao, Ped_Data) ` +
-                    `VALUES (${cod_cli}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}", "${dataToSQL}")` ,
+                    `VALUES (${cod_cli}, ${cod_func}, ROUND(${vlrTotal},2), "${situacao}", "${dateSQL}")` ,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
@@ -242,7 +242,8 @@ class PedidoController {
                         if (error) { return res.status(500).send({ error: error }) } 
                             atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
                             deleteItmPed(id, cod_pro);
-                            return res.status(201).json('Item deletado');
+                            updateValorTotalPedido(id);
+                            return res.status(201).send('Completo');
                     }
                 )
                 conn.release();
