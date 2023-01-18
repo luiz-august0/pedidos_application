@@ -7,6 +7,7 @@ import { AuthContext } from '../../contexts/auth';
 const Login = () => {
     const { login } = useContext(AuthContext);
     
+    const [chave, setChave] = useState("");
     const [usuario, setUsuario] = useState("");
     const [senha, setSenha] = useState(""); 
     
@@ -22,7 +23,7 @@ const Login = () => {
             return;
         } 
 
-        login(usuario, senha);
+        login(chave, usuario, senha);
     }
       
     return (
@@ -30,7 +31,17 @@ const Login = () => {
             <h1>Sistema de pedidos V1.0</h1>
             <form className="form" onSubmit={handleSubmit}>
                 <div className="field">
-                    <label className="lbUsuario" htmlFor="usuario">Usuario</label>
+                    <label htmlFor="chave">Chave de acesso</label>
+                    <input 
+                        type="text" 
+                        name="chave" 
+                        id="chave"
+                        value={chave} 
+                        onChange={(e) => setChave(e.target.value)} 
+                    />
+                </div>
+                <div className="field">
+                    <label htmlFor="usuario">Usuario</label>
                     <input 
                         type="text" 
                         name="usuario" 
@@ -40,7 +51,7 @@ const Login = () => {
                     />
                 </div>
                 <div className="field">
-                    <label className="lbSenha" htmlFor="senha">Senha</label>
+                    <label htmlFor="senha">Senha</label>
                     <input 
                         type="password" 
                         name="senha" 

@@ -32,14 +32,7 @@
     display: block;
     color:#707070;
     font-size: 20px;
-}
-
-.lbUsuario {
-    margin-right: 78%;
-}
-
-.lbSenha {
-    margin-right: 82%;
+    text-align: left;
 }
 
 #login .field input {

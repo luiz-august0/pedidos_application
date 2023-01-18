@@ -36,11 +36,11 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = async (usuario, senha) => {
+    const login = async (chave, usuario, senha) => {
         const MySwal = withReactContent(Swal);
 
         try {            
-            const response = await createSession(usuario, senha);
+            const response = await createSession(chave, usuario, senha);
             const usuarioLogado = response.data.usuario;
             const token = response.data.token;
     
@@ -60,8 +60,17 @@ export const AuthProvider = ({ children }) => {
             setUsuario(usuarioLogado);
             navigate("/");
         } catch (error) {
+            let messageError = "";
+            if (error.response.status === 401 || error.response.status === 404) {
+                messageError = "Usuário ou senha inválido";
+            } else if (error.response.status === 406) {
+                messageError = "Chave de acesso informada é inválida";
+            } else {
+                messageError = "Erro de servidor";
+            }
+
             MySwal.fire({
-                html: <i>Usuário ou senha inválido</i>,
+                html: <i>{messageError}</i>,
                 icon: 'error'
             })
         }

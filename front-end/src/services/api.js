@@ -26,8 +26,8 @@ export const deleteUsuario = async (usuarioID) => {
 };
 
 //Rota de sessão
-export const createSession = async (usuario, senha) => {
-    return api.put('/sessions', { usuario, senha });
+export const createSession = async (userKey, usuario, senha) => {
+    return api.put('/sessions', { userKey, usuario, senha });
 };
 
 //Rotas de Produto

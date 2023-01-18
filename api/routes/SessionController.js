@@ -7,35 +7,46 @@ const mysql = require('../mysql/mysql').pool;
 class SessionController {
     async create(req, res) {
         try {
-            const { usuario, senha } = req.body;
+            const { userKey, usuario, senha } = req.body;
 
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT * FROM usuario WHERE Usr_Login = "${usuario}"`,
+                    `SELECT * FROM configDB WHERE Chave = "${userKey}"`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
-                        
+
                         if (JSON.stringify(result) === '[]') {
-                            return res.status(404).json({ error: "Usuário ou senha inválidos." });
+                            return res.status(406).json({ error: "Chave de acesso informada é inválida." });
+                        } else {
+                            conn.query(
+                                `SELECT * FROM usuario WHERE Usr_Login = "${usuario}"`,
+                                (error, result, fields) => {
+                                    if (error) { return res.status(500).send({ error: error }) }
+
+                                    if (JSON.stringify(result) === '[]') {
+                                        return res.status(404).json({ error: "Usuário ou senha inválidos." });
+                                    }
+            
+                                    const usuarioSenha = JSON.stringify(result[0].Usr_Senha).slice(0, -1).slice(1 | 1);
+            
+                                    if (!checkPassword(senha, usuarioSenha)) {
+                                        return res.status(401).json({ error: "Usuário ou senha inválidos." });
+                                    }
+            
+                                    const id = JSON.stringify(result[0].Usr_Codigo);
+            
+                                    return res.json({
+                                        usuario: {
+                                            id,
+                                            usuario
+                                        },
+                                        token: jwt.sign({ id }, authConfig.secret, {
+                                            expiresIn: authConfig.expiresIn
+                                        })
+                                    });
+                                }
+                            )
                         }
-
-                        const usuarioSenha = JSON.stringify(result[0].Usr_Senha).slice(0, -1).slice(1 | 1);
-
-                        if (!checkPassword(senha, usuarioSenha)) {
-                            return res.status(401).json({ error: "Usuário ou senha inválidos." });
-                        }
-
-                        const id = JSON.stringify(result[0].Usr_Codigo);
-
-                        return res.json({
-                            usuario: {
-                                id,
-                                usuario
-                            },
-                            token: jwt.sign({ id }, authConfig.secret, {
-                                expiresIn: authConfig.expiresIn
-                            })
-                        });
                     }
                 )
                 conn.release();

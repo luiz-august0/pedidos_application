@@ -11,11 +11,11 @@ import auth from "./middlewares/auth";
 
 const routes = new Router();
 
-routes.post('/usuario', UsuarioController.create);
 routes.put('/sessions', SessionController.create);
 routes.use(auth);
 
 //Rotas usuário
+routes.post('/usuario', UsuarioController.create);
 routes.get('/usuario/:id', UsuarioController.show);
 routes.get('/usuario', UsuarioController.index)
 routes.put('/usuario/:id', UsuarioController.update);

@@ -54,6 +54,10 @@ CREATE TABLE pedido_itens(
   PedItm_VlrTotal FLOAT NOT NULL
 );
 
+CREATE TABLE configDB(
+  Chave VARCHAR(80) NOT NULL
+);
+
 ALTER TABLE produto ADD CONSTRAINT fk_for_codigo
 FOREIGN KEY(For_Codigo) REFERENCES fornecedor(For_Codigo);
 
