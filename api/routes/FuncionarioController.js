@@ -123,9 +123,22 @@ class FuncionarioController {
                             return res.status(404).json("Existem pedidos vinculados a este funcionario!");
                         } else {
                             conn.query(
-                                `DELETE FROM funcionario WHERE Fun_Codigo = ${id}`,
+                                `SELECT Usr_Codigo FROM usuario WHERE Fun_Codigo = ${id}`,
                                 (error, result, fields) => {
-                                    return res.json(result);
+                                    if (error) { return res.status(500).send({ error: error }) }
+
+                                    if (JSON.stringify(result) !== '[]') {
+                                        return res.status(404).json("Existem usuários vinculados a este funcionario!");
+                                    } else {
+                                        conn.query(
+                                            `DELETE FROM funcionario WHERE Fun_Codigo = ${id}`,
+                                            (error, result, fields) => {
+                                                if (error) { return res.status(500).send({ error: error }) }
+
+                                                return res.status(201).json(result);
+                                            }
+                                        )
+                                    }
                                 }
                             )
                         }

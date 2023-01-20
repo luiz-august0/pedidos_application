@@ -13,7 +13,7 @@ import FormDialogFechaPedido from "./DialogFechaPedido";
 import { Button, IconButton } from "@mui/material";
 import { createPed, createItemPed } from "../../services/api";
 
-const initialValue = {codigo: "", qtdProd: "", valorUni: 0, valorTotal: 0, editMode: false};
+const initialValue = {codigo: "", produto: "", qtdProd: "", valorUni: 0, valorTotal: 0, editMode: false};
 
 const GridItens = ({ data, closePopup, handleRefresh }) => {
     const [itens, setItens] = useState([]);
@@ -169,7 +169,14 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
         }
     }
 
-    const handleFormSubmit = (codigo, produto, qtd, valorUni, valorTotal, editMode) => {
+    const handleFormSubmit = () => {
+        const codigo = formData.codigo;
+        const produto = formData.produto;
+        const qtd = formData.qtd;
+        const valorUni = formData.valorUni;
+        const valorTotal = formData.valorTotal;
+        const editMode = formData.editMode;
+
         const postItem = () => {
             setItens([...itens, {codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
         }
@@ -203,7 +210,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
     }
 
     const handleUpdate = (oldData) => {
-        setFormData({codigo: oldData.codigo, qtd: oldData.qtd, valorUni: oldData.valorUni, valorTotal: oldData.valorTotal, editMode: true});
+        setFormData({codigo: oldData.codigo, produto: oldData.produto, qtd: oldData.qtd, valorUni: oldData.valorUni, valorTotal: oldData.valorTotal, editMode: true});
         handleClickOpen();
     }
 
@@ -215,6 +222,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
             }
         });
         setItens(newArrayItens);
+        setFormData(initialValue);
     }
 
     return (

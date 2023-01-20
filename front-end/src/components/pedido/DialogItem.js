@@ -18,7 +18,7 @@ import
 import { getProdutos, getProduto } from '../../services/api';
 
 const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data }) => {
-    const {codigo, qtd, valorUni, valorTotal, editMode} = data;
+    const {codigo, produto, qtd, valorUni, valorTotal, editMode} = data;
 	const [ produtoSelected, setProdutoSelected ] = React.useState();
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
@@ -80,7 +80,9 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
         const finalizeSubmit = async() => {
             const response = await getProduto(codigo);
             const prodInfo = response.data[0].Pro_Codigo + ' - ' + response.data[0].Pro_Descricao + ' - ' + response.data[0].Pro_Unidade
-            handleFormSubmit(codigo, prodInfo, qtd, valorUni, valorTotal, editMode);
+            data.produto = prodInfo;
+            onChange(produto, prodInfo);
+            handleFormSubmit();
             limpaCampos();
         }
 
