@@ -8,14 +8,13 @@ const deleteItmPed = async(idPedido, cod_pro) => {
             conn.query(
                 `DELETE FROM pedido_itens WHERE Ped_Codigo = ${idPedido} AND Pro_Codigo = ${cod_pro}`,
                 (error, result, fields) => {
-                    if (error) { return console.log(error) } 
-                    return;
+                    if (error) { console.log(error) } 
                 }
             )
             conn.release();
         })
     } catch(err) {
-        return console.log(err)
+        console.log(err)
     }
 }
 
@@ -26,14 +25,30 @@ const updateValorTotalPedido = async(idPedido) => {
                 `UPDATE pedido SET Ped_VlrTotal = (SELECT ROUND(SUM(PedItm_VlrTotal),2) FROM pedido_itens WHERE Ped_Codigo = ${idPedido}) ` + 
                 `WHERE Ped_Codigo = ${idPedido}`,
                 (error, result, fields) => {
-                    if (error) { return console.log(error) } 
-                    return;
+                    if (error) { console.log(error) } 
                 }
             )
             conn.release();
         })
     } catch(err) {
-        return console.log(err)
+        console.log(err)
+    }
+}
+
+const updateItem = async(idPedido, idItem, qtd, valorTotal) => {
+    try {
+        mysql.getConnection((error, conn) => {
+            conn.query(
+                `UPDATE pedido_itens SET PedItm_Qtd = ${qtd}, PedItm_VlrTotal = ${valorTotal} ` + 
+                `WHERE Ped_Codigo = ${idPedido} AND Pro_Codigo = ${idItem}`,
+                (error, result, fields) => {
+                    if (error) { console.log(error) } 
+                }
+            )
+            conn.release();
+        })
+    } catch(err) {
+        console.log(err)
     }
 }
 //Fim Funções gerais
@@ -92,7 +107,7 @@ class PedidoController {
     }
 
     async createPedItem(req, res) {
-        const { cod_pro, qtd, vlrTotal } = req.body;
+        const { cod_pro, qtd, vlrTotal, atualizaTotal } = req.body;
         const { id } = req.params;
 
         try {
@@ -110,11 +125,94 @@ class PedidoController {
                                 `VALUES (${id}, ${cod_pro}, ${qtd}, ROUND(${vlrTotal},2))` ,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
-                                    atualizaEstoque(qtd, cod_pro, 'dim');
-                                    return res.status(201).json(result);
+                                    const updateDados = async() => {
+                                        await atualizaEstoque(qtd, cod_pro, 'dim');
+                                        if (atualizaTotal) {
+                                            await updateValorTotalPedido(id);
+                                        }
+                                    }
+
+                                    updateDados()
+                                        .then(() => {
+                                            return res.status(201).json(result);
+                                        })
+                                        .catch(error => {
+                                            console.log(error)
+                                            return res.status(401).json(error);
+                                        })
                                 }
                             )
                         }
+                    }
+                )
+                conn.release();
+            })
+        } catch(err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal server error." })
+        }
+    }
+
+    async updatePedItem(req, res) {
+        const { cod_pro, qtd, vlrTotal } = req.body;
+        const { id } = req.params;
+
+        try {
+            mysql.getConnection((error, conn) => {
+                conn.query(
+                    `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}` ,
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                        const updateDados = async() => {
+                            if (qtd > result[0].PedItm_Qtd) {
+                                await atualizaEstoque((qtd - result[0].PedItm_Qtd), cod_pro, 'dim');
+                            } else if (qtd < result[0].PedItm_Qtd) {
+                                await atualizaEstoque((result[0].PedItm_Qtd - qtd), cod_pro, 'add');
+                            }
+                            await updateItem(id, cod_pro, qtd, vlrTotal);
+                            await updateValorTotalPedido(id);
+                        }
+
+                        updateDados()
+                            .then(() => {
+                                return res.status(201).json(result);
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                return res.status(401).json(error);
+                            })
+                    }
+                )
+                conn.release();
+            })
+        } catch(err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal server error." })
+        }
+    }
+
+    async deleteItemPed(req, res) {
+        const { id, cod_pro } = req.params;
+
+        try {
+            mysql.getConnection((error, conn) => {
+                conn.query(
+                    `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}`,
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) } 
+                            const updateDados = async() => {
+                                await atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
+                                await deleteItmPed(id, cod_pro);
+                                await updateValorTotalPedido(id);
+                            }
+                            updateDados()
+                                .then(() => {
+                                    return res.status(201).json(result);
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                    return res.status(401).json(error);
+                                })
                     }
                 )
                 conn.release();
@@ -221,38 +319,6 @@ class PedidoController {
                         } else {
                             return res.status(201).json(result);
                         }
-                    }
-                )
-                conn.release();
-            })
-        } catch(err) {
-            console.error(err);
-            return res.status(500).json({ error: "Internal server error." })
-        }
-    }
-
-    async deleteItemPed(req, res) {
-        const { id, cod_pro } = req.params;
-
-        try {
-            mysql.getConnection((error, conn) => {
-                conn.query(
-                    `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}`,
-                    (error, result, fields) => {
-                        if (error) { return res.status(500).send({ error: error }) } 
-                            const updateDados = async() => {
-                                await atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
-                                await deleteItmPed(id, cod_pro);
-                                await updateValorTotalPedido(id);
-                            }
-                            updateDados()
-                                .then(() => {
-                                    return res.status(201).json('Success');
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                    return res.status(401).json(error);
-                                })
                     }
                 )
                 conn.release();

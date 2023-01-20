@@ -56,8 +56,9 @@ routes.get('/pedido/:id', PedidoController.showPed);
 routes.put('/pedido/:id', PedidoController.updatePed);
 routes.delete('/pedido/:id', PedidoController.deletePed);
 routes.post('/pedido_item/:id', PedidoController.createPedItem);
-routes.get('/pedido_item/:id', PedidoController.showPedItens);
+routes.put('/pedido_item/:id', PedidoController.updatePedItem);
 routes.delete('/pedido_item/:id/:cod_pro', PedidoController.deleteItemPed);
+routes.get('/pedido_item/:id', PedidoController.showPedItens);
 routes.put('/pedido_situacao/:id', PedidoController.updatePedSituacao);
 
 //Rota de adição de estoque

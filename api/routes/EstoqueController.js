@@ -6,14 +6,14 @@ export const atualizaEstoque = async(qtd, id, tipo) => {
             conn.query(
                 `UPDATE produto SET Pro_QtdEst = (Pro_QtdEst ${tipo!='dim'?` + `:' - '} ${qtd}) WHERE Pro_Codigo = ${id} `,
                 (error, result, fields) => {
-                    if (error) { return console.log(error); }
-                    return console.log("Operação: " + tipo + " IDProduto: " + id + " QTDE: " + qtd);
+                    if (error) { console.log(error); }
+                    console.log("Operação: " + tipo + " IDProduto: " + id + " QTDE: " + qtd);
                 }
             )
             conn.release();
         })
     } catch(err) {
-        return console.error(err);
+        console.error(err);
     }
 }
 

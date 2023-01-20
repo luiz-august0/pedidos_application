@@ -8,7 +8,8 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 import { IconButton } from "@mui/material";
-import { getItensPed, deleteItemPed } from "../../services/api";
+import FormDialogItem from "./DialogItem";
+import { getItensPed, updateItemPed, deleteItemPed, createItemPed} from "../../services/api";
 
 const initialValue = {codigo: "", qtdProd: "", valorUni: 0, valorTotal: 0, editMode: false};
 
@@ -38,7 +39,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
 			{situacaoPed === 'ABERTO'?
 			<div>
 				<IconButton style={{ color: 'orange' }}>
-					<Icon.ModeEdit/>
+					<Icon.ModeEdit onClick={() => handleUpdate(params.data)}/>
 				</IconButton>
                 {itens.length > 1 ? 
                 <IconButton style={{ color: 'red' }} onClick={() => handleDelete(params.value)}>
@@ -89,7 +90,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
     const verificaItemExistente = (id) => {
         let itemJaExistente = false;
         itens.map((e) => {
-            if (e.codigo === id) {
+            if (e.Pro_Codigo === id) {
                 itemJaExistente = true;
                 MySwal.fire({
                     html: <i>Item já existe no pedido!</i>,
@@ -100,20 +101,47 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
         return itemJaExistente;
     }
 
-    const handleFormSubmit = (codigo, produto, qtd, valorUni, valorTotal, editMode) => {
-        const postItem = () => {
-            setItens([...itens, {codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal}]);
+    const handleFormSubmit = () => {
+        const codigo = formData.codigo;
+        const produto = formData.produto;
+        const qtd = formData.qtd;
+        const valorUni = formData.valorUni;
+        const valorTotal = formData.valorTotal;
+        const editMode = formData.editMode;
+        handleClose();
+
+        const postItem = async() => {
+            await createItemPed(codigo, qtd, valorTotal, idPedido, true)
+                .then(() => {
+                    refreshGrid();
+                    MySwal.fire({
+                        html: <i>Item adicionado com sucesso!</i>,
+                        icon: 'success'
+                    })
+                })
+                .catch((error) => {
+                    MySwal.fire({
+                        html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
+                        icon: 'error'
+                    })
+                });
         }
 
-        const editItem = () => {
-            let newArrayItens = [];
-            itens.map((e) => {
-                if (e.codigo !== codigo) {
-                    newArrayItens.push({codigo: e.codigo, produto: e.produto, qtd: e.qtd, valorUni: e.valorUni, valorTotal: e.valorTotal});
-                }
-            });
-            newArrayItens.push({codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal});
-            setItens(newArrayItens);
+        const editItem = async() => {
+            await updateItemPed(codigo, qtd, valorTotal, idPedido)
+                .then(() => {
+                    refreshGrid();
+                    MySwal.fire({
+                        html: <i>Item editado com sucesso!</i>,
+                        icon: 'success'
+                    })
+                })
+                .catch((error) => {
+                    MySwal.fire({
+                        html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
+                        icon: 'error'
+                    })
+                });
         }
 
         if (!editMode) {
@@ -123,34 +151,32 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
         } else {
             editItem()
         }
-        handleClose();
-        refreshGrid();
     }
-
 	const onGridReady = (params) => {
         setGridApi(params)
     }
 
     const handleUpdate = (oldData) => {
-        setFormData({codigo: oldData.codigo, qtd: oldData.qtd, valorUni: oldData.valorUni, valorTotal: oldData.valorTotal, editMode: true});
+        setFormData({codigo: oldData.Pro_Codigo, qtd: oldData.PedItm_Qtd, valorUni: (parseFloat(oldData.PedItm_VlrTotal) / parseFloat(oldData.PedItm_Qtd)), valorTotal: oldData.PedItm_VlrTotal, editMode: true});
         handleClickOpen();
     }
 
     const handleDelete = async(id) => {
         const deleteRegister = async () => {
-            try {
-                await deleteItemPed(idPedido, id);
-                await refreshGrid();
-                MySwal.fire({
-                    html: <i>Item excluido com sucesso!</i>,
-                    icon: 'success'
+            await deleteItemPed(idPedido, id)
+                .then(() => {
+                    refreshGrid();
+                    MySwal.fire({
+                        html: <i>Item excluido com sucesso!</i>,
+                        icon: 'success'
+                    })
                 })
-            } catch (error) {
-                MySwal.fire({
-                    html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
-                    icon: 'error'
-                })
-            }
+                .catch((error) => {
+                    MySwal.fire({
+                        html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
+                        icon: 'error'
+                    })
+                });
         }
 
         MySwal.fire({
@@ -189,6 +215,13 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
 					gridOptions={{paginationAutoPageSize: true, pagination: true}}
                 />
             </div>
+            <FormDialogItem
+            open={open} 
+            handleClose={handleClose} 
+            handleFormSubmit={handleFormSubmit}
+            onChange={onChange}
+            data={formData}
+            />
             <h2 style={{color: '#000', textAlign: 'right'}}>Total do Pedido: R${calculaTotalItens()}</h2>
         </div>
     )

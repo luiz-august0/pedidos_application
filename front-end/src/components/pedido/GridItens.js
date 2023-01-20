@@ -108,7 +108,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
             const createdid = response.data.insertId;
 
             itens.map(async(e) => {
-                await createItemPed(e.codigo, e.qtd, e.valorTotal, createdid);
+                await createItemPed(e.codigo, e.qtd, e.valorTotal, createdid, false);
             });
 
             execFinalizacaoPedido();
