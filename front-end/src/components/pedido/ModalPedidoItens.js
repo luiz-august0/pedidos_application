@@ -10,10 +10,11 @@ const ModalPedidoItens = ({idPedido, situacaoPed, refreshGrid}) => {
             trigger={<Button color='primary' variant='outlined'>Itens</Button>}
             modal
             nested
+            onClose={() => refreshGrid()}
             >
             {close => (
                 <div className="modal">
-                    <button className="close" onClick={() => {close(); refreshGrid();}}>
+                    <button className="close" onClick={close}>
                         &times;
                     </button>
                     <div className="header">Itens do Pedido</div>

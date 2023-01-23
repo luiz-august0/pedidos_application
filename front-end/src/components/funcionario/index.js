@@ -1,13 +1,13 @@
 import React from 'react';
 import './styles.css';
 import GridFuncionario from './GridFuncionario';
-//import imgProduto from '../../img/produtos.png'
+import imgFuncionario from '../../img/funcionarios.png'
 
 const Funcionario = () => {
 
     return (
         <div className="container"> 
-            <h1><img width="40"/>Funcionários</h1>
+            <h1><img width="40" src={imgFuncionario}/>Funcionários</h1>
             <GridFuncionario/>
         </div>
     );
