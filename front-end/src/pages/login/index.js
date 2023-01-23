@@ -15,6 +15,14 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (chave === '') {
+            MySwal.fire({
+            html: <i>Chave de acesso deve ser informada</i>,
+            icon: 'error'
+            })
+            return;
+        }
+
         if (usuario === '' && senha === '') {
             MySwal.fire({
             html: <i>Usuário e senha deve ser informado</i>,

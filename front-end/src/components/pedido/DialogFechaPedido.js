@@ -25,6 +25,13 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
         alert(false);
     };  
 
+    const limpaCampos = () => {
+        setMsgAlert('');
+        setOpenAlert(false);
+    };
+
+    const closeDialog = () => { limpaCampos(); handleCloseFechaPed(); };
+
 	const handleChangeValorRecebido = async (event) => {
 		setValorTotalRecebido(event.target.value);
 	}
@@ -43,7 +50,7 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
         if (parseFloat(valorTotalRecebido).toFixed(2) !== 'NaN') {
             if (parseFloat(valorTotalRecebido).toFixed(2) >= parseFloat(valorTotalPed).toFixed(2)) {
                 handleSubmitFechaPed(true);
-                handleCloseAlert();
+                limpaCampos();
                 setValorTotalRecebido();
             } else {
                 handleSubmitFechaPed(false);
@@ -59,7 +66,7 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
         <div>
             <Dialog
                 open={openModalFechaPed}
-                onClose={handleCloseFechaPed}
+                onClose={closeDialog}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -83,7 +90,7 @@ const FormDialogFechaPedido = ({ openModalFechaPed, handleCloseFechaPed, handleS
                     </form>
                 </DialogContent>
                 <DialogActions>
-					<Button onClick={handleCloseFechaPed} color="secondary" variant="outlined">
+					<Button onClick={closeDialog} color="secondary" variant="outlined">
                         Cancelar
                     </Button>
                     <Button color="primary" onClick={() => handleConfirmSubmit()} variant="contained">

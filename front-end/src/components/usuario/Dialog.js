@@ -29,10 +29,14 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
         setOpenAlert(open);
     }
 
-    const onClose = () => {
-        handleClose();
-        alert(false, '');
-    }
+    const limpaCampos = () => {
+        setFuncionarioSelected();
+        setTipoUsuarioSelected();
+        setMsgAlert('');
+        setOpenAlert(false);
+    };
+
+    const closeDialog = () => { limpaCampos(); handleClose(); };
 
     const getDataFuncionarios = async () => {
         const response = await getFuncionarios();
@@ -65,9 +69,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
         }
 
         handleFormSubmit();
-        setFuncionarioSelected();
-        setTipoUsuarioSelected();
-        alert(false, '');
+        limpaCampos();
     }
 
     const handleCloseAlert = (event, reason) => {
@@ -96,7 +98,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
         <div>
             <Dialog
                 open={open}
-                onClose={onClose}
+                onClose={closeDialog}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -149,7 +151,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                     </form>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose} color="secondary" variant="outlined">
+                    <Button onClick={closeDialog} color="secondary" variant="outlined">
                         Cancelar
                     </Button>
                     <Button color="primary" onClick={() => onConfirm()} variant="contained">

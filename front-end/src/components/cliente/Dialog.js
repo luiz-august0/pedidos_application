@@ -25,6 +25,13 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
         setOpenAlert(open);
     }
 
+    const limpaCampos = () => {
+        setMsgAlert('');
+        setOpenAlert(false);
+    };
+
+    const closeDialog = () => { limpaCampos(); handleClose(); };
+
     const onConfirm = () => {
         if (nome === '') {
             alert(true, 'Nome é obrigatório');
@@ -67,7 +74,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
         <div>
             <Dialog
                 open={open}
-                onClose={handleClose}
+                onClose={closeDialog}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -92,7 +99,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                     </form>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="secondary" variant="outlined">
+                    <Button onClick={closeDialog} color="secondary" variant="outlined">
                         Cancelar
                     </Button>
                     <Button color="primary" onClick={() => onConfirm()} variant="contained">
