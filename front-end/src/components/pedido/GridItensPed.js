@@ -8,6 +8,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
 import { IconButton } from "@mui/material";
+import { Oval } from  'react-loader-spinner';
 import FormDialogItem from "./DialogItem";
 import { getItensPed, updateItemPed, deleteItemPed, createItemPed} from "../../services/api";
 
@@ -18,6 +19,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
     const [itens, setItens] = useState([]);
     const [formData, setFormData] = useState(initialValue);
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const MySwal = withReactContent(Swal);
 
     const columnDefs = [
@@ -50,8 +52,12 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
     ];
 
 	const refreshGrid = async () => {
-        const response = await getItensPed(idPedido);
-        setItens(response.data);
+        setLoading(true);
+        await getItensPed(idPedido)
+            .then(res => {
+                setItens(res.data);
+                setLoading(false);
+            });
     }
 
 	useEffect(() => {
@@ -103,9 +109,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
 
     const handleFormSubmit = () => {
         const codigo = formData.codigo;
-        const produto = formData.produto;
         const qtd = formData.qtd;
-        const valorUni = formData.valorUni;
         const valorTotal = formData.valorTotal;
         const editMode = formData.editMode;
         handleClose();
@@ -206,14 +210,28 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
 			</IconButton>:null}
             </Grid>
             <div className="ag-theme-material" style={{ height: '400px', width: '100vh'}}>
-                <AgGridReact 
+                {!loading ?
+                    <AgGridReact 
                     rowData={itens}
                     columnDefs={columnDefs} 
                     defaultColDef={defaultColDef}
-					onGridReady={onGridReady}
+                    onGridReady={onGridReady}
                     localeText={AG_GRID_LOCALE_BR}
-					gridOptions={{paginationAutoPageSize: true, pagination: true}}
-                />
+                    gridOptions={{paginationAutoPageSize: true, pagination: true}}
+                    />
+                :   <Oval
+                    height={50}
+                    width={50}
+                    color="#1976d2"
+                    wrapperStyle={{justifyContent: 'center'}}
+                    wrapperClass=""
+                    visible={true}
+                    ariaLabel='oval-loading'
+                    secondaryColor="#1976d2"
+                    strokeWidth={3}
+                    strokeWidthSecondary={3}
+                    />
+                }
             </div>
             <FormDialogItem
             open={open} 

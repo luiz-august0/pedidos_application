@@ -11,6 +11,7 @@ import FormDialog from "./Dialog";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR } from "../../globalFunctions";
+import { Oval } from  'react-loader-spinner';
 
 const initialValue = {usuario: "", senha: "", codFuncionario: "", tipoUsuarioDefault: "FUNC"};
 
@@ -19,6 +20,7 @@ const GridUsuario = () => {
     
     const [gridApi, setGridApi] = useState(null);
     const [usuarios, setUsuarios] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [open, setOpen] = React.useState(false);
     const [formData, setFormData] = useState(initialValue);
 
@@ -57,8 +59,12 @@ const GridUsuario = () => {
     }
     
     const refreshGrid = async () => {
-        const response = await getUsuario();
-        setUsuarios(response.data);
+        setLoading(true);
+        await getUsuario()
+            .then(res => {
+                setUsuarios(res.data);
+                setLoading(false);
+            });
     }
 
     useEffect(() => {
@@ -129,11 +135,11 @@ const GridUsuario = () => {
         const deleteRegister = async () => {
             try {
                 await deleteUsuario(id);
+                refreshGrid();
                 MySwal.fire({
                     html: <i>Usuario excluido com sucesso!</i>,
                     icon: 'success'
                 })
-                refreshGrid();
             } catch (error) {
                 MySwal.fire({
                     html: <i>{JSON.stringify(error.response.data).slice(0, -1).slice(1 | 1)}</i>,
@@ -169,14 +175,28 @@ const GridUsuario = () => {
             </IconButton>
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px'}}>
-                <AgGridReact 
+                {!loading ?
+                    <AgGridReact 
                     rowData={usuarios}
                     columnDefs={columnDefs} 
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
                     localeText={AG_GRID_LOCALE_BR}
                     gridOptions={{paginationAutoPageSize: true, pagination: true}}
-                />
+                    />
+                :   <Oval
+                    height={50}
+                    width={50}
+                    color="#1976d2"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                    ariaLabel='oval-loading'
+                    secondaryColor="#1976d2"
+                    strokeWidth={3}
+                    strokeWidthSecondary={3}
+                    />
+                }
             </div>
             <FormDialog
             open={open} 

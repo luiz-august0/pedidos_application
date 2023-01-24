@@ -10,7 +10,8 @@ import "ag-grid-community/dist/styles/ag-theme-material.css";
 import FormDialog from "./Dialog";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
+import { AG_GRID_LOCALE_BR } from "../../globalFunctions";
+import { Oval } from  'react-loader-spinner';
 
 const initialValue = {nome: "", cpf: "", contato: ""};
 
@@ -20,7 +21,8 @@ const GridFuncionario = () => {
     
     const [gridApi, setGridApi] = useState(null);
     const [funcionarios, setFuncionarios] = useState([]);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState(initialValue);
 
     const columnDefs = [
@@ -56,8 +58,12 @@ const GridFuncionario = () => {
     }
     
     const refreshGrid = async () => {
-        const response = await getFuncionarios();
-        setFuncionarios(response.data);
+        setLoading(true);
+        await getFuncionarios()
+            .then(res => {
+                setFuncionarios(res.data);
+                setLoading(false);
+            });
     }
 
     useEffect(() => {
@@ -164,14 +170,28 @@ const GridFuncionario = () => {
             </IconButton>
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px'}}>
-                <AgGridReact 
+                {!loading ?
+                    <AgGridReact 
                     rowData={funcionarios}
                     columnDefs={columnDefs} 
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
                     localeText={AG_GRID_LOCALE_BR}
                     gridOptions={{paginationAutoPageSize: true, pagination: true}}
-                />
+                    />
+                :   <Oval
+                    height={50}
+                    width={50}
+                    color="#1976d2"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                    ariaLabel='oval-loading'
+                    secondaryColor="#1976d2"
+                    strokeWidth={3}
+                    strokeWidthSecondary={3}
+                    />
+                }
             </div>
             <FormDialog
             open={open} 

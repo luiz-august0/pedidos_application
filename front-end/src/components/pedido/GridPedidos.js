@@ -8,18 +8,25 @@ import FormDialogFechaPedido from "./DialogFechaPedido";
 import Grid from '@mui/material/Grid'
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
-import { AG_GRID_LOCALE_BR, flexOnOrNot } from "../../globalFunctions";
+import { AG_GRID_LOCALE_BR } from "../../globalFunctions";
 import { Button } from "@mui/material";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import moment from 'moment';
+import { Oval } from  'react-loader-spinner';
 
 const GridPedidos = () => {
+    const [gridApi, setGridApi] = useState(null);
     const [pedidos, setPedidos] = useState([]);
     const [valorTotalFechamento, setValorTotalFechamento] = useState();
     const [idPedidoFechamento, setIdPedidoFechamento] = useState();
     const [openModalFechaPed, setOpenModalFechaPed] = useState(false);
+    const [loading, setLoading] = useState(false);
     const MySwal = withReactContent(Swal);
+
+    const onGridReady = (params) => {
+        setGridApi(params)
+    }
 
     const handleDeletePed = async(idPedido) => {
         const deleteRegister = async() => {
@@ -158,8 +165,12 @@ const GridPedidos = () => {
     }
     
     const refreshGrid = async () => {
-        const response = await getPedidos();
-        setPedidos(response.data);
+        setLoading(true);
+        await getPedidos()
+            .then(res => {
+                setPedidos(res.data);
+                setLoading(false);
+            });
     }
 
     useEffect(() => {
@@ -172,13 +183,28 @@ const GridPedidos = () => {
                 <ModalPedido handleRefreshPedidos={handleRefreshPedidos}/>
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px'}}>
-                <AgGridReact 
+                {!loading ?
+                    <AgGridReact 
                     rowData={pedidos}
                     columnDefs={columnDefs} 
                     defaultColDef={defaultColDef}
+                    onGridReady={onGridReady}
                     localeText={AG_GRID_LOCALE_BR}
                     gridOptions={{paginationAutoPageSize: true, pagination: true}}
-                />
+                    />
+                :   <Oval
+                    height={50}
+                    width={50}
+                    color="#1976d2"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                    ariaLabel='oval-loading'
+                    secondaryColor="#1976d2"
+                    strokeWidth={3}
+                    strokeWidthSecondary={3}
+                    />
+                }
             </div>
             <FormDialogFechaPedido
             openModalFechaPed={openModalFechaPed} 
