@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Popup from 'reactjs-popup';
-import { IconButton, Button, InputLabel, Select, MenuItem } from '@mui/material';
-import { getClientes, getFuncionarios } from '../../services/api'
+import { IconButton, InputLabel, Select, MenuItem } from '@mui/material';
+import { getClientes, getFuncionarios, showUsuario } from '../../services/api'
 import * as Icon from '@mui/icons-material';
 import './ModalPedido.css';
 import GridItens from './GridItens';
@@ -12,6 +12,11 @@ const ModalPedido = ({handleRefreshPedidos}) => {
     const [ funcionarios, setFuncionarios ] = useState([]);
     const [ funcionarioSelected, setFuncionarioSelected ] = useState('');
     const [ situacaoSelected, setSituacaoSelected ] = useState('A');
+
+    const verifyUsuarioFuncionario = async() => {
+        const responseUsuario = await showUsuario(JSON.parse(localStorage.getItem('usuario')).id);
+        setFuncionarioSelected(responseUsuario.data[0].Fun_Codigo);
+    }
 
     const handleRefresh = () => {
         handleRefreshPedidos();
@@ -30,6 +35,9 @@ const ModalPedido = ({handleRefreshPedidos}) => {
     useEffect(() => {
         getDataClientes();
         getDataFuncionarios();
+        if (localStorage.getItem('isFuncionario') === 'true') {
+            verifyUsuarioFuncionario();
+        }
     }, []);
 
     const handleChangeCliente = (event) => {
@@ -85,6 +93,7 @@ const ModalPedido = ({handleRefreshPedidos}) => {
                                 label="Funcionário"
                                 onChange={handleChangeFuncionario}
                                 className='select'
+                                readOnly={localStorage.getItem('isFuncionario') === 'true'}
                                 >
                                     {funcionarios.map((element) => {
                                         return (
