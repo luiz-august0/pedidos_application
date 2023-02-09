@@ -18,7 +18,7 @@ import { getFornecedores } from '../../services/api';
 
 
 const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => {
-    const { id, descricao, unidade, valorUni, fornecedor } = data;
+    const { id, descricao, unidade, valorUni, fornecedor, qtde } = data;
     const [ fornecedores, setFornecedores ] = React.useState([]);
     const [ openAlert, setOpenAlert ] = React.useState(false);
     const [ msgAlert, setMsgAlert ] = React.useState('');
@@ -128,6 +128,8 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                             <MenuItem value={'PCT'}>Pacote</MenuItem> 
                         </Select>
                         <TextField id="valorUni" required value={valorUni} onChange={e => onChange(e)} placeholder="Valor Unitário" variant="outlined" label="Valor Unitário" margin="dense" fullWidth type={'number'}/>
+                        {!id?<TextField id="qtde" value={qtde} onChange={e => onChange(e)} placeholder="Quantidade de estoque" variant="outlined" label="Quantidade de estoque" margin="dense" fullWidth type={'number'}/>
+                        :null}
                         <InputLabel required id="demo-simple-select-label">Fornecedor</InputLabel>
                         <Select
                         labelId="demo-simple-select-label"

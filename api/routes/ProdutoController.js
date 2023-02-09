@@ -20,12 +20,12 @@ class ProdutoController {
     }
 
     async create(req, res) {
-        const { descricao, unidade, valorUni, fornecedor } = req.body;
+        const { descricao, unidade, valorUni, fornecedor, qtde } = req.body;
         try {
             mysql.getConnection((error, conn) => {
                     conn.query(
                         `INSERT INTO produto (Pro_Descricao, Pro_Unidade, Pro_VlrUni, Pro_QtdEst, For_Codigo) ` + 
-                        `VALUES ("${descricao}", "${unidade}", ROUND(${valorUni},2), 0, ${fornecedor})`,
+                        `VALUES ("${descricao}", "${unidade}", ROUND(${valorUni},2), ${qtde!=''&&qtde!=null?`${qtde}`:'0'}, ${fornecedor})`,
                         (error, result, fields) => {
                             if (error) { return res.status(500).send({ error: error }) }
                             return res.status(201).json(result);
