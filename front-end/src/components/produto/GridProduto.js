@@ -13,7 +13,7 @@ import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR } from "../../globalFunctions";
 import { Oval } from  'react-loader-spinner';
 
-const initialValue = {descricao: "", unidade: "", valorUni: "", fornecedor: ""};
+const initialValue = {descricao: "", unidade: "", valorUni: "", fornecedor: "", qtde: ""};
 
 const GridProduto = () => {
 
@@ -88,6 +88,7 @@ const GridProduto = () => {
         const unidade = formData.unidade;
         const valorUni = formData.valorUni;
         const fornecedor = formData.fornecedor;
+        const qtde = formData.qtde;
 
         if(formData.id) {
             try {            
@@ -107,7 +108,7 @@ const GridProduto = () => {
             }
         }else {
             try {           
-                await createProduto(descricao, unidade, valorUni, fornecedor);
+                await createProduto(descricao, unidade, valorUni, fornecedor, qtde);
                 refreshGrid();
                 handleClose();
                 MySwal.fire({
@@ -125,7 +126,7 @@ const GridProduto = () => {
     }
 
     const handleUpdate = (oldData) => {
-        setFormData({id: oldData.Pro_Codigo, descricao: oldData.Pro_Descricao, unidade: oldData.Pro_Unidade, valorUni: oldData.Pro_VlrUni, fornecedor: oldData.For_Codigo});
+        setFormData({id: oldData.Pro_Codigo, descricao: oldData.Pro_Descricao, unidade: oldData.Pro_Unidade, valorUni: oldData.Pro_VlrUni, fornecedor: oldData.For_Codigo, qtde: oldData.Pro_QtdEst});
         handleClickOpen();
     }
 
