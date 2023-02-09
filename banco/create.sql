@@ -31,7 +31,7 @@ CREATE TABLE funcionario(
 
 CREATE TABLE produto(
   Pro_Codigo INT PRIMARY KEY AUTO_INCREMENT,
-  Pro_Descricao VARCHAR(55) NOT NULL,
+  Pro_Descricao VARCHAR(155) NOT NULL,
   Pro_Unidade VARCHAR(10) NOT NULL,
   Pro_VlrUni FLOAT NOT NULL,
   Pro_QtdEst FLOAT NOT NULL,

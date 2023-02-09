@@ -1,5 +1,8 @@
 const mysql = require('../mysql/mysql').pool;
 import { atualizaEstoque } from './EstoqueController';
+import pdfMakePrinter from "pdfmake";
+const axios = require('axios');
+require('dotenv').config();
 
 //Funções gerais
 const deleteItmPed = async(idPedido, cod_pro) => {
@@ -51,6 +54,39 @@ const updateItem = async(idPedido, idItem, qtd, valorTotal) => {
         console.log(err)
     }
 }
+
+const generatePdf = (docDefinition, callback) => {
+    try {
+        const fontDescriptors = {
+            Helvetica: {
+                normal: 'Helvetica',
+                bold: 'Helvetica-Bold',
+                italics: 'Helvetica-Oblique',
+                bolditalics: 'Helvetica-BoldOblique'
+            }
+        };
+
+        const printer = new pdfMakePrinter(fontDescriptors);
+        const doc = printer.createPdfKitDocument(docDefinition);
+      
+        let chunks = [];
+        let result = '';
+  
+        doc.on('data', (chunk) => {
+            chunks.push(chunk);
+        });
+  
+        doc.on('end', () => {
+            result = Buffer.concat(chunks);
+            callback('data:application/pdf;base64,' + result.toString('base64'));
+        });
+      
+        doc.end();
+      
+        } catch(err) {
+            throw(err);
+        }
+};
 //Fim Funções gerais
 
 class PedidoController {   
@@ -308,7 +344,8 @@ class PedidoController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT PI.Pro_Codigo, CONCAT(PI.Pro_Codigo," - ",P.Pro_Descricao) AS Produto, P.Pro_Unidade, PI.PedItm_Qtd, PI.PedItm_VlrTotal FROM pedido_itens PI ` + 
+                    `SELECT PI.Pro_Codigo, CONCAT(PI.Pro_Codigo," - ",P.Pro_Descricao) AS Produto, P.Pro_Unidade, PI.PedItm_Qtd, PI.PedItm_VlrTotal, ` + 
+                    `P.Pro_Descricao FROM pedido_itens PI ` + 
                     `INNER JOIN produto P ON PI.Pro_Codigo = P.Pro_Codigo ` + 
                     `WHERE PI.Ped_Codigo = ${id}`,
                     (error, result, fields) => {
@@ -359,6 +396,142 @@ class PedidoController {
         }
     }
 
+    async getPedidoDetails(req, res) {
+        const { id } = req.params;
+
+        try {
+            mysql.getConnection((error, conn) => {
+                conn.query(
+                    `SELECT P.Ped_Codigo, CONCAT(P.Cli_Codigo," - ",C.Cli_Nome) AS Cliente,
+                    CONCAT(P.Fun_Codigo," - ",FUN.Fun_Nome) AS Funcionario,
+                    P.Ped_VlrTotal, 
+                    IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao, DATE_FORMAT(Ped_Data,'%d/%m/%Y') AS Ped_Data
+                    FROM pedido P
+                    INNER JOIN cliente C ON P.Cli_Codigo = C.Cli_Codigo
+                    INNER JOIN funcionario FUN ON P.Fun_Codigo = FUN.Fun_Codigo
+                    WHERE P.Ped_Codigo = ${id}
+                    ORDER BY P.Ped_Codigo DESC`,
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                        return res.status(201).json(result);
+                    }
+                )
+                conn.release();
+            })
+        } catch(err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal server error." })
+        }
+    }
+      
+    async getReportPed(req, res) {
+        const { id } = req.params;
+        const { token } = req.body;
+
+        const api = axios.create({
+            baseURL: process.env.API_URL
+        });
+
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+
+        const resDataPed = await api.get(`/pedido_details/${id}`);
+        const cliente = resDataPed.data[0].Cliente;
+        const funcionario = resDataPed.data[0].Funcionario;
+        const pedVlrTotal = resDataPed.data[0].Ped_VlrTotal;
+        const situacao = resDataPed.data[0].Situacao;
+        const data = resDataPed.data[0].Ped_Data;
+        const resItensDetails = await api.get(`/pedido_item/${id}`);
+        const itensDetails = resItensDetails.data;
+        let itens = []
+
+        for await (let item of itensDetails) {
+            const rows = new Array();
+            rows.push(item.Pro_Codigo);
+            rows.push(item.Pro_Descricao);
+            rows.push(item.Pro_Unidade);
+            rows.push(item.PedItm_Qtd);
+            rows.push(item.PedItm_VlrTotal / item.PedItm_Qtd);
+            rows.push(item.PedItm_VlrTotal);
+
+            itens.push(rows);
+        }
+
+        const docDefinition = { 
+            defaultStyle: { font: "Helvetica" },
+            content: [
+                {
+                    columns: [
+                        {
+                            alignment: 'center',
+                            bold: true,
+                            fontSize: 18,
+                            text: `Pedido NR ${id}`
+                        },
+                    ]
+                },
+                '\n\n',
+                {
+                    columns: [
+                        {
+                            alignment: 'left',
+                            bold: true,
+                            fontSize: 14,
+                            text: `Cliente: ${cliente}`
+                        },
+                        {
+                            alignment: 'right',
+                            bold: true,
+                            fontSize: 14,
+                            text: `Data: ${data}`
+                        }
+                    ], 
+                },
+                '\n',
+                {
+                    columns: [
+                        {
+                            alignment: 'left',
+                            bold: true,
+                            fontSize: 14,
+                            text: `Funcionário: ${funcionario}`
+                        },
+                        {
+                            alignment: 'right',
+                            bold: true,
+                            fontSize: 14,
+                            text: `Situação do pedido: ${situacao}`
+                        }
+                    ]
+                },
+                '\n\n\n',
+                {
+                    columns: [
+                        {
+                            alignment: 'center',
+                            bold: true,
+                            fontSize: 14,
+                            text: `Itens`
+                        }
+                    ]
+                },
+                '\n\n\n',
+                {
+                    table: {
+                        body: [['Código', 'Descrição', 'Unidade', 'Quantidade', 'Valor Uni', 'Valor Total'], ...itens],
+                    }
+                },
+            ]};
+      
+        generatePdf(
+            docDefinition,
+            function(base64String) {
+                res.status(201).send(base64String);
+            },
+            function(error) {
+                res.status(404).send("ERROR:" + error);
+            }
+        );
+    }
 }
 
 export default new PedidoController();

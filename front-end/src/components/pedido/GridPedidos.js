@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
-import { getPedidos, updatePedSituacao, deletePedido, addEstoqueProd, getItensPed } from "../../services/api";
+import { getPedidos, updatePedSituacao, deletePedido, addEstoqueProd, getItensPed, getReportPed } from "../../services/api";
 import ModalPedido from "./ModalPedido";
 import ModalPedidoItens from "./ModalPedidoItens";
 import FormDialogFechaPedido from "./DialogFechaPedido";
@@ -26,6 +26,17 @@ const GridPedidos = () => {
 
     const onGridReady = (params) => {
         setGridApi(params)
+    }
+
+    const handleGetReport = async(idPedido) => {
+        const response = await getReportPed(idPedido);
+        const linkSource = response.data;
+        const downloadLink = document.createElement("a");
+        const fileName = `Pedido - ${idPedido}.pdf`;
+    
+        downloadLink.href = linkSource;
+        downloadLink.download = fileName;
+        downloadLink.click();
     }
 
     const handleDeletePed = async(idPedido) => {
@@ -154,6 +165,10 @@ const GridPedidos = () => {
         <div>
             {params.data.Situacao === 'ABERTO'?
             <Button variant="outlined" color="secondary" onClick={() => handleCallFechamento(params.data.Ped_Codigo,params.data.Ped_VlrTotal)}>Fechamento</Button>:null}
+        </div>},
+        { cellRendererFramework:(params) => 
+        <div>
+            <Button variant="outlined" color="primary" onClick={() => handleGetReport(params.data.Ped_Codigo)}>Imprimir</Button>
         </div>}
     ];
 
