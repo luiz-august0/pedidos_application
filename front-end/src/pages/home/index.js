@@ -31,7 +31,11 @@ const Home = () => {
 
     const getDataProdutos = async () => {
         const response = await getProdutos();
-        setDataProd(response.data);
+        let arrayProdutos = [];
+        response.data.map((e) => {
+            arrayProdutos.push(`${e.Pro_Codigo} - ${e.Pro_Descricao} - ${e.Pro_Unidade} - Estoque atual: ${e.Pro_QtdEst}`);
+        })
+        setDataProd(arrayProdutos);
     }
 
     const handleLogout = () => {
