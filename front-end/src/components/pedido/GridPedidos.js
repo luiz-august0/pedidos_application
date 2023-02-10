@@ -30,13 +30,25 @@ const GridPedidos = () => {
 
     const handleGetReport = async(idPedido) => {
         const response = await getReportPed(idPedido);
-        const linkSource = response.data;
-        const downloadLink = document.createElement("a");
-        const fileName = `Pedido - ${idPedido}.pdf`;
-    
-        downloadLink.href = linkSource;
-        downloadLink.download = fileName;
-        downloadLink.click();
+        const pdfContentType = 'application/pdf';
+
+        const base64toBlob = (data) => {
+            const base64WithoutPrefix = data.substr(`data:${pdfContentType};base64,`.length);
+
+            const bytes = atob(base64WithoutPrefix);
+            let length = bytes.length;
+            let out = new Uint8Array(length);
+
+            while (length--) {
+                out[length] = bytes.charCodeAt(length);
+            }
+
+            return new Blob([out], { type: pdfContentType });
+        };
+
+        const url = URL.createObjectURL(base64toBlob(response.data));
+
+        window.location.assign(url);
     }
 
     const handleDeletePed = async(idPedido) => {
