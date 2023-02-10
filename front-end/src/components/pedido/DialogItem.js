@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import 
@@ -12,17 +12,30 @@ import
     TextField, 
     Alert, 
     AlertTitle, 
-    Snackbar
+    Snackbar,
+    Box,
+    FormControl,
+    ListSubheader,
+    InputAdornment
 } from '@mui/material';
+import SearchIcon from "@mui/icons-material/Search";
 
 import { getProdutos, getProduto } from '../../services/api';
 
+const containsText = (text, searchProduto) => text.toLowerCase().indexOf(searchProduto.toLowerCase()) > -1;
+
 const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data }) => {
     const {codigo, produto, qtd, valorUni, valorTotal, editMode} = data;
-	const [ produtoSelected, setProdutoSelected ] = React.useState();
-    const [ openAlert, setOpenAlert ] = React.useState(false);
-    const [ msgAlert, setMsgAlert ] = React.useState('');
-	const [ produtos, setProdutos ] = React.useState([]);
+    const [ searchProduto, setSearchProduto ] = useState("");
+	const [ produtoSelected, setProdutoSelected ] = useState();
+    const [ openAlert, setOpenAlert ] = useState(false);
+    const [ msgAlert, setMsgAlert ] = useState('');
+	const [ produtos, setProdutos ] = useState([]);
+
+    const produtosOptions = useMemo(
+        () => produtos.filter((option) => containsText(option, searchProduto)),
+        [searchProduto]
+    );
 
     const alert = (open,msg) => {
         setMsgAlert(msg);
@@ -31,7 +44,11 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
 
 	const getDataProdutos = async () => {
         const response = await getProdutos();
-        setProdutos(response.data);
+        let arrayProdutos = [];
+        response.data.map((e) => {
+            arrayProdutos.push(`${e.Pro_Codigo} - ${e.Pro_Descricao} - ${e.Pro_Unidade} - Estoque atual: ${e.Pro_QtdEst}`);
+        })
+        setProdutos(arrayProdutos);
     }
 
     const limpaCampos = () => {
@@ -42,7 +59,7 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
 
     const closeDialog = () => { limpaCampos(); handleClose(); };
 
-	React.useEffect(() => {
+	useEffect(() => {
         getDataProdutos();
     }, []);
 
@@ -103,10 +120,12 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
 	}
 
 	const handleChangeProduto = async (event) => {
+        const valueSplited = event.target.value.split('-');
+        const value = valueSplited[0].trim();
         data.editMode = false;
-        data.codigo = event.target.value;
+        data.codigo = value;
 		setProdutoSelected(data.codigo);
-		const response = await getProduto(event.target.value);
+		const response = await getProduto(value);
         data.valorUni = response.data[0].Pro_VlrUni;
         onChange(editMode, false);
         onChange(valorUni, response.data[0].Pro_VlrUni);
@@ -147,25 +166,54 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
                 <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{editMode?"Editar Item":"Adicionar Item"}</DialogTitle>
                 <DialogContent>
                     <form>
-						<InputLabel required id="demo-simple-select-label">Produto</InputLabel>
-                        <Select
-                        id="codigo" 
-                        defaultValue={data.codigo !== ''?data.codigo:null}
-                        value={data.codigo}
-                        label="Produto"
-                        onChange={handleChangeProduto}
-                        style={{width: '250px'}}
-                        >
-                            {produtos.map((element) => {
-                                return (
-                                    <MenuItem value={element.Pro_Codigo}>{element.Pro_Codigo} - {element.Pro_Descricao} - {element.Pro_Unidade}</MenuItem> 
-                                )
-                            })}
-                        </Select>
-                        <TextField id="qtd" required value={qtd} onChange={e => handleChangeQtd(e)} placeholder="Quantidade" variant="outlined" margin="dense" label="Quantidade" fullWidth type={'number'}/>
-						<TextField id="valorUni" required value={valorUni} onChange={e => handleChangeValorUni(e)} placeholder="Valor Unitário" variant="outlined" margin="dense" label="Valor Unitário" fullWidth type={'number'}/>
-						<TextField id="valorTotal" value={valorTotal} placeholder="Valor Total" variant="outlined" margin="dense" label="Valor Total" fullWidth type={'number'} inputProps={{readOnly: true}}/>
-				    </form>
+                        <Box sx={{ m: 0.5 }}>
+                            <FormControl fullWidth>
+                                <InputLabel required id="demo-simple-select-label">Produto</InputLabel>
+                                <Select
+                                style={{width: '300px'}}
+                                MenuProps={{ autoFocus: false }}
+                                labelId="Produto"
+                                id="codigo"
+                                defaultValue={data.codigo !== ''?data.codigo:null}
+                                value={data.codigo}
+                                label="Produto"
+                                onChange={handleChangeProduto}
+                                onClose={() => setSearchProduto("")}
+                                renderValue={() => data.codigo}
+                                >
+                                <ListSubheader>
+                                    <TextField
+                                    size="small"
+                                    autoFocus
+                                    placeholder="Digite para procurar..."
+                                    fullWidth
+                                    InputProps={{
+                                        startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                        )
+                                    }}
+                                    onChange={(e) => setSearchProduto(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key !== "Escape") {
+                                        e.stopPropagation();
+                                        }
+                                    }}
+                                    />
+                                </ListSubheader>
+                                {produtosOptions.map((option, i) => (
+                                    <MenuItem key={i} value={option}>
+                                    {option}
+                                    </MenuItem>
+                                ))}
+                                </Select>
+                            </FormControl>
+                            <TextField id="qtd" required value={qtd} onChange={e => handleChangeQtd(e)} placeholder="Quantidade" variant="outlined" margin="dense" label="Quantidade" fullWidth type={'number'}/>
+                            <TextField id="valorUni" required value={valorUni} onChange={e => handleChangeValorUni(e)} placeholder="Valor Unitário" variant="outlined" margin="dense" label="Valor Unitário" fullWidth type={'number'}/>
+                            <TextField id="valorTotal" value={valorTotal} placeholder="Valor Total" variant="outlined" margin="dense" label="Valor Total" fullWidth type={'number'} inputProps={{readOnly: true}}/>
+                        </Box>
+                    </form>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={closeDialog} color="secondary" variant="outlined">
