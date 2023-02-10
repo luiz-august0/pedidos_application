@@ -402,9 +402,8 @@ class PedidoController {
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT P.Ped_Codigo, CONCAT(P.Cli_Codigo," - ",C.Cli_Nome) AS Cliente,
-                    CONCAT(P.Fun_Codigo," - ",FUN.Fun_Nome) AS Funcionario,
-                    P.Ped_VlrTotal, 
+                    `SELECT P.Ped_Codigo, P.Cli_Codigo, C.Cli_Nome,
+                    P.Fun_Codigo, FUN.Fun_Nome, P.Ped_VlrTotal, 
                     IF(P.Ped_Situacao = "A", "ABERTO", "FECHADO") AS Situacao, DATE_FORMAT(Ped_Data,'%d/%m/%Y') AS Ped_Data
                     FROM pedido P
                     INNER JOIN cliente C ON P.Cli_Codigo = C.Cli_Codigo
@@ -434,10 +433,12 @@ class PedidoController {
 
         api.defaults.headers.Authorization = `Bearer ${token}`;
 
+        const styleFormat = {minimumFractionDigits: 2};
+
         const resDataPed = await api.get(`/pedido_details/${id}`);
-        const cliente = resDataPed.data[0].Cliente;
-        const funcionario = resDataPed.data[0].Funcionario;
-        const pedVlrTotal = resDataPed.data[0].Ped_VlrTotal;
+        const cliente = resDataPed.data[0].Cli_Nome;
+        const funcionario = resDataPed.data[0].Fun_Nome;
+        const pedVlrTotal = 'R$' + new Intl.NumberFormat('pt-BR', styleFormat).format(resDataPed.data[0].Ped_VlrTotal);
         const situacao = resDataPed.data[0].Situacao;
         const data = resDataPed.data[0].Ped_Data;
         const resItensDetails = await api.get(`/pedido_item/${id}`);
@@ -450,14 +451,22 @@ class PedidoController {
             rows.push(item.Pro_Descricao);
             rows.push(item.Pro_Unidade);
             rows.push(item.PedItm_Qtd);
-            rows.push(item.PedItm_VlrTotal / item.PedItm_Qtd);
-            rows.push(item.PedItm_VlrTotal);
+            rows.push('R$' + new Intl.NumberFormat('pt-BR', styleFormat).format(item.PedItm_VlrTotal / item.PedItm_Qtd));
+            rows.push('R$' + new Intl.NumberFormat('pt-BR', styleFormat).format(item.PedItm_VlrTotal));
 
             itens.push(rows);
         }
 
         const docDefinition = { 
-            defaultStyle: { font: "Helvetica" },
+            pageSize: 'A4',
+            pageMargins: [ 30, 60, 30, 40 ],
+            footer: 
+                function(currentPage, pageCount) { 
+                    return [
+                        {text: 'Página ' + currentPage.toString() + ' de ' + pageCount, 
+                        alignment: 'center', fontSize: 10}
+                    ]; 
+                },
             content: [
                 {
                     columns: [
@@ -475,13 +484,13 @@ class PedidoController {
                         {
                             alignment: 'left',
                             bold: true,
-                            fontSize: 14,
+                            fontSize: 12,
                             text: `Cliente: ${cliente}`
                         },
                         {
                             alignment: 'right',
                             bold: true,
-                            fontSize: 14,
+                            fontSize: 12,
                             text: `Data: ${data}`
                         }
                     ], 
@@ -492,35 +501,70 @@ class PedidoController {
                         {
                             alignment: 'left',
                             bold: true,
-                            fontSize: 14,
+                            fontSize: 12,
                             text: `Funcionário: ${funcionario}`
                         },
                         {
                             alignment: 'right',
                             bold: true,
-                            fontSize: 14,
-                            text: `Situação do pedido: ${situacao}`
+                            fontSize: 12,
+                            text: `Situação: ${situacao}`
                         }
                     ]
                 },
-                '\n\n\n',
+                '\n\n',
                 {
                     columns: [
                         {
                             alignment: 'center',
                             bold: true,
-                            fontSize: 14,
+                            fontSize: 18,
                             text: `Itens`
                         }
                     ]
                 },
-                '\n\n\n',
+                '\n',
                 {
+                    margin: [0, 5, 0, 15],
+                    widths: [ '*', 'auto', 100, '*' ],
+                    fontSize: 10,
                     table: {
-                        body: [['Código', 'Descrição', 'Unidade', 'Quantidade', 'Valor Uni', 'Valor Total'], ...itens],
+                        heights: function (row) {
+                            return 25;
+                        },
+                        headerRows: 1,
+                        body: [
+                            [
+                                {text: 'Código', fontSize: 12, bold: true}, 
+                                {text: 'Descrição', fontSize: 12, bold: true},
+                                {text: 'Unidade', fontSize: 12, bold: true},
+                                {text: 'Qtde', fontSize: 12, bold: true}, 
+                                {text: 'Valor Uni', fontSize: 12, bold: true}, 
+                                {text: 'Valor Total', fontSize: 12, bold: true}
+                            ], ...itens
+                        ],
                     }
                 },
-            ]};
+                {
+                    canvas: [
+                        { type: 'line', x1: 0, y1: 5, x2: 595-2*30, y2: 5, lineWidth: 1 }
+                    ]
+                },
+                '\n',
+                {
+                    columns: [
+                        {
+                            alignment: 'right',
+                            bold: true,
+                            fontSize: 14,
+                            text: `Valor Total: ${pedVlrTotal}`
+                        }
+                    ]
+                }
+            ],
+            defaultStyle: {
+                font: 'Helvetica'
+            }};
       
         generatePdf(
             docDefinition,
