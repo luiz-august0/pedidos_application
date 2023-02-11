@@ -1,8 +1,6 @@
 const mysql = require('../mysql/mysql').pool;
 import { atualizaEstoque } from './EstoqueController';
 import pdfMakePrinter from "pdfmake";
-const axios = require('axios');
-require('dotenv').config();
 
 //Funções gerais
 const deleteItmPed = async(idPedido, cod_pro) => {
@@ -425,25 +423,17 @@ class PedidoController {
       
     async getReportPed(req, res) {
         const { id } = req.params;
-        const { token } = req.body;
-
-        const api = axios.create({
-            baseURL: process.env.API_URL
-        });
-
-        api.defaults.headers.Authorization = `Bearer ${token}`;
+        const { dataPedido, dataPedidoItens } = req.body;
 
         const styleFormat = {minimumFractionDigits: 2};
 
-        const resDataPed = await api.get(`/pedido_details/${id}`);
-        const cliente = resDataPed.data[0].Cli_Nome;
-        const funcionario = resDataPed.data[0].Fun_Nome;
-        const pedVlrTotal = 'R$' + new Intl.NumberFormat('pt-BR', styleFormat).format(resDataPed.data[0].Ped_VlrTotal);
-        const situacao = resDataPed.data[0].Situacao;
-        const data = resDataPed.data[0].Ped_Data;
-        const resItensDetails = await api.get(`/pedido_item/${id}`);
-        const itensDetails = resItensDetails.data;
-        let itens = []
+        const cliente = dataPedido[0].Cli_Nome;
+        const funcionario = dataPedido[0].Fun_Nome;
+        const pedVlrTotal = 'R$' + new Intl.NumberFormat('pt-BR', styleFormat).format(dataPedido[0].Ped_VlrTotal);
+        const situacao = dataPedido[0].Situacao;
+        const data = dataPedido[0].Ped_Data;
+        const itensDetails = dataPedidoItens;
+        let itens = [];
 
         for await (let item of itensDetails) {
             const rows = new Array();
@@ -474,7 +464,7 @@ class PedidoController {
                             alignment: 'center',
                             bold: true,
                             fontSize: 18,
-                            text: `Pedido NR ${id}`
+                            text: `Pedido NR. ${id}`
                         },
                     ]
                 },
@@ -526,19 +516,19 @@ class PedidoController {
                 '\n',
                 {
                     margin: [0, 5, 0, 15],
-                    widths: [ '*', 'auto', 100, '*' ],
                     fontSize: 10,
                     table: {
                         heights: function (row) {
                             return 25;
                         },
                         headerRows: 1,
+                        widths: [ 55, 155, 50, 70, 75, 75 ],
                         body: [
                             [
                                 {text: 'Código', fontSize: 12, bold: true}, 
                                 {text: 'Descrição', fontSize: 12, bold: true},
                                 {text: 'Unidade', fontSize: 12, bold: true},
-                                {text: 'Qtde', fontSize: 12, bold: true}, 
+                                {text: 'Quantidade', fontSize: 12, bold: true}, 
                                 {text: 'Valor Uni', fontSize: 12, bold: true}, 
                                 {text: 'Valor Total', fontSize: 12, bold: true}
                             ], ...itens

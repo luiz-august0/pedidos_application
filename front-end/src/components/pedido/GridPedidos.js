@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
-import { getPedidos, updatePedSituacao, deletePedido, addEstoqueProd, getItensPed, getReportPed } from "../../services/api";
+import { 
+    getPedidos, 
+    updatePedSituacao, 
+    deletePedido,
+    addEstoqueProd, 
+    getItensPed, 
+    getReportPed, 
+    getPedidoDetails 
+} from "../../services/api";
 import ModalPedido from "./ModalPedido";
 import ModalPedidoItens from "./ModalPedidoItens";
 import FormDialogFechaPedido from "./DialogFechaPedido";
@@ -29,7 +37,9 @@ const GridPedidos = () => {
     }
 
     const handleGetReport = async(idPedido) => {
-        const response = await getReportPed(idPedido);
+        const resDataPedido = await getPedidoDetails(idPedido);
+        const resDataPedidoItens = await getItensPed(idPedido);
+        const response = await getReportPed(idPedido, resDataPedido.data, resDataPedidoItens.data);
         const pdfContentType = 'application/pdf';
 
         const base64toBlob = (data) => {

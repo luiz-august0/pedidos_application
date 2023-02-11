@@ -115,7 +115,7 @@ const DialogEstoque = ({ open, handleClose, dataProd }) => {
                 <DialogTitle style={{color: '#000'}} id="alert-dialog-title">Manutenção de estoque de produtos</DialogTitle>
                 <DialogContent>
                     <form>
-                        <Box sx={{ m: 0.5 }}>
+                        <Box sx={{ m: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel required id="demo-simple-select-label">Produto</InputLabel>
                                 <Select

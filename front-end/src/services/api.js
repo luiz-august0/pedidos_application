@@ -116,13 +116,16 @@ export const getItensPed = async (idPedido) => {
     return api.get(`/pedido_item/${idPedido}`);
 };
 
+export const getPedidoDetails = async (idPedido) => {
+    return api.get(`/pedido_details/${idPedido}`);
+};
+
 export const createPed = async (cod_cli, cod_func, vlrTotal, situacao) => {
     return api.post('/pedido', {cod_cli, cod_func, vlrTotal, situacao});
 };
 
-export const getReportPed = async(idPedido) => {
-    const token = localStorage.getItem('token');
-    return api.post(`/pedido_report/${idPedido}`, { token });
+export const getReportPed = async(idPedido, dataPedido, dataPedidoItens) => {
+    return api.post(`/pedido_report/${idPedido}`, { dataPedido, dataPedidoItens });
 };
 
 export const createItemPed = async (cod_pro, qtd, vlrTotal, idPedido, atualizaTotal) => {
