@@ -166,7 +166,7 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
                 <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{editMode?"Editar Item":"Adicionar Item"}</DialogTitle>
                 <DialogContent>
                     <form>
-                        <Box sx={{ m: 0.5 }}>
+                        <Box sx={{ m: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel required id="demo-simple-select-label">Produto</InputLabel>
                                 <Select
