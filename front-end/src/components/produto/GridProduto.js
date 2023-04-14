@@ -15,8 +15,15 @@ import { Oval } from  'react-loader-spinner';
 
 const initialValue = {descricao: "", unidade: "", valorUni: "", fornecedor: "", qtde: ""};
 
-const GridProduto = () => {
+const style = {
+    headerButtons: {
+        display: 'flex', 
+        flexDirection: "row", 
+        justifyContent: 'space-between'
+    }
+}
 
+const GridProduto = () => {
     const MySwal = withReactContent(Swal);
     
     const [gridApi, setGridApi] = useState(null);
@@ -27,8 +34,8 @@ const GridProduto = () => {
 
     const columnDefs = [
         { field: "Pro_Codigo", headerName: "Código"},
-        { field: "Pro_Descricao", headerName: "Descrição" },
-        { field: "Pro_Unidade", headerName: "Unidade", },
+        { field: "Pro_Descricao", headerName: "Descrição", width: '600rem' },
+        { field: "Pro_Unidade", headerName: "Unidade"},
         { field: "Pro_VlrUni", headerName: "Valor Unitário" },
         { field: "Pro_QtdEst", headerName: "Estoque" },
         { field: "Fornecedor", headerName: "Fornecedor" },
@@ -169,10 +176,17 @@ const GridProduto = () => {
     return (
         <div className="Grid"> 
             <Grid align="right" marginBottom={1}>
-            <IconButton style={{ color: '#000', fontSize: '18px', fontWeight: 'bold'}} onClick={handleClickOpen}>
-                Adicionar
-                <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
-            </IconButton>
+                <div style={style.headerButtons}>
+                    {!loading?
+                    <IconButton onClick={refreshGrid}>
+                        <Icon.Cached style={{ height: '45px', width: '45px', color: '#1976d2'}}/>
+                    </IconButton>
+                    :<div></div>}
+                    <IconButton style={{ color: '#000', fontSize: '18px', fontWeight: 'bold'}} onClick={handleClickOpen}>
+                        Adicionar
+                        <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
+                    </IconButton>
+                </div>
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px' }}>
                 {!loading ?

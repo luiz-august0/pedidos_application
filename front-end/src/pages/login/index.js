@@ -3,6 +3,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import './styles.css';
 import { AuthContext } from '../../contexts/auth';
+import { Oval } from  'react-loader-spinner';
 
 const Login = () => {
     const { login } = useContext(AuthContext);
@@ -10,6 +11,7 @@ const Login = () => {
     const [chave, setChave] = useState("");
     const [usuario, setUsuario] = useState("");
     const [senha, setSenha] = useState(""); 
+    const [loading, setLoading] = useState(false);
     
     const MySwal = withReactContent(Swal);
 
@@ -31,7 +33,13 @@ const Login = () => {
             return;
         } 
 
-        login(chave, usuario, senha);
+        const doLogin = async() => {
+            setLoading(true);
+            await login(chave, usuario, senha);
+            setLoading(false);
+        }
+
+        doLogin();
     }
       
     return (
@@ -69,7 +77,22 @@ const Login = () => {
                     />
                 </div>
                 <div className="actions">
-                    <button type="submit">ENTRAR</button>                
+                    <button type="submit">
+                        {!loading?`ENTRAR`:
+                        <Oval
+                        height={25}
+                        width={25}
+                        color="#1976d2"
+                        wrapperStyle={{justifyContent: "center"}}
+                        wrapperClass=""
+                        visible={true}
+                        ariaLabel='oval-loading'
+                        secondaryColor="#1976d2"
+                        strokeWidth={3}
+                        strokeWidthSecondary={3}
+                        />
+                        }
+                    </button>                
                 </div>
             </form>
         </div>

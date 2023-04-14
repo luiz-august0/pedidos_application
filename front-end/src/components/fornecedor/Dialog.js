@@ -89,7 +89,7 @@ const FormDialog = ({ open, handleClose, data, onChange, handleFormSubmit }) => 
                     </Alert>
                 </Snackbar>
 
-                <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{id?"Editar Cliente":"Cadastrar Cliente"}</DialogTitle>
+                <DialogTitle style={{color: '#000'}}id="alert-dialog-title">{id?"Editar Fornecedor":"Cadastrar Fornecedor"}</DialogTitle>
                 <DialogContent>
                     <form>
                         <TextField id="nome" required value={nome} onChange={e => onChange(e)} placeholder="Nome" variant="outlined" margin="dense" label="Nome" fullWidth type={'text'}/>

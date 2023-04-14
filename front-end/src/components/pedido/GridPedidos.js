@@ -17,11 +17,20 @@ import Grid from '@mui/material/Grid'
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import { AG_GRID_LOCALE_BR } from "../../globalFunctions";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
+import * as Icon from '@mui/icons-material';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import moment from 'moment';
 import { Oval } from  'react-loader-spinner';
+
+const style = {
+    headerButtons: {
+        display: 'flex', 
+        flexDirection: "row", 
+        justifyContent: 'space-between'
+    }
+}
 
 const GridPedidos = () => {
     const [gridApi, setGridApi] = useState(null);
@@ -217,7 +226,14 @@ const GridPedidos = () => {
     return (
         <div className="Grid"> 
             <Grid align="right" marginBottom={1}>
-                <ModalPedido handleRefreshPedidos={handleRefreshPedidos}/>
+                <div style={style.headerButtons}>
+                    {!loading?
+                    <IconButton onClick={refreshGrid}>
+                        <Icon.Cached style={{ height: '45px', width: '45px', color: '#1976d2'}}/>
+                    </IconButton>
+                    :<div></div>}
+                    <ModalPedido handleRefreshPedidos={handleRefreshPedidos}/>
+                </div>
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px'}}>
                 {!loading ?
