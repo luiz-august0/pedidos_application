@@ -34,8 +34,8 @@ const GridProduto = () => {
 
     const columnDefs = [
         { field: "Pro_Codigo", headerName: "Código"},
-        { field: "Pro_Descricao", headerName: "Descrição" },
-        { field: "Pro_Unidade", headerName: "Unidade", },
+        { field: "Pro_Descricao", headerName: "Descrição", width: '600rem' },
+        { field: "Pro_Unidade", headerName: "Unidade"},
         { field: "Pro_VlrUni", headerName: "Valor Unitário" },
         { field: "Pro_QtdEst", headerName: "Estoque" },
         { field: "Fornecedor", headerName: "Fornecedor" },
