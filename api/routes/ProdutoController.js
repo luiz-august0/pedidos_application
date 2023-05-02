@@ -2,10 +2,38 @@ const mysql = require('../mysql/mysql').pool;
 
 class ProdutoController {   
     async index(req, res) {
+        const { cod, descricao, unidade, valorUni, estoque, codFornecedor } = req.body;
+
+        let sql = `SELECT P.*, CONCAT(F.For_Codigo," - ",F.For_Nome) as Fornecedor FROM produto P INNER JOIN fornecedor F ON P.For_Codigo = F.For_Codigo WHERE 1 > 0 `;
+
+        if (cod !== '' && cod !== null && cod !== undefined) {
+            sql = sql + ` AND Pro_Codigo = ${cod}`;
+        }
+
+        if (descricao !== '' && descricao !== null && descricao !== undefined) {
+            sql = sql + ` AND Pro_Descricao LIKE "%${descricao}%"`;
+        }
+
+        if (unidade !== '' && unidade !== null && unidade !== undefined) {
+            sql = sql + ` AND Pro_Unidade = "${unidade}"`;
+        }
+
+        if (valorUni !== '' && valorUni !== null && valorUni !== undefined) {
+            sql = sql + ` AND Pro_VlrUni = ${valorUni}`;
+        }
+
+        if (estoque !== '' && estoque !== null && estoque !== undefined) {
+            sql = sql + ` AND Pro_QtdEst <= ${estoque}`;
+        }
+
+        if (codFornecedor !== '' && codFornecedor !== null && codFornecedor !== undefined) {
+            sql = sql + ` AND P.For_Codigo = ${codFornecedor}`;
+        }
+    
         try {
             mysql.getConnection((error, conn) => {
                 conn.query(
-                    `SELECT P.*, CONCAT(F.For_Codigo," - ",F.For_Nome) as Fornecedor FROM produto P INNER JOIN fornecedor F ON P.For_Codigo = F.For_Codigo`,
+                    sql,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         return res.status(201).json(result);
