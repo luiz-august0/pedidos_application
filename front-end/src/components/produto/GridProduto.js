@@ -73,7 +73,7 @@ const GridProduto = () => {
 
     const defaultColDef = {
         sortable: true,
-        filter: true,
+        filter: false,
         resizable: true
     }
 
