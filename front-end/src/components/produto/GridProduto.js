@@ -108,8 +108,8 @@ const GridProduto = () => {
                 })
 
                 setTotalProdutos(data.length);
-                setTotalUni(parseFloat(totalVlrUni));
-                setTotalLiq(parseFloat(totalVlrLiq));
+                setTotalUni(parseFloat(totalVlrUni).toLocaleString('pt-br', {minimumFractionDigits: 2}));
+                setTotalLiq(parseFloat(totalVlrLiq).toLocaleString('pt-br', {minimumFractionDigits: 2}));
                 setTotalEst(parseFloat(totalQtdEst));
                 setLoading(false);
             })           
