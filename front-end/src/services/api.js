@@ -35,10 +35,6 @@ export const getProdutos = async (cod, descricao, unidade, valorUni, estoque, co
     return api.post(`/produto_filter`, { cod, descricao, unidade, valorUni, estoque, codFornecedor });
 };
 
-export const getTotalProdutos = async (cod, descricao, unidade, valorUni, estoque, codFornecedor) => {
-    return api.post(`/produto_filtertotais`, { cod, descricao, unidade, valorUni, estoque, codFornecedor });
-};
-
 export const getProduto = async (produtoID) => {
     return api.get(`/produto/${produtoID}`);
 };
