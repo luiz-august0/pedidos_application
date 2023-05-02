@@ -31,8 +31,12 @@ export const createSession = async (userKey, usuario, senha) => {
 };
 
 //Rotas de Produto
-export const getProdutos = async () => {
-    return api.get(`/produto`);
+export const getProdutos = async (cod, descricao, unidade, valorUni, estoque, codFornecedor) => {
+    return api.post(`/produto_filter`, { cod, descricao, unidade, valorUni, estoque, codFornecedor });
+};
+
+export const getTotalProdutos = async (cod, descricao, unidade, valorUni, estoque, codFornecedor) => {
+    return api.post(`/produto_filtertotais`, { cod, descricao, unidade, valorUni, estoque, codFornecedor });
 };
 
 export const getProduto = async (produtoID) => {

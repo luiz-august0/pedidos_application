@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
-import { getProdutos, createProduto, updateProduto, deleteProduto } from "../../services/api";
+import { getProdutos, createProduto, updateProduto, deleteProduto, getFornecedores } from "../../services/api";
 
 import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton';
@@ -12,6 +12,15 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { AG_GRID_LOCALE_BR } from "../../globalFunctions";
 import { Oval } from  'react-loader-spinner';
+import 
+{ 
+    TextField, 
+    Select,
+    MenuItem,
+    InputLabel,
+    Button
+} from '@mui/material';
+import imgFiltro from '../../img/filtro.png'
 
 const initialValue = {descricao: "", unidade: "", valorUni: "", fornecedor: "", qtde: ""};
 
@@ -28,19 +37,30 @@ const GridProduto = () => {
     
     const [gridApi, setGridApi] = useState(null);
     const [produtos, setProdutos] = useState([]);
-    const [open, setOpen] = React.useState(false);
+    const [fornecedores, setFornecedores] = useState([]);
+    const [codFilter, setCodFilter] = useState('');
+    const [descricaoFilter, setDescricaoFilter] = useState('');
+    const [unidadeFilterSelected, setUnidadeFilterSelected] = useState(null);
+    const [valorUniFilter, setValorUniFilter] = useState('');
+    const [estoqueFilter, setEstoqueFilter] = useState('');
+    const [fornecedorFilterSelected, setFornecedorFilterSelected] = useState(null);
+    const [totalProdutos, setTotalProdutos] = useState(0);
+    const [totalUni, setTotalUni] = useState(0);
+    const [totalLiq, setTotalLiq] = useState(0);
+    const [totalEst, setTotalEst] = useState(0);
+    const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState(initialValue);
 
     const columnDefs = [
-        { field: "Pro_Codigo", headerName: "Código"},
-        { field: "Pro_Descricao", headerName: "Descrição", width: '600rem' },
-        { field: "Pro_Unidade", headerName: "Unidade"},
-        { field: "Pro_VlrUni", headerName: "Valor Unitário" },
+        { field: "Pro_Codigo", headerName: "Código", filter: false},
+        { field: "Pro_Descricao", headerName: "Descrição", width: '600rem', filter: false},
+        { field: "Pro_Unidade", headerName: "Unidade", filter: false},
+        { field: "Pro_VlrUni", headerName: "Valor Unitário", filter: false},
         { field: "Pro_QtdEst", headerName: "Estoque" },
-        { field: "Fornecedor", headerName: "Fornecedor" },
+        { field: "Fornecedor", headerName: "Fornecedor", filter: false},
         { field: "For_Codigo", headerName: "Código Fornecedor", hide:true },
-        { field: "Pro_Codigo", headerName:"Ações", cellRendererFramework:(params) => 
+        { field: "Pro_Codigo", headerName:"Ações", filter: false, cellRendererFramework:(params) => 
         <div>
             <IconButton style={{ color: 'orange' }} onClick={() => handleUpdate(params.data)}>
                 <Icon.ModeEdit/>
@@ -54,7 +74,6 @@ const GridProduto = () => {
     const defaultColDef = {
         sortable: true,
         filter: true,
-        floatingFilter: true,
         resizable: true
     }
 
@@ -66,18 +85,49 @@ const GridProduto = () => {
         setOpen(false);
         setFormData(initialValue);
     }
+
+    const getDataFornecedores = async () => {
+        const response = await getFornecedores();
+        setFornecedores(response.data);
+    };
     
-    const refreshGrid = async () => {
+    const refreshGrid = async (cod, descricao, unidade, valorUni, estoque, fornecedor) => {
         setLoading(true);
-        await getProdutos()
+        await getProdutos(cod, descricao, unidade, valorUni, estoque, fornecedor)
             .then(res => {
-                setProdutos(res.data);
+                let data = res.data;
+                let totalVlrUni = 0;
+                let totalVlrLiq = 0;
+                let totalQtdEst = 0;
+
+                setProdutos(data);
+                data.map((e) => {
+                    totalVlrUni = totalVlrUni + parseFloat(e.Pro_VlrUni);
+                    totalVlrLiq = totalVlrLiq + parseFloat(e.Pro_VlrUni * e.Pro_QtdEst);
+                    totalQtdEst = totalQtdEst + parseFloat(e.Pro_QtdEst);
+                })
+
+                setTotalProdutos(data.length);
+                setTotalUni(parseFloat(totalVlrUni));
+                setTotalLiq(parseFloat(totalVlrLiq));
+                setTotalEst(parseFloat(totalQtdEst));
                 setLoading(false);
             })           
     }
 
+    const limpaFiltros = () => {
+        setCodFilter('');
+        setDescricaoFilter('');
+        setUnidadeFilterSelected(null);
+        setValorUniFilter('');
+        setEstoqueFilter('');
+        setFornecedorFilterSelected(null);
+        refreshGrid();
+    }
+
     useEffect(() => {
         refreshGrid();
+        getDataFornecedores();
     }, []);
 
     const onChange = (e) => {
@@ -176,17 +226,54 @@ const GridProduto = () => {
     return (
         <div className="Grid"> 
             <Grid align="right" marginBottom={1}>
-                <div style={style.headerButtons}>
-                    {!loading?
-                    <IconButton onClick={refreshGrid}>
-                        <Icon.Cached style={{ height: '45px', width: '45px', color: '#1976d2'}}/>
-                    </IconButton>
-                    :<div></div>}
-                    <IconButton style={{ color: '#000', fontSize: '18px', fontWeight: 'bold'}} onClick={handleClickOpen}>
-                        Adicionar
-                        <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
-                    </IconButton>
+                <div className="divFilters">
+                    <h1><img width="40" src={imgFiltro}/>Filtros</h1>
+                    <TextField id="cod" value={codFilter} onChange={e => setCodFilter(e.target.value)} placeholder="Código" variant="outlined" label="Código" margin="dense" fullWidth type={'number'}/>
+                    <TextField id="descricao" value={descricaoFilter} onChange={e => setDescricaoFilter(e.target.value)} placeholder="Descrição" variant="outlined" margin="dense" label="Descrição" fullWidth type={'text'}/>
+                    <InputLabel id="demo-simple-select-label">Unidade</InputLabel>
+                    <Select
+                    labelId="demo-simple-select-label"
+                    id="unidade"
+                    value={unidadeFilterSelected}
+                    label="Unidade"
+                    onChange={e => setUnidadeFilterSelected(e.target.value)}
+                    >
+                        <MenuItem value={'UN'}>Unidade</MenuItem> 
+                        <MenuItem value={'KG'}>Kilograma</MenuItem> 
+                        <MenuItem value={'PCT'}>Pacote</MenuItem> 
+                    </Select>
+                    <TextField id="valorUni" value={valorUniFilter} onChange={e => setValorUniFilter(e.target.value)} placeholder="Valor Unitário" variant="outlined" label="Valor Unitário" margin="dense" fullWidth type={'number'}/>
+                    <TextField id="qtde" value={estoqueFilter} onChange={e => setEstoqueFilter(e.target.value)} placeholder="Quantidade de estoque mínima" variant="outlined" label="Quantidade de estoque mínima" margin="dense" fullWidth type={'number'}/>
+                    <InputLabel id="demo-simple-select-label">Fornecedor</InputLabel>
+                    <Select
+                    labelId="demo-simple-select-label"
+                    id="fornecedor"
+                    value={fornecedorFilterSelected}
+                    label="Fornecedor"
+                    onChange={e => setFornecedorFilterSelected(e.target.value)}
+                    >
+                        {fornecedores.map((element) => {
+                            return (
+                                <MenuItem key={element.For_Codigo} value={element.For_Codigo}>{element.For_Codigo} - {element.For_Nome}</MenuItem> 
+                            )
+                        })}
+                    </Select>
+                    <div className="divButtonsFilter">
+                        <Button 
+                        onClick={() => refreshGrid(codFilter, descricaoFilter, unidadeFilterSelected, valorUniFilter, estoqueFilter, fornecedorFilterSelected)} 
+                        color="primary" 
+                        variant="contained">
+                            Filtrar
+                        </Button>
+                        <Button color="secondary" onClick={() => limpaFiltros()} variant="outlined">
+                            Limpar Filtros
+                        </Button>
+                    </div>
                 </div>
+                <IconButton style={{ color: '#000', fontSize: '18px', fontWeight: 'bold'}} onClick={handleClickOpen}>
+                    Adicionar
+                    <Icon.AddCircle style={{ height: '45px', width: '45px', color: '#43d138'}}/>
+                </IconButton>
             </Grid>
             <div className="ag-theme-material" style={{ height: '600px' }}>
                 {!loading ?
@@ -219,6 +306,12 @@ const GridProduto = () => {
             onChange={onChange} 
             handleFormSubmit={handleFormSubmit}
             />
+            <div className="divTotais">
+                <h1>{`Total de Produtos: ${totalProdutos}`}</h1>
+                <h1>{`Valor Unitário Total: R$${totalUni}`}</h1>
+                <h1>{`Valor Líquido Total: R$${totalLiq}`}</h1>
+                <h1>{`Quantidade Total de Estoque: ${totalEst}`}</h1>
+            </div>
         </div>
     )
 }

@@ -14,6 +14,26 @@
     background-color: #f0f0f0;
 }
 
+.divFilters {
+    flex-direction: column;
+    display: flex;
+    margin-right: 100%;
+    align-items: baseline;
+    width: 20%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.divButtonsFilter {
+    flex-direction: row;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 10%;
+}
+
 .cont-second  h2{
     margin-left: 2rem;
     margin-top: 5px;
@@ -85,4 +105,12 @@ p{
     background-color: #4d0000;
     height: 52px;
     width: 100%;
+}
+
+.divTotais {
+    flex-direction: column;
+    display: flex;
+    justify-content: flex-end;
+    text-align: end;
+    align-items: flex-end;
 }

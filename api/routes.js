@@ -43,7 +43,7 @@ routes.put('/funcionario/:id', FuncionarioController.update);
 routes.delete('/funcionario/:id', FuncionarioController.destroy);
 
 //Rota Produto
-routes.get('/produto', ProdutoController.index);
+routes.post('/produto_filter', ProdutoController.index);
 routes.post('/produto', ProdutoController.create);
 routes.get('/produto/:id', ProdutoController.show);
 routes.put('/produto/:id', ProdutoController.update);
