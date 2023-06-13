@@ -24,7 +24,7 @@ class EstoqueController {
 
         try {
             atualizaEstoque(qtd, id, 'add');
-            return res.status(201).json("Estoque adicionado");
+            return res.status(201).json("Estoque atualizado");
         } catch(err) {
             console.error(err);
             return res.status(500).json({ error: "Internal server error." })

@@ -159,23 +159,23 @@ class PedidoController {
                                 `VALUES (${id}, ${cod_pro}, ${qtd}, ROUND(${vlrTotal},2))` ,
                                 (error, result, fields) => {
                                     if (error) { return res.status(500).send({ error: error }) }
-                                    const updateDados = async() => {
-                                        await atualizaEstoque(qtd, cod_pro, 'dim');
-                                        if (atualizaTotal) {
-                                            await updateValorTotalPedido(id);
-                                        }
-                                    }
-
-                                    updateDados()
-                                        .then(() => {
-                                            return res.status(201).json(result);
-                                        })
-                                        .catch(error => {
-                                            console.log(error)
-                                            return res.status(401).json(error);
-                                        })
                                 }
                             )
+
+                            const updateDados = async() => {
+                                await atualizaEstoque(qtd, cod_pro, 'dim');
+                                if (atualizaTotal) {
+                                    await updateValorTotalPedido(id);
+                                }
+                            }
+                            updateDados()
+                            .then(() => {
+                                return res.status(201).json();
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                return res.status(401).json(error);
+                            });
                         }
                     }
                 )
@@ -197,26 +197,29 @@ class PedidoController {
                     `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}` ,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
-                        const updateDados = async() => {
+                        
                             if (qtd > result[0].PedItm_Qtd) {
-                                await atualizaEstoque((qtd - result[0].PedItm_Qtd), cod_pro, 'dim');
+                                atualizaEstoque((qtd - result[0].PedItm_Qtd), cod_pro, 'dim');
                             } else if (qtd < result[0].PedItm_Qtd) {
-                                await atualizaEstoque((result[0].PedItm_Qtd - qtd), cod_pro, 'add');
+                                atualizaEstoque((result[0].PedItm_Qtd - qtd), cod_pro, 'add');
                             }
-                            await updateItem(id, cod_pro, qtd, vlrTotal);
-                            await updateValorTotalPedido(id);
-                        }
-
-                        updateDados()
-                            .then(() => {
-                                return res.status(201).json(result);
-                            })
-                            .catch(error => {
-                                console.log(error)
-                                return res.status(401).json(error);
-                            })
                     }
                 )
+
+                const updateDados = async() => {
+                    await updateItem(id, cod_pro, qtd, vlrTotal);
+                    await updateValorTotalPedido(id);
+                }
+            
+                updateDados()
+                .then(() => {
+                    return res.status(201).json();
+                })
+                .catch(error => {
+                    console.log(error)
+                    return res.status(401).json(error);
+                })
+
                 conn.release();
             })
         } catch(err) {
@@ -234,21 +237,24 @@ class PedidoController {
                     `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}`,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) } 
-                            const updateDados = async() => {
-                                await atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
-                                await deleteItmPed(id, cod_pro);
-                                await updateValorTotalPedido(id);
-                            }
-                            updateDados()
-                                .then(() => {
-                                    return res.status(201).json(result);
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                    return res.status(401).json(error);
-                                })
+                            atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
                     }
                 )
+
+                const updateDados = async() => {
+                    await deleteItmPed(id, cod_pro);
+                    await updateValorTotalPedido(id);
+                }
+
+                updateDados()
+                .then(() => {
+                    return res.status(201).json();
+                })
+                .catch(error => {
+                    console.log(error)
+                    return res.status(401).json(error);
+                })
+
                 conn.release();
             })
         } catch(err) {
