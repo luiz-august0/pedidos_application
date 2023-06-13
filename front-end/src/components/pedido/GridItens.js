@@ -13,7 +13,7 @@ import FormDialogFechaPedido from "./DialogFechaPedido";
 import { Button, IconButton } from "@mui/material";
 import { createPed, createItemPed } from "../../services/api";
 
-const initialValue = {codigo: "", produto: "", qtdProd: "", valorUni: 0, valorTotal: 0, editMode: false};
+const initialValue = {codigo: "", produto: "", qtd: "", valorUni: 0, valorTotal: 0, editMode: false};
 
 const GridItens = ({ data, closePopup, handleRefresh }) => {
     const [itens, setItens] = useState([]);
@@ -55,7 +55,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
 
     const handleClose = () => {
         setOpen(false);
-        setFormData(initialValue);
+        setFormData({codigo: "", produto: "", qtd: "", valorUni: 0, valorTotal: 0, editMode: false});
     }
 
     const handleClickOpenFechaPed = () => {
@@ -75,7 +75,7 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
         itens.map((e) => {
             total = parseFloat(total) + parseFloat(e.valorTotal);
         });
-        return parseFloat(total).toFixed(2);
+        return parseFloat(total);
     }
 
     const verificaItemExistente = (id) => {
@@ -183,12 +183,10 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
 
         const editItem = () => {
             let newArrayItens = [];
-            itens.map((e) => {
-                if (e.codigo !== codigo) {
-                    newArrayItens.push({codigo: e.codigo, produto: e.produto, qtd: e.qtd, valorUni: e.valorUni, valorTotal: e.valorTotal});
-                }
+            newArrayItens = itens.map((e) => {
+                if (e.codigo == codigo) return {codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal};
+                return e;
             });
-            newArrayItens.push({codigo: codigo, produto: produto, qtd: qtd, valorUni: valorUni, valorTotal: valorTotal});
             setItens(newArrayItens);
         }
 
@@ -222,7 +220,6 @@ const GridItens = ({ data, closePopup, handleRefresh }) => {
             }
         });
         setItens(newArrayItens);
-        setFormData(initialValue);
     }
 
     return (

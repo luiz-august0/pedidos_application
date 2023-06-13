@@ -12,7 +12,7 @@ import { Oval } from  'react-loader-spinner';
 import FormDialogItem from "./DialogItem";
 import { getItensPed, updateItemPed, deleteItemPed, createItemPed} from "../../services/api";
 
-const initialValue = {codigo: "", qtdProd: "", valorUni: 0, valorTotal: 0, editMode: false};
+const initialValue = {codigo: "", qtd: "", valorUni: 0, valorTotal: 0, editMode: false};
 
 const GridItensPed = ({idPedido, situacaoPed}) => {
 	const [gridApi, setGridApi] = useState(null);
@@ -77,7 +77,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
         itens.map((e) => {
             total = parseFloat(total) + parseFloat(e.PedItm_VlrTotal);
         });
-        return parseFloat(total).toFixed(2);
+        return parseFloat(total);
     }
 
     const handleClickOpen = () => {
@@ -86,7 +86,7 @@ const GridItensPed = ({idPedido, situacaoPed}) => {
 
     const handleClose = () => {
         setOpen(false);
-        setFormData(initialValue);
+        setFormData({codigo: "", produto: "", qtd: "", valorUni: 0, valorTotal: 0, editMode: false});
     }
 
     const onChange = (field, value) => {

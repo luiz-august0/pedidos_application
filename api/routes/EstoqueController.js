@@ -1,21 +1,5 @@
 const mysql = require('../mysql/mysql').pool;
-
-export const atualizaEstoque = async(qtd, id, tipo) => {
-    try {
-        mysql.getConnection((error, conn) => {
-            conn.query(
-                `UPDATE produto SET Pro_QtdEst = (Pro_QtdEst ${tipo!='dim'?` + `:' - '} ${qtd}) WHERE Pro_Codigo = ${id} `,
-                (error, result, fields) => {
-                    if (error) { console.log(error); }
-                    console.log("Operação: " + tipo + " IDProduto: " + id + " QTDE: " + qtd);
-                }
-            )
-            conn.release();
-        })
-    } catch(err) {
-        console.error(err);
-    }
-}
+import { sqlAtualizaEstoque } from '../dao/ModelEstoque';
 
 class EstoqueController {   
     async addEstoque(req, res) {
@@ -23,10 +7,18 @@ class EstoqueController {
         const { qtd } = req.body;
 
         try {
-            atualizaEstoque(qtd, id, 'add');
-            return res.status(201).json("Estoque atualizado");
+            mysql.getConnection((error, conn) => {
+                conn.query(
+                    sqlAtualizaEstoque(qtd, id, 'add'),
+                    (error, result, fields) => {
+                        if (error) { console.log(error) } 
+                        return res.status(201).json("Estoque atualizado");
+                    }
+                )
+                conn.release();
+            })
         } catch(err) {
-            console.error(err);
+            console.log(err)
             return res.status(500).json({ error: "Internal server error." })
         }
     }

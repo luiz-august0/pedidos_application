@@ -1,57 +1,7 @@
 const mysql = require('../mysql/mysql').pool;
-import { atualizaEstoque } from './EstoqueController';
+import { sqlAtualizaEstoque } from '../dao/ModelEstoque';
+import { sqlDeleteItmPed, sqlUpdateItem, sqlUpdateValorTotalPedido } from '../dao/ModelPedidos';
 import pdfMakePrinter from "pdfmake";
-
-//Funções gerais
-const deleteItmPed = async(idPedido, cod_pro) => {
-    try {
-        mysql.getConnection((error, conn) => {
-            conn.query(
-                `DELETE FROM pedido_itens WHERE Ped_Codigo = ${idPedido} AND Pro_Codigo = ${cod_pro}`,
-                (error, result, fields) => {
-                    if (error) { console.log(error) } 
-                }
-            )
-            conn.release();
-        })
-    } catch(err) {
-        console.log(err)
-    }
-}
-
-const updateValorTotalPedido = async(idPedido) => {
-    try {
-        mysql.getConnection((error, conn) => {
-            conn.query(
-                `UPDATE pedido SET Ped_VlrTotal = (SELECT ROUND(SUM(PedItm_VlrTotal),2) FROM pedido_itens WHERE Ped_Codigo = ${idPedido}) ` + 
-                `WHERE Ped_Codigo = ${idPedido}`,
-                (error, result, fields) => {
-                    if (error) { console.log(error) } 
-                }
-            )
-            conn.release();
-        })
-    } catch(err) {
-        console.log(err)
-    }
-}
-
-const updateItem = async(idPedido, idItem, qtd, valorTotal) => {
-    try {
-        mysql.getConnection((error, conn) => {
-            conn.query(
-                `UPDATE pedido_itens SET PedItm_Qtd = ${qtd}, PedItm_VlrTotal = ${valorTotal} ` + 
-                `WHERE Ped_Codigo = ${idPedido} AND Pro_Codigo = ${idItem}`,
-                (error, result, fields) => {
-                    if (error) { console.log(error) } 
-                }
-            )
-            conn.release();
-        })
-    } catch(err) {
-        console.log(err)
-    }
-}
 
 const generatePdf = (docDefinition, callback) => {
     try {
@@ -162,21 +112,24 @@ class PedidoController {
                                 }
                             )
 
-                            const updateDados = async() => {
-                                await atualizaEstoque(qtd, cod_pro, 'dim');
-                                if (atualizaTotal) {
-                                    await updateValorTotalPedido(id);
+                            conn.query(
+                                sqlAtualizaEstoque(qtd, cod_pro, 'dim'),
+                                (error, result, fields) => {
+                                    if (error) { return res.status(500).send({ error: error }) }
                                 }
+                            )
+
+                            if (atualizaTotal) { 
+                                conn.query(
+                                    sqlUpdateValorTotalPedido(id),
+                                    (error, result, fields) => {
+                                        if (error) { return res.status(500).send({ error: error }) }
+                                    }
+                                )
                             }
-                            updateDados()
-                            .then(() => {
-                                return res.status(201).json();
-                            })
-                            .catch(error => {
-                                console.log(error)
-                                return res.status(401).json(error);
-                            });
-                        }
+
+                            return res.status(201).json();
+                        } 
                     }
                 )
                 conn.release();
@@ -191,36 +144,50 @@ class PedidoController {
         const { cod_pro, qtd, vlrTotal } = req.body;
         const { id } = req.params;
 
+        
         try {
             mysql.getConnection((error, conn) => {
+                let sqlEst = '';
+
                 conn.query(
                     `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}` ,
                     (error, result, fields) => {
                         if (error) { return res.status(500).send({ error: error }) }
                         
-                            if (qtd > result[0].PedItm_Qtd) {
-                                atualizaEstoque((qtd - result[0].PedItm_Qtd), cod_pro, 'dim');
-                            } else if (qtd < result[0].PedItm_Qtd) {
-                                atualizaEstoque((result[0].PedItm_Qtd - qtd), cod_pro, 'add');
-                            }
+                        if (qtd > result[0].PedItm_Qtd) {
+                            sqlEst = sqlAtualizaEstoque((qtd - result[0].PedItm_Qtd), cod_pro, 'dim');
+                        } else if (qtd < result[0].PedItm_Qtd) {
+                            sqlEst = sqlAtualizaEstoque((result[0].PedItm_Qtd - qtd), cod_pro, 'add');
+                        }
+
+                        if (sqlEst !== '') {
+                            conn.query(
+                                sqlEst,
+                                (error, result, fields) => {
+                                    if (error) { return res.status(500).send({ error: error }) }
+                                }
+                            )
+                        }
                     }
                 )
 
-                const updateDados = async() => {
-                    await updateItem(id, cod_pro, qtd, vlrTotal);
-                    await updateValorTotalPedido(id);
-                }
-            
-                updateDados()
-                .then(() => {
-                    return res.status(201).json();
-                })
-                .catch(error => {
-                    console.log(error)
-                    return res.status(401).json(error);
-                })
+                conn.query(
+                    sqlUpdateItem(id, cod_pro, qtd, vlrTotal),
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                    }
+                )
 
+                conn.query(
+                    sqlUpdateValorTotalPedido(id),
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                    } 
+                )
+                
                 conn.release();
+
+                return res.status(201).json();
             })
         } catch(err) {
             console.error(err);
@@ -236,26 +203,34 @@ class PedidoController {
                 conn.query(
                     `SELECT PedItm_Qtd FROM pedido_itens WHERE Ped_Codigo = ${id} AND Pro_Codigo = ${cod_pro}`,
                     (error, result, fields) => {
-                        if (error) { return res.status(500).send({ error: error }) } 
-                            atualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add');
+                        if (error) { return res.status(500).send({ error: error }) }
+                        
+                        conn.query(
+                            sqlAtualizaEstoque(result[0].PedItm_Qtd, cod_pro, 'add'),
+                            (error, result, fields) => {
+                                if (error) { return res.status(500).send({ error: error }) }
+                            }
+                        ) 
                     }
                 )
 
-                const updateDados = async() => {
-                    await deleteItmPed(id, cod_pro);
-                    await updateValorTotalPedido(id);
-                }
+                conn.query(
+                    sqlDeleteItmPed(id, cod_pro),
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                    }
+                )
 
-                updateDados()
-                .then(() => {
-                    return res.status(201).json();
-                })
-                .catch(error => {
-                    console.log(error)
-                    return res.status(401).json(error);
-                })
-
+                conn.query(
+                    sqlUpdateValorTotalPedido(id),
+                    (error, result, fields) => {
+                        if (error) { return res.status(500).send({ error: error }) }
+                    }
+                )
+                
                 conn.release();
+
+                return res.status(201).json();
             })
         } catch(err) {
             console.error(err);

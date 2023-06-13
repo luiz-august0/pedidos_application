@@ -11,7 +11,7 @@ class ProdutoController {
         }
 
         if (descricao !== '' && descricao !== null && descricao !== undefined) {
-            sql = sql + ` AND Pro_Descricao LIKE "%${descricao}%"`;
+            sql = sql + ` AND UPPER(Pro_Descricao) LIKE "%${descricao.toString().toUpperCase()}%"`;
         }
 
         if (unidade !== '' && unidade !== null && unidade !== undefined) {

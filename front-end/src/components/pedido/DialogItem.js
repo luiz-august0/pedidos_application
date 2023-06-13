@@ -52,6 +52,7 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
     }
 
     const limpaCampos = () => {
+        setSearchProduto("");
         setProdutoSelected();
         setMsgAlert('');
         setOpenAlert(false);
@@ -115,8 +116,8 @@ const FormDialogItem = ({ open, handleClose, handleFormSubmit, onChange, data })
     };  
 
 	const calculateValorTotal = (qtd, valorUni) => {
-        data.valorTotal = (qtd * valorUni).toFixed(2);
-        onChange(valorTotal, (qtd * valorUni).toFixed(2));
+        data.valorTotal = parseFloat(qtd * valorUni);
+        onChange(valorTotal, parseFloat(qtd * valorUni));
 	}
 
 	const handleChangeProduto = async (event) => {
