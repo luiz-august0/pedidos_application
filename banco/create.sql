@@ -38,13 +38,65 @@ CREATE TABLE produto(
   For_Codigo INT NOT NULL
 );
 
+CREATE TABLE condicoespagto (
+  Cnd_Codigo INT NOT NULL,
+  Cnd_Descricao VARCHAR(50) NOT NULL,
+  Cnd_NrParcelas INT,
+  Cnd_Forma INT,
+  Cnd_Dias INT
+);
+
+CREATE TABLE tipopagto (
+  TPg_Codigo INT NOT NULL,
+  TPg_Descricao VARCHAR(80) NOT NULL
+);
+
+CREATE TABLE formapagto (
+  FPg_Codigo INT NOT NULL,
+  FPg_Descricao VARCHAR(50) NOT NULL,
+  TPg_Codigo INT NOT NULL
+);
+
+//Titulos
+Tit_Titulo,
+Tit_Parcela,
+Tit_DataLcto,
+Tit_DataVcto,
+Ped_Numero,
+Ped_VlrTotal,
+Tit_VlrTitulo,
+Tit_Saldo,
+Tit_VlrDesc,
+Tit_VlrJurosDia,
+Tit_Obs,
+Cli_Codigo,
+Tit_Situacao,
+Tit_LinkArquivo,
+Tit_Cobrado
+
+//Movimento de titulo
+Mov_Codigo,
+Mov_DataLcto,
+Mov_Valor,
+Tit_Titulo,
+Tit_Parcela,
+Mov_VlrJuro,
+Mov_VlrDesc,
+Mov_Obs
+
+//Movimento de titulo (forma pagto)
+Mov_Codigo,
+FPg_Codigo,
+MovFPg_Valor
+
 CREATE TABLE pedido(
   Ped_Codigo INT PRIMARY KEY AUTO_INCREMENT,
   Cli_Codigo INT NOT NULL,
   Fun_Codigo INT NOT NULL,
   Ped_VlrTotal FLOAT NOT NULL,
   Ped_Situacao CHAR(1) NOT NULL,
-  Ped_Data DATE NOT NULL
+  Ped_Data DATE NOT NULL,
+  Cnd_Codigo INT NOT NULL
 );
 
 CREATE TABLE pedido_itens(
@@ -60,6 +112,18 @@ CREATE TABLE configDB(
 
 ALTER TABLE produto ADD CONSTRAINT fk_for_codigo
 FOREIGN KEY(For_Codigo) REFERENCES fornecedor(For_Codigo);
+
+ALTER TABLE condicoespagto ADD CONSTRAINT pk_condicaopagto
+PRIMARY KEY (Cnd_Codigo);
+
+ALTER TABLE tipopagto ADD CONSTRAINT pk_tipopagto
+PRIMARY KEY (TPg_Codigo);
+
+ALTER TABLE formapagto ADD CONSTRAINT pk_formapagto
+PRIMARY KEY (FPg_Codigo);
+
+ALTER TABLE formapagto ADD CONSTRAINT fk_forma_tipo
+FOREIGN KEY(TPg_Codigo) REFERENCES tipopagto(TPg_Codigo);
 
 ALTER TABLE pedido ADD CONSTRAINT fk_cli_codigo
 FOREIGN KEY(Cli_Codigo) REFERENCES cliente(Cli_Codigo);
