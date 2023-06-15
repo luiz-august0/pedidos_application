@@ -38,56 +38,59 @@ CREATE TABLE produto(
   For_Codigo INT NOT NULL
 );
 
-CREATE TABLE condicoespagto (
-  Cnd_Codigo INT NOT NULL,
+CREATE TABLE condicaopagto (
+  Cnd_Codigo INT PRIMARY KEY AUTO_INCREMENT,
   Cnd_Descricao VARCHAR(50) NOT NULL,
   Cnd_NrParcelas INT,
-  Cnd_Forma INT,
+  Cnd_Forma INT NOT NULL,
   Cnd_Dias INT
 );
 
 CREATE TABLE tipopagto (
-  TPg_Codigo INT NOT NULL,
+  TPg_Codigo INT PRIMARY KEY AUTO_INCREMENT,
   TPg_Descricao VARCHAR(80) NOT NULL
 );
 
 CREATE TABLE formapagto (
-  FPg_Codigo INT NOT NULL,
+  FPg_Codigo INT PRIMARY KEY AUTO_INCREMENT,
   FPg_Descricao VARCHAR(50) NOT NULL,
   TPg_Codigo INT NOT NULL
 );
 
-//Titulos
-Tit_Titulo,
-Tit_Parcela,
-Tit_DataLcto,
-Tit_DataVcto,
-Ped_Numero,
-Ped_VlrTotal,
-Tit_VlrTitulo,
-Tit_Saldo,
-Tit_VlrDesc,
-Tit_VlrJurosDia,
-Tit_Obs,
-Cli_Codigo,
-Tit_Situacao,
-Tit_LinkArquivo,
-Tit_Cobrado
+CREATE TABLE titulo (
+  Tit_Titulo INT NOT NULL,
+  Tit_Parcela INT NOT NULL,
+  Tit_DataLcto DATE NOT NULL,
+  Tit_DataVcto DATE,
+  Ped_Codigo INT NOT NULL,
+  Ped_VlrTotal FLOAT NOT NULL,
+  Tit_VlrTitulo FLOAT NOT NULL,
+  Tit_Saldo FLOAT NOT NULL,
+  Tit_VlrDesc FLOAT,
+  Tit_VlrJurosDia FLOAT,
+  Tit_Obs TEXT,
+  Cli_Codigo INT NOT NULL,
+  Tit_Situacao CHAR(1) NOT NULL,
+  Tit_LinkArquivo VARCHAR(255),
+  Tit_Cobrado CHAR(1) NOT NULL
+);
 
-//Movimento de titulo
-Mov_Codigo,
-Mov_DataLcto,
-Mov_Valor,
-Tit_Titulo,
-Tit_Parcela,
-Mov_VlrJuro,
-Mov_VlrDesc,
-Mov_Obs
+CREATE TABLE movimentotitulo (
+  Mov_Codigo INT PRIMARY KEY AUTO_INCREMENT,
+  Mov_DataLcto DATE NOT NULL,
+  Mov_Valor FLOAT NOT NULL,
+  Tit_Titulo INT NOT NULL,
+  Tit_Parcela INT NOT NULL,
+  Mov_VlrJuro FLOAT,
+  Mov_VlrDesc FLOAT,
+  Mov_Obs TEXT
+);
 
-//Movimento de titulo (forma pagto)
-Mov_Codigo,
-FPg_Codigo,
-MovFPg_Valor
+CREATE TABLE movimentotitulo_formapgto (
+  Mov_Codigo INT NOT NULL,
+  FPg_Codigo INT NOT NULL,
+  MovFPg_Valor FLOAT NOT NULL
+);
 
 CREATE TABLE pedido(
   Ped_Codigo INT PRIMARY KEY AUTO_INCREMENT,
@@ -110,37 +113,46 @@ CREATE TABLE configDB(
   Chave VARCHAR(80) NOT NULL
 );
 
-ALTER TABLE produto ADD CONSTRAINT fk_for_codigo
+ALTER TABLE produto ADD CONSTRAINT fk_produto_fornecedor
 FOREIGN KEY(For_Codigo) REFERENCES fornecedor(For_Codigo);
-
-ALTER TABLE condicoespagto ADD CONSTRAINT pk_condicaopagto
-PRIMARY KEY (Cnd_Codigo);
-
-ALTER TABLE tipopagto ADD CONSTRAINT pk_tipopagto
-PRIMARY KEY (TPg_Codigo);
-
-ALTER TABLE formapagto ADD CONSTRAINT pk_formapagto
-PRIMARY KEY (FPg_Codigo);
 
 ALTER TABLE formapagto ADD CONSTRAINT fk_forma_tipo
 FOREIGN KEY(TPg_Codigo) REFERENCES tipopagto(TPg_Codigo);
 
-ALTER TABLE pedido ADD CONSTRAINT fk_cli_codigo
+ALTER TABLE titulo ADD CONSTRAINT pk_titulo_parcela
+PRIMARY KEY(Tit_Titulo, Tit_Parcela);
+
+ALTER TABLE titulo ADD CONSTRAINT fk_titulo_pedido
+FOREIGN KEY(Ped_Codigo) REFERENCES pedido(Ped_Codigo);
+
+ALTER TABLE titulo ADD CONSTRAINT fk_titulo_cliente
 FOREIGN KEY(Cli_Codigo) REFERENCES cliente(Cli_Codigo);
 
-ALTER TABLE pedido ADD CONSTRAINT fk_fun_codigo
+ALTER TABLE movimentotitulo ADD CONSTRAINT fk_movimento_tituloparcela
+FOREIGN KEY(Tit_Titulo, Tit_Parcela) REFERENCES titulo(Tit_Titulo, Tit_Parcela);
+
+ALTER TABLE movimentotitulo_formapgto ADD CONSTRAINT fk_movtitulo_formapagto
+FOREIGN KEY(FPg_Codigo) REFERENCES formapagto(FPg_Codigo);
+
+ALTER TABLE pedido ADD CONSTRAINT fk_pedido_cliente
+FOREIGN KEY(Cli_Codigo) REFERENCES cliente(Cli_Codigo);
+
+ALTER TABLE pedido ADD CONSTRAINT fk_pedido_funcionario
 FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);
+
+ALTER TABLE pedido ADD CONSTRAINT fk_pedido_condicao
+FOREIGN KEY(Cnd_Codigo) REFERENCES condicaopagto(Cnd_Codigo);
 
 ALTER TABLE pedido_itens ADD CONSTRAINT pk_pedido_produto
 PRIMARY KEY (Ped_Codigo, Pro_Codigo);
 
-ALTER TABLE pedido_itens ADD CONSTRAINT fk_pedido
+ALTER TABLE pedido_itens ADD CONSTRAINT fk_pedidoitens_pedido
 FOREIGN KEY (Ped_Codigo) REFERENCES pedido(Ped_Codigo);
 
-ALTER TABLE pedido_itens ADD CONSTRAINT fk_produto
+ALTER TABLE pedido_itens ADD CONSTRAINT fk_pedidoitens_produto
 FOREIGN KEY (Pro_Codigo) REFERENCES produto(Pro_Codigo);
 
-ALTER TABLE usuario ADD CONSTRAINT fk_funcionario
+ALTER TABLE usuario ADD CONSTRAINT fk_usuario_funcionario
 FOREIGN KEY(Fun_Codigo) REFERENCES funcionario(Fun_Codigo);
 
 DELIMITER $$
