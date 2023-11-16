@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  backend:
+    build: .
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on: 
+      - db
+    networks:
+      - spring
+      - spring-mysql
+  db:
+    image: mysql
+    ports:
+      - "3308:3308"
+    environment:
+      MYSQL_DB: "pedidosapp-dev"
+      MYSQL_ROOT_PASSWORD: "123"
+    networks:
+      - spring
+      - spring-mysql
+networks:
+  spring: {}
+  spring-mysql: {}
