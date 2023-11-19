@@ -26,6 +26,7 @@ public class Usuario  implements Serializable, UserDetails {
     @Column(nullable = false, unique = true)
     private String login;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String senha;
 
@@ -46,7 +47,7 @@ public class Usuario  implements Serializable, UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return senha;
     }
 
     @Override

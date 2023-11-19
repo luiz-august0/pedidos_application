@@ -3,13 +3,13 @@ package com.pedidosapp.api.service.security;
 import com.pedidosapp.api.model.dtos.AuthenticationDTO;
 import com.pedidosapp.api.model.dtos.LoginResponseDTO;
 import com.pedidosapp.api.model.dtos.RegisterDTO;
-import com.pedidosapp.api.model.dtos.UsuarioDTO;
 import com.pedidosapp.api.model.entities.Usuario;
 import com.pedidosapp.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,9 +30,13 @@ public class AuthenticationService {
 
     public ResponseEntity login(AuthenticationDTO authenticationDTO) {
         var loginSenha = new UsernamePasswordAuthenticationToken(authenticationDTO.login(), authenticationDTO.senha());
-        var session = authenticationManager.authenticate(loginSenha);
-        var token = tokenService.geraToken((UsuarioDTO) session.getPrincipal());
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        try {
+            var session = authenticationManager.authenticate(loginSenha);
+            var token = tokenService.geraToken((Usuario) session.getPrincipal());
+            return ResponseEntity.ok(new LoginResponseDTO(token));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha incorretos");
+        }
     }
 
     public ResponseEntity registrar(RegisterDTO registerDTO) {
@@ -42,6 +46,6 @@ public class AuthenticationService {
         Usuario usuario = new Usuario(registerDTO.login(), senhaIncriptada, registerDTO.role());
         repository.save(usuario);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(usuario.getId()).toUri();
-        return ResponseEntity.created(uri).body(usuario);
+        return ResponseEntity.created(uri).build();
     }
 }
