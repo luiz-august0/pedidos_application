@@ -1,11 +1,11 @@
 package com.pedidosapp.api.service;
 
-import com.pedidosapp.api.repository.ClienteRepository;
+import com.pedidosapp.api.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ClienteService {
+public class ClientService {
     @Autowired
-    private ClienteRepository repository;
+    private ClientRepository repository;
 }

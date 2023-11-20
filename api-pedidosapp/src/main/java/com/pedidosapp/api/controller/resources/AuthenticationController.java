@@ -21,7 +21,7 @@ public class AuthenticationController implements AuthenticationInterfaceControll
     }
 
     @Override
-    public ResponseEntity registrar(RegisterDTO registerDTO) {
-        return service.registrar(registerDTO);
+    public ResponseEntity register(RegisterDTO registerDTO) {
+        return service.register(registerDTO);
     }
 }

@@ -14,6 +14,6 @@ public interface AuthenticationInterfaceController {
     @PostMapping("/login")
     ResponseEntity login(@RequestBody @Valid AuthenticationDTO authenticationDTO);
 
-    @PostMapping("/registro")
-    ResponseEntity registrar (@RequestBody @Valid RegisterDTO registerDTO);
+    @PostMapping("/register")
+    ResponseEntity register (@RequestBody @Valid RegisterDTO registerDTO);
 }

@@ -1,6 +1,6 @@
 package com.pedidosapp.api.service.security;
 
-import com.pedidosapp.api.repository.UsuarioRepository;
+import com.pedidosapp.api.repository.UserRepository;
 import com.pedidosapp.api.service.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorizationService implements UserDetailsService {
     @Autowired
-    private UsuarioRepository repository;
+    private UserRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String username) {

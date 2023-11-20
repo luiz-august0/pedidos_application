@@ -1,6 +1,6 @@
 package com.pedidosapp.api.config.security;
 
-import com.pedidosapp.api.repository.UsuarioRepository;
+import com.pedidosapp.api.repository.UserRepository;
 import com.pedidosapp.api.service.security.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +21,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     private TokenService tokenService;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository usuarioRepository;
 
     private String recuperaToken(HttpServletRequest request) {
         var sessionHeader = request.getHeader("Authorization");

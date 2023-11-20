@@ -1,6 +1,6 @@
 package com.pedidosapp.api.model.dtos;
 
-import com.pedidosapp.api.model.enums.UsuarioRole;
+import com.pedidosapp.api.model.enums.UserRole;
 import lombok.*;
 
 import java.io.Serializable;
@@ -10,9 +10,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-public class UsuarioDTO implements Serializable {
+public class UserDTO implements Serializable {
     private Integer id;
     private String login;
-    private String senha;
-    private UsuarioRole role;
+    private String password;
+    private UserRole role;
 }

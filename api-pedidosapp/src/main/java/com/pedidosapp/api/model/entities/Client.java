@@ -10,22 +10,22 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "cliente")
+@Table(name = "client")
 @EqualsAndHashCode(of = "id")
-public class Cliente implements Serializable {
+public class Client implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)
-    private String nome;
+    private String name;
 
-    @Column(length = 14)
+    @Column(length = 14, unique = true)
     private String cnpj;
 
-    @Column(length = 11)
+    @Column(length = 11, unique = true)
     private String cpf;
 
     @Column(length = 20)
-    private String contato;
+    private String contact;
 }

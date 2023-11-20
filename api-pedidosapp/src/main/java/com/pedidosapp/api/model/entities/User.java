@@ -1,7 +1,7 @@
 package com.pedidosapp.api.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pedidosapp.api.model.enums.UsuarioRole;
+import com.pedidosapp.api.model.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,9 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "usuario")
+@Table(name = "users")
 @EqualsAndHashCode(of = "id")
-public class Usuario  implements Serializable, UserDetails {
+public class User implements Serializable, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,15 +28,15 @@ public class Usuario  implements Serializable, UserDetails {
 
     @JsonIgnore
     @Column(nullable = false)
-    private String senha;
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private UsuarioRole role;
+    private UserRole role;
 
-    public Usuario(String login, String senha, UsuarioRole role) {
+    public User(String login, String password, UserRole role) {
         this.login = login;
-        this.senha = senha;
+        this.password = password;
         this.role = role;
     }
 
@@ -47,7 +47,7 @@ public class Usuario  implements Serializable, UserDetails {
 
     @Override
     public String getPassword() {
-        return senha;
+        return password;
     }
 
     @Override
