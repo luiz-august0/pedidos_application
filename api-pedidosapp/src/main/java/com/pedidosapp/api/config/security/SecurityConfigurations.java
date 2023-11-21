@@ -28,6 +28,15 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/session/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/session/register").permitAll()
+                        .requestMatchers(
+                                "/v2/api-docs",
+                                "/configuration/ui",
+                                "/swagger-resources/**",
+                                "/configuration/security",
+                                "/swagger-ui.html",
+                                "/webjars/**",
+                                "/swagger-ui/**"
+                        ).permitAll()
                         //.requestMatchers(HttpMethod.POST, "/teste").hasRole("ADMIN")
                         //.requestMatchers(HttpMethod.GET, "/teste").permitAll()
                         .anyRequest().authenticated()

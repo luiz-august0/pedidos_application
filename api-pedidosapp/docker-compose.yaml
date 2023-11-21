@@ -10,17 +10,17 @@ services:
       - db
     networks:
       - spring
-      - spring-mysql
+      - spring-postgres
   db:
-    image: mysql
+    image: postgres:alpine
     ports:
-      - "3308:3308"
+      - "5432:5432"
     environment:
-      MYSQL_DB: "pedidosapp-dev"
-      MYSQL_ROOT_PASSWORD: "123"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "postgres"
     networks:
       - spring
-      - spring-mysql
+      - spring-postgres
 networks:
   spring: {}
-  spring-mysql: {}
+  spring-postgres: {}
