@@ -29,7 +29,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/session/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/session/register").permitAll()
                         .requestMatchers(
-                                "/v2/api-docs",
+                                "/v3/api-docs/**",
                                 "/configuration/ui",
                                 "/swagger-resources/**",
                                 "/configuration/security",

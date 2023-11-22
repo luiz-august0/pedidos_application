@@ -7,7 +7,11 @@ public class TenantContext {
     private static final ThreadLocal<String> currentTenant = ThreadLocal.withInitial(() -> DEFAULT_TENANT);
 
     public static void setCurrentTenant(String tenant) {
-        currentTenant.set(tenant);
+        if (tenant != null) {
+            currentTenant.set(tenant);
+        } else {
+            currentTenant.set(DEFAULT_TENANT);
+        }
     }
 
     public static String getCurrentTenant() {
