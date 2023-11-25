@@ -21,7 +21,9 @@ public class DataSourceConfig {
     @PostConstruct
     public void migrate() {
         String[] schemas = schemaRepository.findAllSchemas().stream().map(e -> e.getSchema()).collect(Collectors.toList()).toArray(new String[0]);
-        Flyway flyway = Flyway.configure().dataSource(dataSource).schemas(schemas).load();
-        flyway.migrate();
+
+        for (String schema : schemas) {
+            Flyway.configure().dataSource(dataSource).schemas(schema).load().migrate();
+        }
     }
 }
