@@ -10,9 +10,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "client")
+@Table(name = "customer")
 @EqualsAndHashCode(of = "id")
-public class Client implements Serializable {
+public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

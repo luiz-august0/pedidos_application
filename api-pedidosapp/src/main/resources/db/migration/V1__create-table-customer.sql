@@ -1,4 +1,4 @@
-CREATE TABLE client (
+CREATE TABLE customer (
     id SERIAL UNIQUE PRIMARY KEY,
     name varchar(255) NOT NULL,
     cpf varchar(11) UNIQUE,

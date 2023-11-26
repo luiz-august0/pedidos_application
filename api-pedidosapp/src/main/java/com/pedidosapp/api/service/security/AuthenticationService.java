@@ -1,7 +1,6 @@
 package com.pedidosapp.api.service.security;
 
 import com.pedidosapp.api.model.dtos.AuthenticationDTO;
-import com.pedidosapp.api.model.dtos.LoginResponseDTO;
 import com.pedidosapp.api.model.dtos.RegisterDTO;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.repository.UserRepository;
@@ -10,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,23 +29,27 @@ public class AuthenticationService {
     private TokenService tokenService;
 
     public ResponseEntity login(AuthenticationDTO authenticationDTO) {
-        var loginSenha = new UsernamePasswordAuthenticationToken(authenticationDTO.login(), authenticationDTO.senha());
+        var loginPassword = new UsernamePasswordAuthenticationToken(authenticationDTO.login(), authenticationDTO.password());
         try {
-            var session = authenticationManager.authenticate(loginSenha);
-            var token = tokenService.geraToken((User) session.getPrincipal());
-            return ResponseEntity.ok(new LoginResponseDTO(token));
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha incorretos");
+            var session = authenticationManager.authenticate(loginPassword);
+            var token = tokenService.generateToken((User) session.getPrincipal());
+            return ResponseEntity.ok(token);
+        } catch (RuntimeException e) {
+            if (e.getClass() == BadCredentialsException.class || e.getClass() == InternalAuthenticationServiceException.class) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha incorretos");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getCause());
+            }
         }
     }
 
     public ResponseEntity register(RegisterDTO registerDTO) {
         if(repository.findByLogin(registerDTO.login()) != null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário já cadastrado");
 
-        String senhaIncriptada = new BCryptPasswordEncoder().encode(registerDTO.password());
-        User usuario = new User(registerDTO.login(), senhaIncriptada, registerDTO.role());
-        repository.save(usuario);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(usuario.getId()).toUri();
+        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
+        User user = new User(registerDTO.login(), encryptedPassword, registerDTO.role());
+        repository.save(user);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 }

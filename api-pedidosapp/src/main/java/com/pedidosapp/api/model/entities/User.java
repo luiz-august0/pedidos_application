@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 @Table(name = "users")
 @EqualsAndHashCode(of = "id")
-public class User implements Serializable, UserDetails {
+public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

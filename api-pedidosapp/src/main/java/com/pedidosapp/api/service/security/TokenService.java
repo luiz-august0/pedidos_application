@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.pedidosapp.api.config.multitenancy.TenantContext;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.service.exceptions.TokenException;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,17 +19,18 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    private Instant genDataExpiracao() {
+    private Instant genExpirationDate() {
         return LocalDateTime.now().plusDays(7).toInstant(ZoneOffset.of("-03:00"));
     }
 
-    public String geraToken(User usuario) {
+    public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
+                    .withAudience(TenantContext.getCurrentTenant())
                     .withIssuer("pedidosapp-session")
-                    .withSubject(usuario.getLogin())
-                    .withExpiresAt(genDataExpiracao())
+                    .withSubject(user.getLogin())
+                    .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException e) {
@@ -36,7 +38,7 @@ public class TokenService {
         }
     }
 
-    public String validaToken(String token) {
+    public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)

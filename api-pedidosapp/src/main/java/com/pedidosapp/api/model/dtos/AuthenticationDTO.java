@@ -1,4 +1,4 @@
 package com.pedidosapp.api.model.dtos;
 
-public record AuthenticationDTO(String login, String senha) {
+public record AuthenticationDTO(String login, String password) {
 }

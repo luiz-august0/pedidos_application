@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.pedidosapp.api.utils.endpoints.Endpoints.session;
 
 @RequestMapping(session)
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-public interface AuthenticationInterfaceController {
+public interface IAuthenticationController {
     @PostMapping("/login")
     ResponseEntity login(@RequestBody @Valid AuthenticationDTO authenticationDTO);
 

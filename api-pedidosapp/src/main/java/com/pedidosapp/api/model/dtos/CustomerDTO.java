@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-public class ClientDTO implements Serializable {
+public class CustomerDTO implements Serializable {
     private Integer id;
     private String name;
     private String cnpj;
