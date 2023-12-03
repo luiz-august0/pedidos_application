@@ -1,5 +1,6 @@
 package com.pedidosapp.api.model.dtos;
 
+import com.pedidosapp.api.model.entities.Employee;
 import com.pedidosapp.api.model.enums.UserRole;
 import lombok.*;
 
@@ -15,4 +16,5 @@ public class UserDTO implements Serializable {
     private String login;
     private String password;
     private UserRole role;
+    private Employee employee;
 }

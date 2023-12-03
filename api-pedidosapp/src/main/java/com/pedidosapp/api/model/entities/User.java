@@ -34,6 +34,9 @@ public class User implements UserDetails, Serializable {
     @Column(nullable = false, length = 30)
     private UserRole role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Employee employee;
+
     public User(String login, String password, UserRole role) {
         this.login = login;
         this.password = password;
