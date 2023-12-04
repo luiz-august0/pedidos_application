@@ -26,8 +26,8 @@ public class User implements UserDetails, Serializable {
     @Column(nullable = false, unique = true)
     private String login;
 
-    @JsonIgnore
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -35,6 +35,7 @@ public class User implements UserDetails, Serializable {
     private UserRole role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Employee employee;
 
     public User(String login, String password, UserRole role) {

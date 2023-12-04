@@ -17,29 +17,24 @@ public abstract class AbstractController<Service extends AbstractService, DTO> i
         this.dto = dto;
     }
 
-    @Override
     public ResponseEntity findAll() {
         return ResponseEntity.ok(Converter.convertListEntityToDTO(service.findAll(), dto.getClass()));
     }
 
-    @Override
     public Object findById(Integer id) throws Throwable {
         return Converter.convertEntityToDTO(service.findById(id), dto.getClass());
     }
 
-    @Override
     public ResponseEntity insert(DTO dto) {
         service.insert(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Override
-    public ResponseEntity delete(Integer id) {
+    public ResponseEntity delete(Integer id) throws Throwable {
         service.delete(id);
         return ResponseEntity.ok().build();
     }
 
-    @Override
     public ResponseEntity update(Integer id, DTO dto) throws Throwable {
         service.update(id, dto);
         return ResponseEntity.ok().build();

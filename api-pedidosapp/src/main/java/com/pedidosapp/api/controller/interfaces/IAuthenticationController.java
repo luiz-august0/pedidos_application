@@ -12,7 +12,4 @@ import static com.pedidosapp.api.utils.endpoints.Endpoints.session;
 public interface IAuthenticationController {
     @PostMapping("/login")
     ResponseEntity login(@RequestBody @Valid AuthenticationDTO authenticationDTO);
-
-    @PostMapping("/register")
-    ResponseEntity register (@RequestBody @Valid RegisterDTO registerDTO);
 }

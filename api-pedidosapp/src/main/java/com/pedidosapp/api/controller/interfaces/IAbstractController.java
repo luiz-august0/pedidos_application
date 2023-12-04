@@ -14,7 +14,7 @@ public interface IAbstractController<DTO> {
     ResponseEntity insert(@RequestBody DTO dto);
 
     @DeleteMapping("/{id}")
-    ResponseEntity delete(@PathVariable("id") Integer id);
+    ResponseEntity delete(@PathVariable("id") Integer id) throws Throwable;
 
     @PutMapping("/{id}")
     ResponseEntity update(@PathVariable("id") Integer id, @RequestBody DTO dto) throws Throwable;

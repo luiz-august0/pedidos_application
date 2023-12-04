@@ -19,9 +19,4 @@ public class AuthenticationController implements IAuthenticationController, Seri
     public ResponseEntity login(AuthenticationDTO authenticationDTO) {
         return service.login(authenticationDTO);
     }
-
-    @Override
-    public ResponseEntity register(RegisterDTO registerDTO) {
-        return service.register(registerDTO);
-    }
 }

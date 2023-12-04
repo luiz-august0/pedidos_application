@@ -15,5 +15,5 @@ public class EmployeeDTO implements Serializable {
     private String name;
     private String cpf;
     private String contact;
-    private User user;
+    private UserDTO user;
 }

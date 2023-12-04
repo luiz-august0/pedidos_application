@@ -6,7 +6,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.pedidosapp.api.config.multitenancy.TenantContext;
 import com.pedidosapp.api.model.entities.User;
-import com.pedidosapp.api.service.exceptions.TokenException;
+import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class TokenService {
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException e) {
-            throw new TokenException();
+            throw new ApplicationGenericsException(e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException e) {
-            return "";
+            throw new ApplicationGenericsException(e.getMessage());
         }
     }
 }

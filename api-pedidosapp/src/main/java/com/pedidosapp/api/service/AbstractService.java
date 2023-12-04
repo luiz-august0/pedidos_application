@@ -30,7 +30,7 @@ public abstract class AbstractService<Repository extends JpaRepository, Entity> 
         repository.save(Converter.convertDTOToEntity(object, entity.getClass()));
     }
 
-    public void delete(Integer id) {
+    public void delete(Integer id) throws Throwable {
         if (!repository.findById(id).isEmpty()) {
             repository.deleteById(id);
         } else {
