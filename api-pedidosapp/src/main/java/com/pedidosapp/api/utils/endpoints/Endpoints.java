@@ -6,4 +6,5 @@ public class Endpoints {
     public static final String customer = "/api/customer";
     public static final String supplier = "/api/supplier";
     public static final String employee = "/api/employee";
+    public static final String product = "/api/product";
 }

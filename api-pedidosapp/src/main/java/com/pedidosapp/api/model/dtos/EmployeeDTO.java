@@ -1,6 +1,5 @@
 package com.pedidosapp.api.model.dtos;
 
-import com.pedidosapp.api.model.entities.User;
 import lombok.*;
 
 import java.io.Serializable;

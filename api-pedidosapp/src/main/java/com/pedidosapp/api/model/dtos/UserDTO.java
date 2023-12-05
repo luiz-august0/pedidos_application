@@ -1,7 +1,7 @@
 package com.pedidosapp.api.model.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pedidosapp.api.model.enums.UserRole;
+import com.pedidosapp.api.model.enums.EnumUserRole;
 import lombok.*;
 
 import java.io.Serializable;
@@ -19,5 +19,5 @@ public class UserDTO implements Serializable {
     @JsonIgnore
     private String password;
 
-    private UserRole role;
+    private EnumUserRole role;
 }

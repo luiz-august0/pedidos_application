@@ -1,12 +1,12 @@
 package com.pedidosapp.api.model.enums;
 
-public enum UserRole {
+public enum EnumUserRole {
     ADMIN("ADMIN"),
     EMPLOYEE("EMPLOYEE");
 
     private String role;
 
-    UserRole(String role) {
+    EnumUserRole(String role) {
         this.role = role;
     }
 

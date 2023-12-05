@@ -1,6 +1,6 @@
 package com.pedidosapp.api.model.dtos;
 
-import com.pedidosapp.api.model.enums.UserRole;
+import com.pedidosapp.api.model.enums.EnumUserRole;
 
-public record RegisterDTO(String login, String password, UserRole role) {
+public record RegisterDTO(String login, String password, EnumUserRole role) {
 }

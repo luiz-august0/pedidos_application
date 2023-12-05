@@ -1,7 +1,7 @@
 package com.pedidosapp.api.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pedidosapp.api.model.enums.UserRole;
+import com.pedidosapp.api.model.enums.EnumUserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,13 +32,13 @@ public class User implements UserDetails, Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private UserRole role;
+    private EnumUserRole role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private Employee employee;
 
-    public User(String login, String password, UserRole role) {
+    public User(String login, String password, EnumUserRole role) {
         this.login = login;
         this.password = password;
         this.role = role;

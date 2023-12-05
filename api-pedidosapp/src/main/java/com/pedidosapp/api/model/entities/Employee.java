@@ -26,7 +26,7 @@ public class Employee implements Serializable {
     @Column(length = 20)
     private String contact;
 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     @OneToOne
     private User user;
 }

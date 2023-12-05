@@ -3,7 +3,7 @@ package com.pedidosapp.api.service;
 import com.pedidosapp.api.model.beans.EmployeeBean;
 import com.pedidosapp.api.model.entities.Employee;
 import com.pedidosapp.api.model.entities.User;
-import com.pedidosapp.api.model.enums.UserRole;
+import com.pedidosapp.api.model.enums.EnumUserRole;
 import com.pedidosapp.api.repository.EmployeeRepository;
 import com.pedidosapp.api.repository.UserRepository;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
@@ -30,7 +30,7 @@ public class EmployeeService extends AbstractService<EmployeeRepository, Employe
         if(userRepository.findByLogin(bean.getLogin()) != null) throw new ApplicationGenericsException(EnumUnauthorizedException.USER_ALREADY_REGISTERED);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(bean.getPassword());
-        User user = new User(bean.getLogin(), encryptedPassword, UserRole.EMPLOYEE);
+        User user = new User(bean.getLogin(), encryptedPassword, EnumUserRole.EMPLOYEE);
         userRepository.save(user);
 
         Employee employee = new Employee(null, bean.getName(), bean.getCpf(), bean.getContact(), user);
