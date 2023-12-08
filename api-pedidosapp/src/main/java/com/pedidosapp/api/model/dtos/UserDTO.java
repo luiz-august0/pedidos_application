@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pedidosapp.api.model.enums.EnumUserRole;
 import lombok.*;
 
-import java.io.Serializable;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
-public class UserDTO implements Serializable {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class UserDTO extends AbstractDTO {
     private Integer id;
 
     private String login;

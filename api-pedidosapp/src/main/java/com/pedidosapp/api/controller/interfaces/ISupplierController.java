@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static com.pedidosapp.api.utils.endpoints.Endpoints.supplier;
 
 @RequestMapping(supplier)
-public interface ISupplierController extends IAbstractController<SupplierDTO> {
+public interface ISupplierController extends IAbstractAllController<SupplierDTO> {
 }

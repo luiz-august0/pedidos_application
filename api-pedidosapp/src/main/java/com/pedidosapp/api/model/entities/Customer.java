@@ -3,16 +3,14 @@ package com.pedidosapp.api.model.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Table(name = "customer")
-@EqualsAndHashCode(of = "id")
-public class Customer implements Serializable {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class Customer extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

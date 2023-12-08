@@ -19,7 +19,8 @@ public class UserService {
     UserRepository repository;
 
     public ResponseEntity register(RegisterDTO registerDTO) {
-        if(repository.findByLogin(registerDTO.login()) != null) throw new ApplicationGenericsException(EnumUnauthorizedException.USER_ALREADY_REGISTERED);
+        if (repository.findByLogin(registerDTO.login()) != null)
+            throw new ApplicationGenericsException(EnumUnauthorizedException.USER_ALREADY_REGISTERED);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
         User user = new User(registerDTO.login(), encryptedPassword, registerDTO.role());

@@ -10,26 +10,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class EmployeeController extends AbstractController<EmployeeService, EmployeeDTO> implements IEmployeeController {
+public class EmployeeController extends AbstractAllGetController<EmployeeService, EmployeeDTO> implements IEmployeeController {
     @Autowired
     EmployeeService service;
 
-    protected EmployeeController(EmployeeService service) {
-        super(service, new EmployeeDTO());
+    EmployeeController(EmployeeService service) {
+        super(service);
     }
 
-    @Override
     public ResponseEntity insert(EmployeeBean bean) {
         return service.insert(bean);
     }
 
-    @Override
-    public ResponseEntity update(Integer id, EmployeeBean bean) throws Throwable {
+    public ResponseEntity update(Integer id, EmployeeBean bean) {
         return service.update(id, bean);
     }
 
-    @Override
-    public ResponseEntity delete(@PathVariable("id") Integer id) throws Throwable {
+    public ResponseEntity delete(@PathVariable("id") Integer id) {
         return service.deleteById(id);
     }
 }

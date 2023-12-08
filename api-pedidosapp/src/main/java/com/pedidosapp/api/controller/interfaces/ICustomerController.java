@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static com.pedidosapp.api.utils.endpoints.Endpoints.customer;
 
 @RequestMapping(customer)
-public interface ICustomerController extends IAbstractController<CustomerDTO> {
+public interface ICustomerController extends IAbstractAllController<CustomerDTO> {
 }

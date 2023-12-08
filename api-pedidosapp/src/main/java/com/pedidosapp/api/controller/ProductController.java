@@ -6,8 +6,8 @@ import com.pedidosapp.api.service.ProductService;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ProductController extends AbstractController<ProductService, ProductDTO> implements IProductController {
-    protected ProductController(ProductService service) {
-        super(service, new ProductDTO());
+public class ProductController extends AbstractAllController<ProductService, ProductDTO> implements IProductController {
+    ProductController(ProductService service) {
+        super(service);
     }
 }

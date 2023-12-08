@@ -4,7 +4,6 @@ import com.pedidosapp.api.model.enums.EnumUnitProduct;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
@@ -12,8 +11,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Table(name = "product")
-@EqualsAndHashCode(of = "id")
-public class Product implements Serializable {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class Product extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

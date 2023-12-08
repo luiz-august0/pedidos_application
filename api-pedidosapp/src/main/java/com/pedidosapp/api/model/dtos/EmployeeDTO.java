@@ -2,17 +2,19 @@ package com.pedidosapp.api.model.dtos;
 
 import lombok.*;
 
-import java.io.Serializable;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
-public class EmployeeDTO implements Serializable {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class EmployeeDTO extends AbstractDTO {
     private Integer id;
+
     private String name;
+
     private String cpf;
+
     private String contact;
+
     private UserDTO user;
 }

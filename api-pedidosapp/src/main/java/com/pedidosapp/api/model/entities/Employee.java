@@ -3,7 +3,6 @@ package com.pedidosapp.api.model.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
@@ -11,8 +10,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Table(name = "employee")
-@EqualsAndHashCode(of = "id")
-public class Employee implements Serializable {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class Employee extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

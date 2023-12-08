@@ -1,6 +1,8 @@
 package com.pedidosapp.api.service;
 
+import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.beans.EmployeeBean;
+import com.pedidosapp.api.model.dtos.EmployeeDTO;
 import com.pedidosapp.api.model.entities.Employee;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.model.enums.EnumUserRole;
@@ -15,36 +17,38 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmployeeService extends AbstractService<EmployeeRepository, Employee> {
+public class EmployeeService extends AbstractService<EmployeeRepository, Employee, EmployeeDTO> {
     @Autowired
-    EmployeeRepository repository;
+    EmployeeRepository employeeRepository;
 
     @Autowired
     UserRepository userRepository;
 
-    protected EmployeeService(EmployeeRepository repository) {
-        super(repository, new Employee());
+    EmployeeService(EmployeeRepository repository) {
+        super(repository, new Employee(), new EmployeeDTO());
     }
 
     public ResponseEntity insert(EmployeeBean bean) {
-        if(userRepository.findByLogin(bean.getLogin()) != null) throw new ApplicationGenericsException(EnumUnauthorizedException.USER_ALREADY_REGISTERED);
+        if (userRepository.findByLogin(bean.getLogin()) != null)
+            throw new ApplicationGenericsException(EnumUnauthorizedException.USER_ALREADY_REGISTERED);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(bean.getPassword());
         User user = new User(bean.getLogin(), encryptedPassword, EnumUserRole.EMPLOYEE);
         userRepository.save(user);
 
         Employee employee = new Employee(null, bean.getName(), bean.getCpf(), bean.getContact(), user);
-        repository.save(employee);
+        employeeRepository.save(employee);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    public ResponseEntity update(Integer id, EmployeeBean bean) throws Throwable {
-        Employee employee = (Employee) super.findById(id);
+    public ResponseEntity update(Integer id, EmployeeBean bean) {
+        Employee employee = Converter.convertDTOToEntity(super.findAndValidate(id), Employee.class);
         User user = (userRepository.findById(employee.getUser().getId())).get();
 
         if ((bean.getLogin() != null) && (!bean.getLogin().equals(user.getLogin()))) {
-            if (userRepository.findByLogin(bean.getLogin())!=null) throw new ApplicationGenericsException(EnumUnauthorizedException.USER_ALREADY_REGISTERED);
+            if (userRepository.findByLogin(bean.getLogin()) != null)
+                throw new ApplicationGenericsException(EnumUnauthorizedException.USER_ALREADY_REGISTERED);
 
             user.setLogin(bean.getLogin());
         }
@@ -60,15 +64,15 @@ public class EmployeeService extends AbstractService<EmployeeRepository, Employe
         employee.setContact(bean.getContact());
         employee.setUser(user);
 
-        repository.save(employee);
+        employeeRepository.save(employee);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity deleteById(Integer id) throws Throwable {
-        Employee employee = (Employee) super.findById(id);
+    public ResponseEntity deleteById(Integer id) {
+        Employee employee = Converter.convertDTOToEntity(super.findAndValidate(id), Employee.class);
 
         userRepository.deleteById(employee.getUser().getId());
-        repository.deleteById(employee.getId());
+        employeeRepository.deleteById(employee.getId());
 
         return ResponseEntity.ok().build();
     }

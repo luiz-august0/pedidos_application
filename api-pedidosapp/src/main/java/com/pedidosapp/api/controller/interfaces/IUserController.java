@@ -1,6 +1,5 @@
 package com.pedidosapp.api.controller.interfaces;
 
-import com.pedidosapp.api.model.dtos.AuthenticationDTO;
 import com.pedidosapp.api.model.dtos.RegisterDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

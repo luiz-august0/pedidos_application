@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -13,8 +12,8 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "supplier")
-@EqualsAndHashCode(of = "id")
-public class Supplier implements Serializable {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class Supplier extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
