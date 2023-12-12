@@ -3,10 +3,10 @@ package com.pedidosapp.api.service.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.pedidosapp.api.config.multitenancy.TenantContext;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
+import com.pedidosapp.api.service.exceptions.enums.EnumGenericsException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,20 +34,16 @@ public class TokenService {
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException e) {
-            throw new ApplicationGenericsException(e.getMessage());
+            throw new ApplicationGenericsException(EnumGenericsException.GENERATE_TOKEN);
         }
     }
 
     public String validateToken(String token) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm)
-                    .withIssuer("pedidosapp-session")
-                    .build()
-                    .verify(token)
-                    .getSubject();
-        } catch (JWTVerificationException e) {
-            throw new ApplicationGenericsException(e.getMessage());
-        }
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        return JWT.require(algorithm)
+                .withIssuer("pedidosapp-session")
+                .build()
+                .verify(token)
+                .getSubject();
     }
 }

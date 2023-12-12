@@ -6,21 +6,17 @@ import com.pedidosapp.api.service.AbstractService;
 import org.springframework.http.ResponseEntity;
 
 import java.io.Serializable;
-import java.util.List;
 
-public abstract class AbstractAllController<Service extends AbstractService, DTO extends AbstractDTO> implements IAbstractAllController<DTO>, Serializable {
+public abstract class AbstractAllController
+        <Service extends AbstractService, DTO extends AbstractDTO>
+        extends AbstractAllGetController
+        implements IAbstractAllController<DTO>, Serializable
+{
     private final Service service;
 
     AbstractAllController(Service service) {
+        super(service);
         this.service = service;
-    }
-
-    public List<DTO> findAll() {
-        return service.findAll();
-    }
-
-    public DTO findById(Integer id) {
-        return (DTO) service.findAndValidate(id);
     }
 
     public ResponseEntity insert(DTO dto) {
