@@ -5,7 +5,11 @@ import com.pedidosapp.api.model.dtos.AbstractDTO;
 import com.pedidosapp.api.model.entities.AbstractEntity;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -14,7 +18,10 @@ import java.util.List;
 import java.util.Optional;
 
 
-public abstract class AbstractService<Repository extends JpaRepository, Entity extends AbstractEntity, DTO extends AbstractDTO> {
+public abstract class AbstractService
+        <Repository extends JpaRepository & PagingAndSortingRepository & JpaSpecificationExecutor,
+                Entity extends AbstractEntity, DTO extends AbstractDTO<Entity>>
+{
     private final Repository repository;
     private final Entity entity;
     private final DTO dto;
@@ -27,6 +34,14 @@ public abstract class AbstractService<Repository extends JpaRepository, Entity e
 
     public List<DTO> findAll() {
         return Converter.convertListEntityToDTO(repository.findAll(), dto.getClass());
+    }
+
+    public List<DTO> findAllFiltered(DTO dto) {
+        return repository.findAll(dto.toSpec(dto));
+    }
+
+    public Page<DTO> findAllFilteredAndPageable(DTO dto, Pageable pageable) {
+        return repository.findAll(dto.toSpec(dto), pageable);
     }
 
     public DTO findAndValidate(Integer id) {

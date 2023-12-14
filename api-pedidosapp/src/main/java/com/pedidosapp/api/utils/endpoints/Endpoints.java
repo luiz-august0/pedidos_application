@@ -1,6 +1,6 @@
 package com.pedidosapp.api.utils.endpoints;
 
-public class Endpoints {
+public abstract class Endpoints {
     public static final String session = "/api/session";
     public static final String user = "/api/user";
     public static final String customer = "/api/customer";
