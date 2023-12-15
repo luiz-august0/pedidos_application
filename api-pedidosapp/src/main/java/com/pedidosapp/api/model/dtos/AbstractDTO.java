@@ -1,28 +1,18 @@
 package com.pedidosapp.api.model.dtos;
 
-import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.entities.AbstractEntity;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.utils.Utils;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.xml.stream.events.DTD;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractDTO<Entity extends AbstractEntity> implements Serializable {
-    private final Entity entity;
-
-    public AbstractDTO(Entity entity) {
-        this.entity = entity;
-    }
-
-    public Specification<Entity> toSpec(AbstractDTO<Entity> dto) {
-        Object entityObject = Converter.convertDTOToEntity(dto, entity.getClass());
-
+    public Specification<Entity> toSpec(Entity entity) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             Field[] fields = entity.getClass().getDeclaredFields();
@@ -31,18 +21,7 @@ public abstract class AbstractDTO<Entity extends AbstractEntity> implements Seri
                 field.setAccessible(true);
 
                 try {
-//                    switch (field.getType()) {
-//                        case String.class:
-//                            stringSpec(predicates, field.get(entity).toString(), field.getName(), root, query, criteriaBuilder);
-//                            break;
-//                        default:
-//                            break;
-//                    }
-
-                    if (field.getType().equals(String.class)) {
-                        stringSpec(predicates, field.get(entityObject), field.getName(), root, query, criteriaBuilder);
-                    }
-
+                    createSpecification(predicates, field.get(entity), field.getName(), root, criteriaBuilder, query, entity);
                 } catch (Exception e) {
                     throw new ApplicationGenericsException(e.getMessage());
                 }
@@ -52,10 +31,30 @@ public abstract class AbstractDTO<Entity extends AbstractEntity> implements Seri
         };
     }
 
-    private void stringSpec(List<Predicate> predicates, Object field, String fieldName, Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
-        if (Utils.isNotEmpty(field)) {
-            Path<String> fieldSpec = root.<String>get(fieldName);
-            Predicate predicate = criteriaBuilder.like(fieldSpec, "%"+field+"%");
+    private void createSpecification(List<Predicate> predicates,
+                                     Object fieldValue,
+                                     String fieldName,
+                                     Root root,
+                                     CriteriaBuilder criteriaBuilder,
+                                     CriteriaQuery criteriaQuery,
+                                     Entity entity) throws NoSuchFieldException, IllegalAccessException {
+        if (Utils.isNotEmpty(fieldValue)) {
+            Path fieldSpec = root.get(fieldName);
+            Predicate predicate = null;
+            
+            if (fieldValue.getClass().equals(String.class)) {
+                predicate = criteriaBuilder.like(criteriaBuilder.upper(fieldSpec), "%"+fieldValue.toString().toUpperCase()+"%");
+            } else if (fieldValue instanceof AbstractEntity) {
+                Join<Entity, Class<? extends AbstractEntity>> join = root.join(fieldName, JoinType.INNER);
+
+                Field field = fieldValue.getClass().getDeclaredField("id");
+                field.setAccessible(true);
+
+                predicate = criteriaBuilder.equal(join.get("id"), field.get(fieldValue));
+            } else {
+                predicate = criteriaBuilder.equal(fieldSpec, fieldValue);
+            }
+
             predicates.add(predicate);
         }
     }

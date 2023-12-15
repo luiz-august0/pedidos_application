@@ -48,17 +48,19 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             String errorMessage;
+            Integer status = HttpServletResponse.SC_UNAUTHORIZED;
 
             if (e.getClass().equals(TokenExpiredException.class)) {
                 errorMessage = EnumGenericsException.EXPIRED_TOKEN.getMessage();
             } else if (e.getClass().equals(JWTVerificationException.class)) {
                 errorMessage = EnumGenericsException.VALIDATE_TOKEN.getMessage();
             } else {
+                status = HttpServletResponse.SC_BAD_REQUEST;
                 errorMessage = e.getMessage();
             }
 
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(status);
             response.getWriter().write("{\"message\":\"" + errorMessage + "\"}");
         }
     }

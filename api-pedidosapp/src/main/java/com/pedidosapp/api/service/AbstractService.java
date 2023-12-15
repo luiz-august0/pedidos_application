@@ -37,11 +37,11 @@ public abstract class AbstractService
     }
 
     public List<DTO> findAllFiltered(DTO dto) {
-        return repository.findAll(dto.toSpec(dto));
+        return repository.findAll(dto.toSpec((Entity) Converter.convertDTOToEntity(dto, entity.getClass())));
     }
 
     public Page<DTO> findAllFilteredAndPageable(DTO dto, Pageable pageable) {
-        return repository.findAll(dto.toSpec(dto), pageable);
+        return repository.findAll(dto.toSpec((Entity) Converter.convertDTOToEntity(dto, entity.getClass())), pageable);
     }
 
     public DTO findAndValidate(Integer id) {
