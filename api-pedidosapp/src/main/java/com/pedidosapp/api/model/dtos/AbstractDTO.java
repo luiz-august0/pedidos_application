@@ -21,7 +21,7 @@ public abstract class AbstractDTO<Entity extends AbstractEntity> implements Seri
                 field.setAccessible(true);
 
                 try {
-                    createSpecification(predicates, field.get(entity), field.getName(), root, criteriaBuilder, query, entity);
+                    createSpecification(predicates, field.get(entity), field.getName(), root, criteriaBuilder, entity);
                 } catch (Exception e) {
                     throw new ApplicationGenericsException(e.getMessage());
                 }
@@ -36,8 +36,7 @@ public abstract class AbstractDTO<Entity extends AbstractEntity> implements Seri
                                      String fieldName,
                                      Root root,
                                      CriteriaBuilder criteriaBuilder,
-                                     CriteriaQuery criteriaQuery,
-                                     Entity entity) throws NoSuchFieldException, IllegalAccessException {
+                                     Entity entity) throws IllegalAccessException {
         if (Utils.isNotEmpty(fieldValue)) {
             Path fieldSpec = root.get(fieldName);
             Predicate predicate = null;
@@ -46,11 +45,23 @@ public abstract class AbstractDTO<Entity extends AbstractEntity> implements Seri
                 predicate = criteriaBuilder.like(criteriaBuilder.upper(fieldSpec), "%"+fieldValue.toString().toUpperCase()+"%");
             } else if (fieldValue instanceof AbstractEntity) {
                 Join<Entity, Class<? extends AbstractEntity>> join = root.join(fieldName, JoinType.INNER);
+                Field[] classFields = fieldValue.getClass().getDeclaredFields();
 
-                Field field = fieldValue.getClass().getDeclaredField("id");
-                field.setAccessible(true);
+                for (Field classField : classFields) {
+                    classField.setAccessible(true);
 
-                predicate = criteriaBuilder.equal(join.get("id"), field.get(fieldValue));
+                    if (Utils.isNotEmpty(classField.get(fieldValue)) && !classField.getType().equals(entity.getClass())) {
+                        if (classField.getType().equals(String.class)) {
+                            Path classFieldSpec = join.get(classField.getName());
+                            predicate = criteriaBuilder.like(criteriaBuilder.upper(classFieldSpec), "%"+classField.get(fieldValue).toString().toUpperCase()+"%");
+                        } else {
+                            predicate = criteriaBuilder.equal(join.get(classField.getName()), classField.get(fieldValue));
+                        }
+
+                        predicates.add(predicate);
+                    }
+                }
+
             } else {
                 predicate = criteriaBuilder.equal(fieldSpec, fieldValue);
             }
