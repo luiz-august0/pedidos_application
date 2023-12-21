@@ -4,7 +4,8 @@ import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.dtos.AbstractDTO;
 import com.pedidosapp.api.model.entities.AbstractEntity;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
-import com.pedidosapp.api.service.exceptions.ResourceNotFoundException;
+import com.pedidosapp.api.service.exceptions.enums.EnumResourceNotFoundException;
+import com.pedidosapp.api.service.validators.AbstractValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,16 +21,19 @@ import java.util.Optional;
 
 public abstract class AbstractService
         <Repository extends JpaRepository & PagingAndSortingRepository & JpaSpecificationExecutor,
-                Entity extends AbstractEntity, DTO extends AbstractDTO<Entity>>
+                Entity extends AbstractEntity, DTO extends AbstractDTO<Entity>, Validator extends AbstractValidator<Entity>>
 {
     private final Repository repository;
     private final Entity entity;
     private final DTO dto;
 
-    AbstractService(Repository repository, Entity entity, DTO dto) {
+    private final Validator validator;
+
+    AbstractService(Repository repository, Entity entity, DTO dto, Validator validator) {
         this.repository = repository;
         this.entity = entity;
         this.dto = dto;
+        this.validator = validator;
     }
 
     public List<DTO> findAll() {
@@ -48,14 +52,16 @@ public abstract class AbstractService
         Optional object = repository.findById(id);
 
         if (object.isEmpty()) {
-            throw new ResourceNotFoundException();
+            throw new ApplicationGenericsException(EnumResourceNotFoundException.RESOURCE_NOT_FOUND, entity.getPortugueseClassName(), id);
         }
 
         return (DTO) Converter.convertEntityToDTO((Entity) object.get(), dto.getClass());
     }
 
     public ResponseEntity insert(DTO object) {
-        Object entityObject = Converter.convertDTOToEntity(object, entity.getClass());
+        Entity entityObject = (Entity) Converter.convertDTOToEntity(object, entity.getClass());
+        validator.validate((Entity) entityObject);
+
         repository.save(entityObject);
         return ResponseEntity.status(HttpStatus.CREATED).body(Converter.convertEntityToDTO((Entity) entityObject, dto.getClass()));
     }
@@ -80,7 +86,10 @@ public abstract class AbstractService
             throw new ApplicationGenericsException("Não foi possível acessar o campo id da classe " + entity.getClass().getName());
         }
 
-        repository.save(Converter.convertDTOToEntity(object, entity.getClass()));
+        Entity entityObject = (Entity) Converter.convertDTOToEntity(object, entity.getClass());
+        validator.validate(entityObject);
+
+        repository.save(entityObject);
         return ResponseEntity.ok().build();
     }
 }

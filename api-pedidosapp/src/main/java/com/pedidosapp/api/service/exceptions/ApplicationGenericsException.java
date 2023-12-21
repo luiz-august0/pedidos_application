@@ -1,6 +1,7 @@
 package com.pedidosapp.api.service.exceptions;
 
 import com.pedidosapp.api.service.exceptions.enums.EnumGenericsException;
+import com.pedidosapp.api.service.exceptions.enums.EnumResourceNotFoundException;
 import com.pedidosapp.api.service.exceptions.enums.EnumUnauthorizedException;
 import org.springframework.http.HttpStatus;
 
@@ -20,6 +21,16 @@ public class ApplicationGenericsException extends RuntimeException {
     public ApplicationGenericsException(EnumUnauthorizedException exception) {
         super(exception.getMessage());
         this.status = HttpStatus.UNAUTHORIZED;
+    }
+
+    public ApplicationGenericsException(EnumResourceNotFoundException exception) {
+        super(exception.getMessage());
+        this.status = HttpStatus.NOT_FOUND;
+    }
+
+    public ApplicationGenericsException(EnumResourceNotFoundException exception, String portugueseClassName, Integer id) {
+        super(exception.getMessage() + " de " + portugueseClassName + " com id " + id);
+        this.status = HttpStatus.NOT_FOUND;
     }
 
     public HttpStatus getStatus() {

@@ -26,4 +26,9 @@ public class Customer extends AbstractEntity {
 
     @Column(length = 20)
     private String contact;
+
+    @Override
+    public String getPortugueseClassName() {
+        return "cliente";
+    }
 }

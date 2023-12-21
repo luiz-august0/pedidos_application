@@ -1,4 +1,4 @@
-package com.pedidosapp.api.utils.endpoints;
+package com.pedidosapp.api.constants.endpoints;
 
 public abstract class Endpoints {
     public static final String session = "/api/session";

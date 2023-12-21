@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.pedidosapp.api.utils.endpoints.Endpoints.session;
+import static com.pedidosapp.api.constants.endpoints.Endpoints.session;
 
 @RequestMapping(session)
 public interface IAuthenticationController {

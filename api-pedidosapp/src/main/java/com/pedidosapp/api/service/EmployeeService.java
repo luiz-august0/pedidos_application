@@ -10,6 +10,7 @@ import com.pedidosapp.api.repository.EmployeeRepository;
 import com.pedidosapp.api.repository.UserRepository;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumUnauthorizedException;
+import com.pedidosapp.api.service.validators.EmployeeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmployeeService extends AbstractService<EmployeeRepository, Employee, EmployeeDTO> {
+public class EmployeeService extends AbstractService<EmployeeRepository, Employee, EmployeeDTO, EmployeeValidator> {
     @Autowired
     EmployeeRepository employeeRepository;
 
@@ -25,7 +26,7 @@ public class EmployeeService extends AbstractService<EmployeeRepository, Employe
     UserRepository userRepository;
 
     EmployeeService(EmployeeRepository repository) {
-        super(repository, new Employee(), new EmployeeDTO());
+        super(repository, new Employee(), new EmployeeDTO(), new EmployeeValidator());
     }
 
     public ResponseEntity insert(EmployeeBean bean) {

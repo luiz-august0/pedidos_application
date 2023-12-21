@@ -36,4 +36,9 @@ public class Supplier extends AbstractEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "supplier")
     List<Product> products;
+
+    @Override
+    public String getPortugueseClassName() {
+        return "fornecedor";
+    }
 }

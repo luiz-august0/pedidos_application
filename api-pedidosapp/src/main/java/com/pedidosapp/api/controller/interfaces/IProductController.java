@@ -3,7 +3,7 @@ package com.pedidosapp.api.controller.interfaces;
 import com.pedidosapp.api.model.dtos.ProductDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.pedidosapp.api.utils.endpoints.Endpoints.product;
+import static com.pedidosapp.api.constants.endpoints.Endpoints.product;
 
 @RequestMapping(product)
 public interface IProductController extends IAbstractAllController<ProductDTO> {

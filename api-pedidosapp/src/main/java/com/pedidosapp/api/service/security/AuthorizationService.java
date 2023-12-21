@@ -1,7 +1,8 @@
 package com.pedidosapp.api.service.security;
 
 import com.pedidosapp.api.repository.UserRepository;
-import com.pedidosapp.api.service.exceptions.ResourceNotFoundException;
+import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
+import com.pedidosapp.api.service.exceptions.enums.EnumResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,7 +19,7 @@ public class AuthorizationService implements UserDetailsService {
         try {
             return repository.findByLogin(username);
         } catch (UsernameNotFoundException e) {
-            throw new ResourceNotFoundException();
+            throw new ApplicationGenericsException(EnumResourceNotFoundException.RESOURCE_NOT_FOUND);
         }
     }
 }

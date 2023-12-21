@@ -33,4 +33,9 @@ public class Product extends AbstractEntity {
     @JoinColumn(name = "supplier_id", nullable = false)
     @ManyToOne
     private Supplier supplier;
+
+    @Override
+    public String getPortugueseClassName() {
+        return "produto";
+    }
 }

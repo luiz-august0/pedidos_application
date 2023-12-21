@@ -5,7 +5,7 @@ import com.pedidosapp.api.model.dtos.EmployeeDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.pedidosapp.api.utils.endpoints.Endpoints.employee;
+import static com.pedidosapp.api.constants.endpoints.Endpoints.employee;
 
 @RequestMapping(employee)
 public interface IEmployeeController extends IAbstractAllGetController<EmployeeDTO> {

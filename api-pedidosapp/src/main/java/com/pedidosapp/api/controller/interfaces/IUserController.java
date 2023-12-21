@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.pedidosapp.api.utils.endpoints.Endpoints.user;
+import static com.pedidosapp.api.constants.endpoints.Endpoints.user;
 
 @RequestMapping(user)
 public interface IUserController {

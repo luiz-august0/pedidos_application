@@ -28,4 +28,9 @@ public class Employee extends AbstractEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     @OneToOne
     private User user;
+
+    @Override
+    public String getPortugueseClassName() {
+        return "funcionário";
+    }
 }

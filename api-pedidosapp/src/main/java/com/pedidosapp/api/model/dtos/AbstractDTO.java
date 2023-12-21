@@ -1,5 +1,6 @@
 package com.pedidosapp.api.model.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pedidosapp.api.model.entities.AbstractEntity;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.utils.Utils;
@@ -11,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractDTO<Entity extends AbstractEntity> implements Serializable {
     public Specification<Entity> toSpec(Entity entity) {
         return (root, query, criteriaBuilder) -> {
