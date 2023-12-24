@@ -1,16 +1,24 @@
 package com.pedidosapp.api.model.beans;
 
+import com.pedidosapp.api.model.dtos.EmployeeDTO;
+import com.pedidosapp.api.model.enums.EnumUserRole;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class EmployeeBean {
+@AllArgsConstructor
+@NoArgsConstructor
+public class TokenBean extends AbstractBean {
+    private Integer userId;
+
     private String login;
 
-    private String password;
+    private EnumUserRole role;
 
-    private String name;
+    private EmployeeDTO employee;
 
-    private String cpf;
-
-    private String contact;
+    private String accessToken;
 }

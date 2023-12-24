@@ -3,10 +3,11 @@ package com.pedidosapp.api.config.security;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.pedidosapp.api.repository.UserRepository;
+import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumGenericsException;
 import com.pedidosapp.api.service.security.TokenService;
+import com.pedidosapp.api.utils.Utils;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,19 +34,19 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         var token = recoverToken(request);
         try {
-            if (token != null) {
+            if (Utils.isNotEmpty(token)) {
                 var login = tokenService.validateToken(token);
                 UserDetails userDetails = userRepository.findByLogin(login);
 
                 var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                filterChain.doFilter(request, response);
+            } else {
+                throw new ApplicationGenericsException(EnumGenericsException.TOKEN_NULL);
             }
-
-            filterChain.doFilter(request, response);
-
         } catch (Exception e) {
             String errorMessage;
             Integer status = HttpServletResponse.SC_UNAUTHORIZED;
@@ -54,6 +55,8 @@ public class SecurityFilter extends OncePerRequestFilter {
                 errorMessage = EnumGenericsException.EXPIRED_TOKEN.getMessage();
             } else if (e.getClass().equals(JWTVerificationException.class)) {
                 errorMessage = EnumGenericsException.VALIDATE_TOKEN.getMessage();
+            } else if (e.getClass().equals(ApplicationGenericsException.class)) {
+                errorMessage = e.getMessage();
             } else {
                 status = HttpServletResponse.SC_BAD_REQUEST;
                 errorMessage = e.getMessage();

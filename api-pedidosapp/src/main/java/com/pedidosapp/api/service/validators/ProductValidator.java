@@ -1,6 +1,5 @@
 package com.pedidosapp.api.service.validators;
 
-import com.pedidosapp.api.model.entities.Customer;
 import com.pedidosapp.api.model.entities.Product;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 
@@ -11,7 +10,10 @@ public class ProductValidator extends AbstractValidator<Product> {
     public ProductValidator() {
         try {
             List<RequiredField> requiredFields = new ArrayList<>();
-            requiredFields.add(new RequiredField(Customer.class.getDeclaredField("name"), "nome"));
+            requiredFields.add(new RequiredField(Product.class.getDeclaredField("description"), "descrição"));
+            requiredFields.add(new RequiredField(Product.class.getDeclaredField("unit"), "unidade"));
+            requiredFields.add(new RequiredField(Product.class.getDeclaredField("unitValue"), "valor unitário"));
+            requiredFields.add(new RequiredField(Product.class.getDeclaredField("supplier"), "fornecedor"));
 
             super.addListOfRequiredFields(requiredFields);
         } catch (Exception e) {

@@ -1,4 +1,7 @@
 package com.pedidosapp.api.model.beans;
 
-public class AbstractBean {
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public abstract class AbstractBean {
 }

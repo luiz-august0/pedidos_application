@@ -1,9 +1,13 @@
 package com.pedidosapp.api.service.security;
 
+import com.pedidosapp.api.converter.Converter;
+import com.pedidosapp.api.model.beans.TokenBean;
 import com.pedidosapp.api.model.dtos.AuthenticationDTO;
+import com.pedidosapp.api.model.dtos.EmployeeDTO;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumUnauthorizedException;
+import com.pedidosapp.api.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +31,20 @@ public class AuthenticationService {
         try {
             var session = authenticationManager.authenticate(loginPassword);
             var token = tokenService.generateToken((User) session.getPrincipal());
-            return ResponseEntity.ok(token);
+            User user = (User) session.getPrincipal();
+            TokenBean tokenBean = new TokenBean();
+
+            tokenBean.setUserId(user.getId());
+            tokenBean.setLogin(user.getLogin());
+            tokenBean.setRole(user.getRole());
+
+            if (Utils.isNotEmpty(user.getEmployee())) {
+                tokenBean.setEmployee(Converter.convertEntityToDTO(user.getEmployee(), EmployeeDTO.class));
+            }
+
+            tokenBean.setAccessToken(token);
+
+            return ResponseEntity.ok(tokenBean);
         } catch (RuntimeException e) {
             if (e.getClass() == BadCredentialsException.class || e.getClass() == InternalAuthenticationServiceException.class) {
                 throw new ApplicationGenericsException(EnumUnauthorizedException.WRONG_CREDENTIALS);
