@@ -21,10 +21,12 @@ import java.util.Optional;
 
 public abstract class AbstractService
         <Repository extends JpaRepository & PagingAndSortingRepository & JpaSpecificationExecutor,
-                Entity extends AbstractEntity, DTO extends AbstractDTO<Entity>, Validator extends AbstractValidator<Entity>>
+                Entity extends AbstractEntity, DTO extends AbstractDTO<Entity>, Validator extends AbstractValidator>
 {
     private final Repository repository;
+
     private final Entity entity;
+
     private final DTO dto;
 
     private final Validator validator;
@@ -60,10 +62,10 @@ public abstract class AbstractService
 
     public ResponseEntity insert(DTO object) {
         Entity entityObject = (Entity) Converter.convertDTOToEntity(object, entity.getClass());
-        validator.validate((Entity) entityObject);
+        validator.validate(entityObject);
 
         repository.save(entityObject);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Converter.convertEntityToDTO((Entity) entityObject, dto.getClass()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Converter.convertEntityToDTO(entityObject, dto.getClass()));
     }
 
     public ResponseEntity delete(Integer id) {

@@ -6,7 +6,7 @@ import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductValidator extends AbstractValidator<Product> {
+public class ProductValidator extends AbstractValidator {
     public ProductValidator() {
         try {
             List<RequiredField> requiredFields = new ArrayList<>();

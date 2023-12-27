@@ -3,8 +3,7 @@ package com.pedidosapp.api.service;
 import com.pedidosapp.api.model.dtos.RegisterDTO;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.repository.UserRepository;
-import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
-import com.pedidosapp.api.service.exceptions.enums.EnumUnauthorizedException;
+import com.pedidosapp.api.service.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,8 +18,8 @@ public class UserService {
     UserRepository repository;
 
     public ResponseEntity register(RegisterDTO registerDTO) {
-        if (repository.findByLogin(registerDTO.login()) != null)
-            throw new ApplicationGenericsException(EnumUnauthorizedException.USER_ALREADY_REGISTERED);
+        final UserValidator userValidator = new UserValidator(repository);
+        userValidator.validate(registerDTO);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
         User user = new User(registerDTO.login(), encryptedPassword, registerDTO.role());

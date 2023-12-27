@@ -1,5 +1,6 @@
 package com.pedidosapp.api.config.security;
 
+import com.pedidosapp.api.constants.endpoints.Endpoints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,11 +15,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
     @Autowired
     SecurityFilter securityFilter;
+
+    private final String[] blockedEndpointsEmployees = {
+            Endpoints.supplier + "/**",
+            Endpoints.user + "/**",
+            Endpoints.customer + "/**",
+            Endpoints.product + "/**",
+            Endpoints.employee + "/**"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -26,9 +38,9 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/session/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/user/register").permitAll()
                         .requestMatchers(
+                                Endpoints.session + "/login",
+                                Endpoints.user + "/register",
                                 "/v3/api-docs/**",
                                 "/configuration/ui",
                                 "/swagger-resources/**",
@@ -37,8 +49,10 @@ public class SecurityConfigurations {
                                 "/webjars/**",
                                 "/swagger-ui/**"
                         ).permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/teste").hasRole("ADMIN")
-                        //.requestMatchers(HttpMethod.GET, "/teste").permitAll()
+                        .requestMatchers(HttpMethod.POST, blockedEndpointsEmployees).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, blockedEndpointsEmployees).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, blockedEndpointsEmployees).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, blockedEndpointsEmployees).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
