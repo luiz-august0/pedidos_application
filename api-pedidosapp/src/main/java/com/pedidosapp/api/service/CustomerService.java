@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerService extends AbstractService<CustomerRepository, Customer, CustomerDTO, CustomerValidator> {
     CustomerService(CustomerRepository repository) {
-        super(repository, new Customer(), new CustomerDTO(), new CustomerValidator());
+        super(repository, new Customer(), new CustomerDTO(), new CustomerValidator(repository));
     }
 }

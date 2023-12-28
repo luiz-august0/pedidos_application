@@ -5,7 +5,9 @@ public enum EnumUnauthorizedException {
     WRONG_CREDENTIALS("Usuário ou senha incorretos"),
     CNPJ_INVALID("CNPJ inválido"),
     CNPJ_CPF_INVALID("CPF/CNPJ inválido"),
-    CPF_INVALID("CPF inválido");
+    CPF_INVALID("CPF inválido"),
+    CPF_ALREADY_REGISTERED("CPF j́á cadastrado"),
+    CNPJ_ALREADY_REGISTERED("CNPJ j́á cadastrado");
     private final String message;
 
     EnumUnauthorizedException(String message) {

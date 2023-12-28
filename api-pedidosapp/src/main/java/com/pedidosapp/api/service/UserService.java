@@ -4,7 +4,6 @@ import com.pedidosapp.api.model.dtos.RegisterDTO;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.repository.UserRepository;
 import com.pedidosapp.api.service.validators.UserValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,12 +13,17 @@ import java.net.URI;
 
 @Service
 public class UserService {
-    @Autowired
-    UserRepository repository;
+    private final UserRepository repository;
+
+    private final UserValidator validator;
+
+    public UserService(UserRepository repository) {
+        this.repository = repository;
+        this.validator = new UserValidator(repository);
+    }
 
     public ResponseEntity register(RegisterDTO registerDTO) {
-        final UserValidator userValidator = new UserValidator(repository);
-        userValidator.validate(registerDTO);
+        validator.validate(registerDTO);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
         User user = new User(registerDTO.login(), encryptedPassword, registerDTO.role());
