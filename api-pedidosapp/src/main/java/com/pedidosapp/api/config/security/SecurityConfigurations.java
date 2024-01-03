@@ -15,9 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
@@ -40,6 +37,7 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 Endpoints.session + "/login",
+                                Endpoints.session + "/refresh-token",
                                 Endpoints.user + "/register",
                                 "/v3/api-docs/**",
                                 "/configuration/ui",

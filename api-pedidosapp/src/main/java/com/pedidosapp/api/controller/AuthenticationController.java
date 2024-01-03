@@ -1,6 +1,7 @@
 package com.pedidosapp.api.controller;
 
 import com.pedidosapp.api.controller.interfaces.IAuthenticationController;
+import com.pedidosapp.api.model.beans.TokenBean;
 import com.pedidosapp.api.model.dtos.AuthenticationDTO;
 import com.pedidosapp.api.service.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,12 @@ public class AuthenticationController implements IAuthenticationController, Seri
     private AuthenticationService service;
 
     @Override
-    public ResponseEntity login(AuthenticationDTO authenticationDTO) {
+    public ResponseEntity<TokenBean> login(AuthenticationDTO authenticationDTO) {
         return service.login(authenticationDTO);
+    }
+
+    @Override
+    public ResponseEntity<TokenBean> refreshToken(TokenBean tokenBeanRequest) {
+        return service.refreshToken(tokenBeanRequest);
     }
 }

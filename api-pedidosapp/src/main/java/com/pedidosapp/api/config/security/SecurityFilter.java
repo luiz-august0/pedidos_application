@@ -45,7 +45,9 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                if (!request.getRequestURI().equals(Endpoints.session + "/login") && !request.getRequestURI().equals(Endpoints.user + "/register")) {
+                if (!request.getRequestURI().equals(Endpoints.session + "/login")
+                        && !request.getRequestURI().equals(Endpoints.user + "/register")
+                        && !request.getRequestURI().equals(Endpoints.session + "/refresh-token") ) {
                     throw new ApplicationGenericsException(EnumGenericsException.TOKEN_NULL);
                 }
             }

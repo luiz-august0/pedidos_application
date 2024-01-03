@@ -1,6 +1,9 @@
 package com.pedidosapp.api.config.multitenancy;
 
 import com.auth0.jwt.JWT;
+import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
+import com.pedidosapp.api.service.exceptions.enums.EnumGenericsException;
+import com.pedidosapp.api.utils.Utils;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
@@ -20,7 +23,13 @@ public class TenantInterceptor implements WebRequestInterceptor {
             TenantContext.setCurrentTenant(request.getHeader(TENANT_HEADER));
         } else {
             String token = sessionHeader.replace("Bearer ", "");
-            TenantContext.setCurrentTenant(String.valueOf(JWT.decode(token).getAudience()).replaceAll("]", "").replaceAll("\\[", ""));
+            String schema = String.valueOf(JWT.decode(token).getAudience()).replaceAll("]", "").replaceAll("\\[", "");
+
+            if (Utils.isNotEmpty(schema)) {
+                TenantContext.setCurrentTenant(schema);
+            } else {
+                throw new ApplicationGenericsException(EnumGenericsException.TOKEN_WITHOUT_SCHEMA);
+            }
         }
     }
 

@@ -3,6 +3,8 @@ package com.pedidosapp.api.service.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.pedidosapp.api.config.multitenancy.TenantContext;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
@@ -13,14 +15,19 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Base64;
+import java.util.UUID;
 
 @Service
 public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    private Instant genExpirationDate() {
-        return LocalDateTime.now().plusDays(7).toInstant(ZoneOffset.of("-03:00"));
+    private Instant genExpirationDateAccessToken() {
+        return LocalDateTime.now().plusSeconds(10).toInstant(ZoneOffset.of("-03:00"));
+    }
+    private Instant genExpirationDateRefreshToken() {
+        return LocalDateTime.now().plusSeconds(60).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public String generateToken(User user) {
@@ -30,7 +37,7 @@ public class TokenService {
                     .withAudience(TenantContext.getCurrentTenant())
                     .withIssuer("pedidosapp-session")
                     .withSubject(user.getLogin())
-                    .withExpiresAt(genExpirationDate())
+                    .withExpiresAt(genExpirationDateAccessToken())
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException e) {
@@ -38,12 +45,40 @@ public class TokenService {
         }
     }
 
+    public String generateRefreshToken(User user) {
+        try {
+            String uniqueId = UUID.randomUUID().toString();
+            String userIdAndSchema = user.getId() + "-" + TenantContext.getCurrentTenant();
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            String token = JWT.create()
+                    .withJWTId(uniqueId)
+                    .withIssuer("pedidosapp-session")
+                    .withSubject(new String(Base64.getEncoder().encode(userIdAndSchema.getBytes())))
+                    .withExpiresAt(genExpirationDateRefreshToken())
+                    .sign(algorithm);
+            return token;
+        } catch (JWTCreationException e) {
+            throw new ApplicationGenericsException(EnumGenericsException.GENERATE_REFRESH_TOKEN);
+        }
+    }
+
     public String validateToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
-        return JWT.require(algorithm)
-                .withIssuer("pedidosapp-session")
-                .build()
-                .verify(token)
-                .getSubject();
+
+        try {
+            return JWT.require(algorithm)
+                    .withIssuer("pedidosapp-session")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (Exception e) {
+            if (e.getClass().equals(TokenExpiredException.class)) {
+                throw new ApplicationGenericsException(EnumGenericsException.EXPIRED_TOKEN);
+            } else if (e.getClass().equals(JWTVerificationException.class)) {
+                throw new ApplicationGenericsException(EnumGenericsException.VALIDATE_TOKEN);
+            } else {
+                throw new ApplicationGenericsException(e.getMessage());
+            }
+        }
     }
 }

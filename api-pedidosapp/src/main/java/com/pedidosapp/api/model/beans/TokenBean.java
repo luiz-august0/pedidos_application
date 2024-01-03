@@ -21,4 +21,6 @@ public class TokenBean extends AbstractBean {
     private EmployeeDTO employee;
 
     private String accessToken;
+
+    private String refreshToken;
 }

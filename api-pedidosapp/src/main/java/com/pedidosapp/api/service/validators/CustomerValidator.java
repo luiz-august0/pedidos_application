@@ -2,7 +2,6 @@ package com.pedidosapp.api.service.validators;
 
 import com.pedidosapp.api.model.entities.Customer;
 import com.pedidosapp.api.repository.CustomerRepository;
-import com.pedidosapp.api.repository.UserRepository;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumUnauthorizedException;
 import com.pedidosapp.api.utils.CnpjUtil;
