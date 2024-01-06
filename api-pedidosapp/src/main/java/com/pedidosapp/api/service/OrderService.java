@@ -1,14 +1,14 @@
 package com.pedidosapp.api.service;
 
-import com.pedidosapp.api.model.dtos.CustomerDTO;
-import com.pedidosapp.api.model.entities.Customer;
-import com.pedidosapp.api.repository.CustomerRepository;
-import com.pedidosapp.api.service.validators.CustomerValidator;
+import com.pedidosapp.api.model.dtos.OrderDTO;
+import com.pedidosapp.api.model.entities.Order;
+import com.pedidosapp.api.repository.OrderRepository;
+import com.pedidosapp.api.service.validators.OrderValidator;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderService extends AbstractService<CustomerRepository, Customer, CustomerDTO, CustomerValidator> {
-    OrderService(CustomerRepository repository) {
-        super(repository, new Customer(), new CustomerDTO(), new CustomerValidator(repository));
+public class OrderService extends AbstractService<OrderRepository, Order, OrderDTO, OrderValidator> {
+    OrderService(OrderRepository repository) {
+        super(repository, new Order(), new OrderDTO(), new OrderValidator());
     }
 }

@@ -1,11 +1,9 @@
 package com.pedidosapp.api.model.entities;
 
-import com.pedidosapp.api.model.enums.EnumStatusOrder;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 
 @Entity
@@ -13,39 +11,38 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "order")
+@Table(name = "order_item")
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class OrderItem extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     @ManyToOne
-    private Customer customer;
+    private Order order;
 
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     @ManyToOne
-    private User user;
+    private Product product;
+
+    @Column(nullable = false, name = "quantity")
+    private BigDecimal quantity;
+
+    @Column(nullable = false, name = "unitary_value")
+    private BigDecimal unitaryValue;
 
     @Column(nullable = false, name = "amount")
     private BigDecimal amount;
 
-    @Column(nullable = false, name = "discount")
+    @Column(name = "discount")
     private BigDecimal discount;
 
-    @Column(nullable = false, name = "addition")
+    @Column(name = "addition")
     private BigDecimal addition;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 50)
-    private EnumStatusOrder status;
-
-    @Column(nullable = false, name = "inclusion_date")
-    private Date inclusionDate;
 
     @Override
     public String getPortugueseClassName() {
-        return "pedido";
+        return "item do pedido";
     }
 }

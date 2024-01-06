@@ -7,4 +7,6 @@ public abstract class Endpoints {
     public static final String supplier = "/api/supplier";
     public static final String employee = "/api/employee";
     public static final String product = "/api/product";
+    public static final String order = "/api/order";
+    public static final String orderItem = "/api/order/item";
 }

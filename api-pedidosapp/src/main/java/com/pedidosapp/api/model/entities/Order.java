@@ -1,10 +1,12 @@
 package com.pedidosapp.api.model.entities;
 
-import com.pedidosapp.api.model.enums.EnumUnitProduct;
+import com.pedidosapp.api.model.enums.EnumStatusOrder;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -12,32 +14,42 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "product")
+@Table(name = "orders")
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class Order extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
-    private String description;
+    @JoinColumn(name = "customer_id", nullable = false)
+    @ManyToOne
+    private Customer customer;
+
+    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    private User user;
+
+    @Column(nullable = false, name = "amount")
+    private BigDecimal amount;
+
+    @Column(name = "discount")
+    private BigDecimal discount;
+
+    @Column(name = "addition")
+    private BigDecimal addition;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
-    private EnumUnitProduct unit;
+    @Column(name = "status", nullable = false, length = 50)
+    private EnumStatusOrder status;
 
-    @Column(nullable = false, name = "unitary_value")
-    private BigDecimal unitaryValue;
+    @Column(nullable = false, name = "inclusion_date")
+    private Date inclusionDate;
 
-    @Column(name = "stock_quantity")
-    private BigDecimal stockQuantity;
-
-    @JoinColumn(name = "supplier_id", nullable = false)
-    @ManyToOne
-    private Supplier supplier;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    List<OrderItem> items;
 
     @Override
     public String getPortugueseClassName() {
-        return "produto";
+        return "pedido";
     }
 }

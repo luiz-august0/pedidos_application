@@ -33,12 +33,16 @@ public class User extends AbstractEntity implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
+    @Column(name = "role", nullable = false, length = 30)
     private EnumUserRole role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private Employee employee;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    List<Order> orders;
 
     public User(String login, String password, EnumUserRole role) {
         this.login = login;

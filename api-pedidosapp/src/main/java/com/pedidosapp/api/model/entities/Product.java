@@ -4,6 +4,8 @@ import com.pedidosapp.api.model.enums.EnumUnitProduct;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 
 @Entity
 @NoArgsConstructor
@@ -21,14 +23,14 @@ public class Product extends AbstractEntity {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
+    @Column(name = "unit", nullable = false, length = 50)
     private EnumUnitProduct unit;
 
-    @Column(nullable = false, name = "unit_value")
-    private Double unitValue;
+    @Column(nullable = false, name = "unitary_value")
+    private BigDecimal unitaryValue;
 
     @Column(name = "stock_quantity")
-    private Double stockQuantity;
+    private BigDecimal stockQuantity;
 
     @JoinColumn(name = "supplier_id", nullable = false)
     @ManyToOne

@@ -1,21 +1,18 @@
 package com.pedidosapp.api.model.enums;
 
 public enum EnumStatusOrder {
-    UNIT("UNIT", "Unidade"),
-    KILOGRAM("KILOGRAM", "Kilograma"),
-    PACKAGE("PACKAGE", "Pacote");
+    OPEN("OPEN", "Aberto"),
+    CLOSED("CLOSED", "Fechado");
 
-    private String unit;
+    private String status;
     private String name;
 
-    EnumStatusOrder(String unit, String name) {
-        this.unit = unit;
+    EnumStatusOrder(String status, String name) {
+        this.status = status;
         this.name = name;
     }
 
-    public String getUnit() {
-        return unit;
-    }
+    public String getStatus() { return status; }
 
     public String getName() {
         return name;

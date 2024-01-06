@@ -12,7 +12,7 @@ public class ProductValidator extends AbstractValidator {
             List<RequiredField> requiredFields = new ArrayList<>();
             requiredFields.add(new RequiredField(Product.class.getDeclaredField("description"), "descrição"));
             requiredFields.add(new RequiredField(Product.class.getDeclaredField("unit"), "unidade"));
-            requiredFields.add(new RequiredField(Product.class.getDeclaredField("unitValue"), "valor unitário"));
+            requiredFields.add(new RequiredField(Product.class.getDeclaredField("unitaryValue"), "valor unitário"));
             requiredFields.add(new RequiredField(Product.class.getDeclaredField("supplier"), "fornecedor"));
 
             super.addListOfRequiredFields(requiredFields);

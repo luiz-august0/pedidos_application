@@ -1,7 +1,10 @@
 package com.pedidosapp.api.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -26,6 +29,10 @@ public class Customer extends AbstractEntity {
 
     @Column(length = 20)
     private String contact;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    List<Order> orders;
 
     @Override
     public String getPortugueseClassName() {

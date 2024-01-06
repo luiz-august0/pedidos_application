@@ -1,10 +1,10 @@
 package com.pedidosapp.api.controller.interfaces;
 
-import com.pedidosapp.api.model.dtos.OrderDTO;
+import com.pedidosapp.api.model.dtos.OrderItemDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.pedidosapp.api.constants.endpoints.Endpoints.order;
+import static com.pedidosapp.api.constants.endpoints.Endpoints.orderItem;
 
-@RequestMapping(order)
-public interface IOrderItemController extends IAbstractAllController<OrderDTO> {
+@RequestMapping(orderItem)
+public interface IOrderItemController extends IAbstractAllController<OrderItemDTO> {
 }

@@ -1,6 +1,6 @@
 package com.pedidosapp.api.service.validators;
 
-import com.pedidosapp.api.model.entities.Order;
+import com.pedidosapp.api.model.entities.OrderItem;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 
 import java.util.ArrayList;
@@ -10,10 +10,11 @@ public class OrderItemValidator extends AbstractValidator {
     public OrderItemValidator() {
         try {
             List<RequiredField> requiredFields = new ArrayList<>();
-            requiredFields.add(new RequiredField(Order.class.getDeclaredField("description"), "descrição"));
-            requiredFields.add(new RequiredField(Order.class.getDeclaredField("unit"), "unidade"));
-            requiredFields.add(new RequiredField(Order.class.getDeclaredField("unitaryValue"), "valor unitário"));
-            requiredFields.add(new RequiredField(Order.class.getDeclaredField("supplier"), "fornecedor"));
+            requiredFields.add(new RequiredField(OrderItem.class.getDeclaredField("order"), "pedido"));
+            requiredFields.add(new RequiredField(OrderItem.class.getDeclaredField("product"), "produto"));
+            requiredFields.add(new RequiredField(OrderItem.class.getDeclaredField("quantity"), "quantidade"));
+            requiredFields.add(new RequiredField(OrderItem.class.getDeclaredField("unitaryValue"), "valor unitário"));
+            requiredFields.add(new RequiredField(OrderItem.class.getDeclaredField("amount"), "valor total"));
 
             super.addListOfRequiredFields(requiredFields);
         } catch (Exception e) {
