@@ -1,9 +1,18 @@
-package com.pedidosapp.api.config.flyway;
+package com.pedidosapp.api.config.datasource;
 
+import com.pedidosapp.api.config.multitenancy.TenantContext;
+import com.pedidosapp.api.model.dtos.RegisterDTO;
+import com.pedidosapp.api.model.entities.User;
+import com.pedidosapp.api.model.enums.EnumUserRole;
+import com.pedidosapp.api.repository.UserRepository;
+import com.pedidosapp.api.service.UserService;
+import com.pedidosapp.api.utils.Utils;
 import jakarta.annotation.PostConstruct;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -12,9 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class FlywayConfig {
+public class DataSourceLoad {
     @Autowired
     DataSource dataSource;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @PostConstruct
     public void migrate() {
@@ -33,7 +48,18 @@ public class FlywayConfig {
         }
 
         for (String schema : schemas) {
+            TenantContext.clear();
             Flyway.configure().dataSource(dataSource).schemas(schema).load().migrate();
+
+            TenantContext.setCurrentTenant(schema);
+            UserDetails userDetails = userRepository.findByLogin("admin");
+
+            if (Utils.isEmpty(userDetails)) {
+                String encryptedPassword = new BCryptPasswordEncoder().encode(schema + "123logar");
+                User user = new User("admin", encryptedPassword, EnumUserRole.ADMIN);
+
+                userRepository.save(user);
+            }
         }
     }
 }
