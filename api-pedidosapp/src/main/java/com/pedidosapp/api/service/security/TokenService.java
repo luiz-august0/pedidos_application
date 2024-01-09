@@ -24,10 +24,10 @@ public class TokenService {
     private String secret;
 
     private Instant genExpirationDateAccessToken() {
-        return LocalDateTime.now().plusSeconds(10).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.of("-03:00"));
     }
     private Instant genExpirationDateRefreshToken() {
-        return LocalDateTime.now().plusSeconds(60).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusDays(30).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public String generateToken(User user) {

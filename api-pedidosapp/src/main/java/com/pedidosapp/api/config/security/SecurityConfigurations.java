@@ -38,7 +38,6 @@ public class SecurityConfigurations {
                         .requestMatchers(
                                 Endpoints.session + "/login",
                                 Endpoints.session + "/refresh-token",
-                                Endpoints.user + "/register",
                                 "/v3/api-docs/**",
                                 "/configuration/ui",
                                 "/swagger-resources/**",

@@ -58,7 +58,7 @@ public class AuthenticationService {
 
             return ResponseEntity.ok(tokenBean);
         } catch (RuntimeException e) {
-            if (e.getClass() == BadCredentialsException.class || e.getClass() == InternalAuthenticationServiceException.class) {
+            if (e.getClass() == BadCredentialsException.class) {
                 throw new ApplicationGenericsException(EnumUnauthorizedException.WRONG_CREDENTIALS);
             } else {
                 throw new ApplicationGenericsException(e.getMessage());
