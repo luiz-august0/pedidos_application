@@ -1,11 +1,9 @@
 package com.pedidosapp.api.model.beans;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class EmployeeBean extends AbstractBean {
+public class EmployeeBean {
     private String login;
 
     private String password;

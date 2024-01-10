@@ -1,7 +1,6 @@
 package com.pedidosapp.api.config.datasource;
 
 import com.pedidosapp.api.config.multitenancy.TenantContext;
-import com.pedidosapp.api.model.dtos.RegisterDTO;
 import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.model.enums.EnumUserRole;
 import com.pedidosapp.api.repository.UserRepository;
