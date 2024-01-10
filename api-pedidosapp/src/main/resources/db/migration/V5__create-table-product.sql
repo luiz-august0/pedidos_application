@@ -2,7 +2,7 @@ CREATE TABLE product (
     id SERIAL UNIQUE PRIMARY KEY,
     description TEXT NOT NULL,
     unit VARCHAR(50) NOT NULL,
-    unit_value NUMERIC NOT NULL,
+    unitary_value NUMERIC NOT NULL,
     stock_quantity NUMERIC,
     supplier_id INT NOT NULL
 );
