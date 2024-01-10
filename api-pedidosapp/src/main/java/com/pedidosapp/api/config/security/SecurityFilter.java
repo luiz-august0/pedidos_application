@@ -2,7 +2,6 @@ package com.pedidosapp.api.config.security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.pedidosapp.api.constants.endpoints.Endpoints;
 import com.pedidosapp.api.repository.UserRepository;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumGenericsException;
@@ -44,10 +43,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
                 var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                if (!request.getRequestURI().equals(Endpoints.session + "/login") && !request.getRequestURI().equals(Endpoints.session + "/refresh-token") ) {
-                    throw new ApplicationGenericsException(EnumGenericsException.TOKEN_NULL);
-                }
             }
 
             filterChain.doFilter(request, response);

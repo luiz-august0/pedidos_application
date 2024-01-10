@@ -32,8 +32,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         final MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter(mapper);
 
         converters.clear();
-        converters.add(jsonConverter);
         converters.add(new ByteArrayHttpMessageConverter());
+        converters.add(jsonConverter);
     }
 
     public WebMvcConfig(TenantInterceptor tenantInterceptor) {
