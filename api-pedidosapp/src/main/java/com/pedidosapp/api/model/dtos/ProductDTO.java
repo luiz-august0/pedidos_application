@@ -23,4 +23,6 @@ public class ProductDTO extends AbstractDTO<Product> {
     private BigDecimal stockQuantity;
 
     private SupplierDTO supplier;
+
+    private Boolean active;
 }

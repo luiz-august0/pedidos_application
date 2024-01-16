@@ -2,6 +2,7 @@ package com.pedidosapp.api.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pedidosapp.api.model.enums.EnumUserRole;
+import com.pedidosapp.api.utils.Utils;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,10 +45,19 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     List<Order> orders;
 
+    @Column(nullable = false)
+    private Boolean active;
+
     public User(String login, String password, EnumUserRole role) {
         this.login = login;
         this.password = password;
         this.role = role;
+    }
+
+    @PrePersist
+    @PreUpdate
+    protected void onPersist() {
+        if (Utils.isEmpty(active)) this.active = true;
     }
 
     @Override

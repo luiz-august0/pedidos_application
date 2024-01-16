@@ -37,7 +37,7 @@ public class EmployeeService extends AbstractService<EmployeeRepository, Employe
         User user = new User(bean.getLogin(), encryptedPassword, EnumUserRole.EMPLOYEE);
         userRepository.save(user);
 
-        Employee employee = new Employee(null, bean.getName(), bean.getCpf(), bean.getContact(), user);
+        Employee employee = new Employee(null, bean.getName(), bean.getCpf(), bean.getContact(), user, true);
         employeeRepository.save(employee);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -69,12 +69,16 @@ public class EmployeeService extends AbstractService<EmployeeRepository, Employe
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity deleteById(Integer id) {
+    @Override
+    public ResponseEntity activateInactivate(Integer id, Boolean active) {
         Employee employee = Converter.convertDTOToEntity(super.findAndValidate(id), Employee.class);
+        User user = employee.getUser();
+        employee.setActive(active);
+        user.setActive(active);
+        user.setEmployee(employee);
 
-        userRepository.deleteById(employee.getUser().getId());
-        employeeRepository.deleteById(employee.getId());
-
+        userRepository.save(user);
+        employeeRepository.save(employee);
         return ResponseEntity.ok().build();
     }
 }

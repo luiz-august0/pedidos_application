@@ -1,6 +1,7 @@
 package com.pedidosapp.api.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pedidosapp.api.utils.Utils;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,6 +34,15 @@ public class Customer extends AbstractEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
     List<Order> orders;
+
+    @Column(nullable = false)
+    private Boolean active;
+
+    @PrePersist
+    @PreUpdate
+    protected void onPersist() {
+        if (Utils.isEmpty(active)) this.active = true;
+    }
 
     @Override
     public String getPortugueseClassName() {

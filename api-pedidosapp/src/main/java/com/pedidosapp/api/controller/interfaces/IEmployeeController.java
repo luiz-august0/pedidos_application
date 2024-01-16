@@ -15,6 +15,6 @@ public interface IEmployeeController extends IAbstractAllGetController<EmployeeD
     @PutMapping("/{id}")
     ResponseEntity update(@PathVariable("id") Integer id, @RequestBody EmployeeBean bean);
 
-    @DeleteMapping("/{id}")
-    ResponseEntity delete(@PathVariable("id") Integer id);
+    @PutMapping("/{id}/activate")
+    ResponseEntity activateInactivate(@PathVariable("id") Integer id, @RequestParam(value = "active", defaultValue = "true") Boolean active);
 }

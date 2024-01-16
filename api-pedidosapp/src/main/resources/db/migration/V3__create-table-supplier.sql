@@ -4,5 +4,6 @@ CREATE TABLE supplier (
     social_reason varchar(255),
     cpf varchar(11) UNIQUE,
     cnpj varchar(14) UNIQUE,
-    contact varchar(20)
+    contact varchar(20),
+    active BOOLEAN NOT NULL DEFAULT TRUE
 );

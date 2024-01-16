@@ -19,4 +19,6 @@ public class UserDTO extends AbstractDTO<User> {
     private String password;
 
     private EnumUserRole role;
+
+    private Boolean active;
 }

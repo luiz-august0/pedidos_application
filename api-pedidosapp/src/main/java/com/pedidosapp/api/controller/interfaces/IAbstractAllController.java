@@ -8,8 +8,8 @@ public interface IAbstractAllController<DTO extends AbstractDTO> extends IAbstra
     @PostMapping
     ResponseEntity insert(@RequestBody DTO dto);
 
-    @DeleteMapping("/{id}")
-    ResponseEntity delete(@PathVariable("id") Integer id);
+    @PutMapping("/{id}/activate")
+    ResponseEntity activateInactivate(@PathVariable("id") Integer id, @RequestParam(value = "active", defaultValue = "true") Boolean active);
 
     @PutMapping("/{id}")
     ResponseEntity update(@PathVariable("id") Integer id, @RequestBody DTO dto);

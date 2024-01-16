@@ -4,7 +4,8 @@ CREATE TABLE product (
     unit VARCHAR(50) NOT NULL,
     unitary_value NUMERIC NOT NULL,
     stock_quantity NUMERIC,
-    supplier_id INT NOT NULL
+    supplier_id INT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 ALTER TABLE product ADD CONSTRAINT fk_product_supplier

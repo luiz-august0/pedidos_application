@@ -20,4 +20,6 @@ public class SupplierDTO extends AbstractDTO<Supplier> {
     private String cpf;
 
     private String contact;
+
+    private Boolean active;
 }

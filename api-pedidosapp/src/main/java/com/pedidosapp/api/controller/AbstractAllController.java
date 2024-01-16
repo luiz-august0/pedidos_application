@@ -23,8 +23,8 @@ public abstract class AbstractAllController
         return service.insert(dto);
     }
 
-    public ResponseEntity delete(Integer id) {
-        return service.delete(id);
+    public ResponseEntity activateInactivate(Integer id, Boolean active) {
+        return service.activateInactivate(id, active);
     }
 
     public ResponseEntity update(Integer id, DTO dto) {

@@ -18,4 +18,6 @@ public class EmployeeDTO extends AbstractDTO<Employee> {
     private String contact;
 
     private UserDTO user;
+
+    private Boolean active;
 }

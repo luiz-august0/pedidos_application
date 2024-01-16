@@ -68,9 +68,20 @@ public abstract class AbstractService
         return ResponseEntity.status(HttpStatus.CREATED).body(Converter.convertEntityToDTO(entityObject, dto.getClass()));
     }
 
-    public ResponseEntity delete(Integer id) {
-        this.findAndValidate(id);
-        repository.deleteById(id);
+    public ResponseEntity activateInactivate(Integer id, Boolean active) {
+        Entity entityObject = (Entity) Converter.convertDTOToEntity(this.findAndValidate(id), entity.getClass());
+
+        try {
+            Field field = entityObject.getClass().getDeclaredField("active");
+            field.setAccessible(true);
+            field.set(entityObject, active);
+        } catch (NoSuchFieldException e) {
+            throw new ApplicationGenericsException("Classe " + entity.getClass().getName() + " não tem campo active");
+        } catch (IllegalAccessException e) {
+            throw new ApplicationGenericsException("Não foi possível acessar o campo active da classe " + entity.getClass().getName());
+        }
+
+        repository.save(entityObject);
         return ResponseEntity.ok().build();
     }
 

@@ -1,6 +1,7 @@
 package com.pedidosapp.api.model.entities;
 
 import com.pedidosapp.api.model.enums.EnumUnitProduct;
+import com.pedidosapp.api.utils.Utils;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +36,15 @@ public class Product extends AbstractEntity {
     @JoinColumn(name = "supplier_id", nullable = false)
     @ManyToOne
     private Supplier supplier;
+
+    @Column(nullable = false)
+    private Boolean active;
+
+    @PrePersist
+    @PreUpdate
+    protected void onPersist() {
+        if (Utils.isEmpty(active)) this.active = true;
+    }
 
     @Override
     public String getPortugueseClassName() {

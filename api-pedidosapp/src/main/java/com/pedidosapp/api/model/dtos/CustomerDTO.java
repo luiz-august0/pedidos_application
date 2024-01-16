@@ -18,4 +18,6 @@ public class CustomerDTO extends AbstractDTO<Customer> {
     private String cpf;
 
     private String contact;
+
+    private Boolean active;
 }

@@ -6,7 +6,6 @@ import com.pedidosapp.api.model.dtos.EmployeeDTO;
 import com.pedidosapp.api.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,7 +25,7 @@ public class EmployeeController extends AbstractAllGetController<EmployeeService
         return service.update(id, bean);
     }
 
-    public ResponseEntity delete(@PathVariable("id") Integer id) {
-        return service.deleteById(id);
+    public ResponseEntity activateInactivate(Integer id, Boolean active) {
+        return service.activateInactivate(id, active);
     }
 }

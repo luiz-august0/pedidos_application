@@ -1,5 +1,6 @@
 package com.pedidosapp.api.model.entities;
 
+import com.pedidosapp.api.utils.Utils;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,15 @@ public class Employee extends AbstractEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     @OneToOne
     private User user;
+
+    @Column(nullable = false)
+    private Boolean active;
+
+    @PrePersist
+    @PreUpdate
+    protected void onPersist() {
+        if (Utils.isEmpty(active)) this.active = true;
+    }
 
     @Override
     public String getPortugueseClassName() {
