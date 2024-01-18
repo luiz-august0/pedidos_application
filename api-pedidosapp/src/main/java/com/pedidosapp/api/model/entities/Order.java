@@ -48,6 +48,14 @@ public class Order extends AbstractEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     List<OrderItem> items;
 
+    public BigDecimal calculateAmount() {
+        BigDecimal amount = BigDecimal.ZERO;
+
+        items.forEach(item -> amount.add(item.getAmount().subtract(item.getDiscount()).add(item.getAddition())));
+
+        return amount;
+    }
+
     @Override
     public String getPortugueseClassName() {
         return "pedido";

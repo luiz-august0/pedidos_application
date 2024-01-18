@@ -24,10 +24,8 @@ public class OrderValidator extends AbstractValidator {
         }
     }
 
-    @Override
-    public void validate(Object object) {
-        Order order = (Order) object;
-        super.validate(object);
+    public void validate(Order order) {
+        super.validate(order);
 
         if (Utils.isEmpty(order.getItems())) {
             throw new ApplicationGenericsException(EnumUnauthorizedException.EMPTY_ITEMS_ORDER);

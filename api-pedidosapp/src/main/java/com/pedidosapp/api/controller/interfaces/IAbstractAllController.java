@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.*;
 
 public interface IAbstractAllController<DTO extends AbstractDTO> extends IAbstractAllGetController {
     @PostMapping
-    ResponseEntity insert(@RequestBody DTO dto);
+    ResponseEntity<DTO> insert(@RequestBody DTO dto);
 
     @PutMapping("/{id}/activate")
-    ResponseEntity activateInactivate(@PathVariable("id") Integer id, @RequestParam(value = "active", defaultValue = "true") Boolean active);
+    ResponseEntity<DTO> activateInactivate(@PathVariable("id") Integer id, @RequestParam(value = "active", defaultValue = "true") Boolean active);
 
     @PutMapping("/{id}")
-    ResponseEntity update(@PathVariable("id") Integer id, @RequestBody DTO dto);
+    ResponseEntity<DTO> update(@PathVariable("id") Integer id, @RequestBody DTO dto);
 }

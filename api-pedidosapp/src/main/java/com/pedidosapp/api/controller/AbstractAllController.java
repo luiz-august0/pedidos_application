@@ -19,15 +19,15 @@ public abstract class AbstractAllController
         this.service = service;
     }
 
-    public ResponseEntity insert(DTO dto) {
+    public ResponseEntity<DTO> insert(DTO dto) {
         return service.insert(dto);
     }
 
-    public ResponseEntity activateInactivate(Integer id, Boolean active) {
+    public ResponseEntity<DTO> activateInactivate(Integer id, Boolean active) {
         return service.activateInactivate(id, active);
     }
 
-    public ResponseEntity update(Integer id, DTO dto) {
+    public ResponseEntity<DTO> update(Integer id, DTO dto) {
         return service.update(id, dto);
     }
 }

@@ -60,15 +60,15 @@ public abstract class AbstractService
         return (DTO) Converter.convertEntityToDTO((Entity) object.get(), dto.getClass());
     }
 
-    public ResponseEntity insert(DTO object) {
+    public ResponseEntity<DTO> insert(DTO object) {
         Entity entityObject = (Entity) Converter.convertDTOToEntity(object, entity.getClass());
         validator.validate(entityObject);
 
         repository.save(entityObject);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Converter.convertEntityToDTO(entityObject, dto.getClass()));
+        return ResponseEntity.status(HttpStatus.CREATED).body((DTO) Converter.convertEntityToDTO(entityObject, dto.getClass()));
     }
 
-    public ResponseEntity activateInactivate(Integer id, Boolean active) {
+    public ResponseEntity<DTO> activateInactivate(Integer id, Boolean active) {
         Entity entityObject = (Entity) Converter.convertDTOToEntity(this.findAndValidate(id), entity.getClass());
 
         try {
@@ -82,10 +82,10 @@ public abstract class AbstractService
         }
 
         repository.save(entityObject);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body((DTO) Converter.convertEntityToDTO(entityObject, dto.getClass()));
     }
 
-    public ResponseEntity update(Integer id, DTO object) {
+    public ResponseEntity<DTO> update(Integer id, DTO object) {
         this.findAndValidate(id);
 
         try {
@@ -103,6 +103,6 @@ public abstract class AbstractService
         validator.validate(entityObject);
 
         repository.save(entityObject);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body((DTO) Converter.convertEntityToDTO(entityObject, dto.getClass()));
     }
 }
