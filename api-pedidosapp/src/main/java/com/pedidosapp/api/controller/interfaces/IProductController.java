@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import static com.pedidosapp.api.constants.endpoints.Endpoints.product;
 
-@RequestMapping(product)
+@RequestMapping(IProductController.prefixPath + product)
 public interface IProductController extends IAbstractAllController<ProductDTO> {
+    String prefixPath = "${api.prefix.v1}";
+
 }

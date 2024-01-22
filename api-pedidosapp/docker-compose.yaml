@@ -6,21 +6,7 @@ services:
     ports:
       - 8080:8080
     restart: always
-    depends_on: 
-      - db
     networks:
       - spring
-      - spring-postgres
-  db:
-    image: postgres:alpine
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "postgres"
-    networks:
-      - spring
-      - spring-postgres
 networks:
   spring: {}
-  spring-postgres: {}

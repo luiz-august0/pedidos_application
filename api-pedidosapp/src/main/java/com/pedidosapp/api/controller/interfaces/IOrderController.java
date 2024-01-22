@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.pedidosapp.api.constants.endpoints.Endpoints.order;
 
-@RequestMapping(order)
+@RequestMapping(IOrderController.prefixPath + order)
 public interface IOrderController extends IAbstractAllGetController<OrderDTO> {
+    String prefixPath = "${api.prefix.v1}";
+
     @PostMapping
     ResponseEntity<OrderDTO> insert(@RequestBody OrderDTO orderDTO);
 

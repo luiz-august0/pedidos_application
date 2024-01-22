@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import static com.pedidosapp.api.constants.endpoints.Endpoints.user;
 
-@RequestMapping(user)
+@RequestMapping(IUserController.prefixPath + user)
 public interface IUserController {
+    String prefixPath = "${api.prefix.v1}";
+
     @PostMapping("/register")
     ResponseEntity register(@RequestBody @Valid RegisterDTO registerDTO);
 }

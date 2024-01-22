@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.pedidosapp.api.constants.endpoints.Endpoints.employee;
 
-@RequestMapping(employee)
+@RequestMapping(IEmployeeController.prefixPath + employee)
 public interface IEmployeeController extends IAbstractAllGetController<EmployeeDTO> {
+    String prefixPath = "${api.prefix.v1}";
+
     @PostMapping
     ResponseEntity insert(@RequestBody EmployeeBean bean);
 
