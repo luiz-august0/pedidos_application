@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.pedidosapp.api.constants.endpoints.Endpoints.session;
+import static com.pedidosapp.api.constants.paths.Paths.prefixPath;
 
-@RequestMapping( IAuthenticationController.prefixPath + session)
+
+@RequestMapping(IAuthenticationController.PATH)
 public interface IAuthenticationController {
-    String prefixPath = "${api.prefix.v1}";
-
+    String PATH = prefixPath + "/session";
     @PostMapping("/login")
     ResponseEntity<TokenBean> login(@RequestBody @Valid AuthenticationDTO authenticationDTO);
 

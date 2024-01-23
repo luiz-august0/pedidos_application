@@ -1,7 +1,9 @@
 package com.pedidosapp.api.config.security;
 
-import com.pedidosapp.api.constants.endpoints.Endpoints;
+import com.pedidosapp.api.constants.paths.Paths;
+import com.pedidosapp.api.controller.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,23 +23,25 @@ public class SecurityConfigurations {
     @Autowired
     SecurityFilter securityFilter;
 
-    private final String[] blockedEndpointsEmployees = {
-            Endpoints.supplier + "/**",
-            Endpoints.user + "/**",
-            Endpoints.customer + "/**",
-            Endpoints.product + "/**",
-            Endpoints.employee + "/**"
-    };
+    @Value(Paths.prefixPath)
+    private String prefixPath;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        final String[] blockedEndpointsEmployees = {
+                ISupplierController.PATH.replace(Paths.prefixPath, prefixPath) + "/**",
+                IUserController.PATH.replace(Paths.prefixPath, prefixPath)  + "/**",
+                ICustomerController.PATH.replace(Paths.prefixPath, prefixPath)  + "/**",
+                IProductController.PATH.replace(Paths.prefixPath, prefixPath)  + "/**",
+                IEmployeeController.PATH.replace(Paths.prefixPath, prefixPath)  + "/**"
+        };
+
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
-                                Endpoints.session + "/login",
-                                Endpoints.session + "/refresh-token",
+                                IAuthenticationController.PATH.replace(Paths.prefixPath, prefixPath) + "/**",
                                 "/v3/api-docs/**",
                                 "/configuration/ui",
                                 "/swagger-resources/**",

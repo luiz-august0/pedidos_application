@@ -3,10 +3,10 @@ package com.pedidosapp.api.controller.interfaces;
 import com.pedidosapp.api.model.dtos.CustomerDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.pedidosapp.api.constants.endpoints.Endpoints.customer;
+import static com.pedidosapp.api.constants.paths.Paths.prefixPath;
 
-@RequestMapping(ICustomerController.prefixPath + customer)
+@RequestMapping(ICustomerController.PATH)
 public interface ICustomerController extends IAbstractAllController<CustomerDTO> {
-    String prefixPath = "${api.prefix.v1}";
+    String PATH = prefixPath + "/customer";
 
 }

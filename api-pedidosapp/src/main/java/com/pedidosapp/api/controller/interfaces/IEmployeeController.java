@@ -5,11 +5,11 @@ import com.pedidosapp.api.model.dtos.EmployeeDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.pedidosapp.api.constants.endpoints.Endpoints.employee;
+import static com.pedidosapp.api.constants.paths.Paths.prefixPath;
 
-@RequestMapping(IEmployeeController.prefixPath + employee)
+@RequestMapping(IEmployeeController.PATH)
 public interface IEmployeeController extends IAbstractAllGetController<EmployeeDTO> {
-    String prefixPath = "${api.prefix.v1}";
+    String PATH = prefixPath + "/employee";
 
     @PostMapping
     ResponseEntity insert(@RequestBody EmployeeBean bean);
