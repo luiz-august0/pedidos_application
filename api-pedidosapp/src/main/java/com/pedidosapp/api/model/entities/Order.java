@@ -1,6 +1,7 @@
 package com.pedidosapp.api.model.entities;
 
 import com.pedidosapp.api.model.enums.EnumStatusOrder;
+import com.pedidosapp.api.utils.Utils;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,10 +52,40 @@ public class Order extends AbstractEntity {
     public BigDecimal calculateAmount() {
         BigDecimal amount = BigDecimal.ZERO;
 
-        items.forEach(item -> amount.add(item.getAmount().subtract(item.getDiscount()).add(item.getAddition())));
+        for (OrderItem item : getItems()) {
+            if (Utils.isNotEmpty(item.getAmount())) {
+                amount = amount.add(item.getAmount());
+            }
+        }
 
         return amount;
     }
+
+    public BigDecimal calculateDiscount() {
+        BigDecimal discount = BigDecimal.ZERO;
+
+        for (OrderItem item : getItems()) {
+            if (Utils.isNotEmpty(item.getDiscount())) {
+                discount = discount.add(item.getDiscount());
+            }
+        }
+
+        return discount;
+    }
+
+    public BigDecimal calculateAddition() {
+        BigDecimal addition = BigDecimal.ZERO;
+
+        for (OrderItem item : getItems()) {
+            if (Utils.isNotEmpty(item.getAddition())) {
+                addition = addition.add(item.getAddition());
+            }
+        }
+
+
+        return addition;
+    }
+
 
     @Override
     public String getPortugueseClassName() {

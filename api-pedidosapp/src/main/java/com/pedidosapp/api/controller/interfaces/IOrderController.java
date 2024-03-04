@@ -2,7 +2,9 @@ package com.pedidosapp.api.controller.interfaces;
 
 import com.pedidosapp.api.model.dtos.OrderDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import static com.pedidosapp.api.constants.paths.Paths.prefixPath;
 
@@ -14,6 +16,4 @@ public interface IOrderController extends IAbstractAllGetController<OrderDTO> {
     @PostMapping
     ResponseEntity<OrderDTO> insert(@RequestBody OrderDTO orderDTO);
 
-    @PutMapping("/{id}")
-    ResponseEntity<OrderDTO> update(@PathVariable("id") Integer id, @RequestBody OrderDTO orderDTO);
 }

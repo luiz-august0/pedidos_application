@@ -4,6 +4,7 @@ import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.dtos.AbstractDTO;
 import com.pedidosapp.api.model.entities.AbstractEntity;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
+import com.pedidosapp.api.service.exceptions.enums.EnumResourceInactiveException;
 import com.pedidosapp.api.service.exceptions.enums.EnumResourceNotFoundException;
 import com.pedidosapp.api.service.validators.AbstractValidator;
 import org.springframework.data.domain.Page;
@@ -58,6 +59,27 @@ public abstract class AbstractService
         }
 
         return (DTO) Converter.convertEntityToDTO((Entity) object.get(), dto.getClass());
+    }
+
+    public DTO findAndValidateActive(Integer id) {
+        DTO dtoObject = this.findAndValidate(id);
+        Entity entityObject = (Entity) Converter.convertDTOToEntity(dtoObject, entity.getClass());
+
+        try {
+            Field field = entityObject.getClass().getDeclaredField("active");
+            field.setAccessible(true);
+            Boolean active = (Boolean) field.get(entityObject);
+
+            if (active.equals(false)) {
+                throw new ApplicationGenericsException(EnumResourceInactiveException.RESOURCE_INACTIVE, entity.getPortugueseClassName(), id);
+            }
+        } catch (NoSuchFieldException e) {
+            throw new ApplicationGenericsException("Classe " + entity.getClass().getName() + " não tem campo active");
+        } catch (IllegalAccessException e) {
+            throw new ApplicationGenericsException("Não foi possível acessar o campo active da classe " + entity.getClass().getName());
+        }
+
+        return dtoObject;
     }
 
     public ResponseEntity<DTO> insert(DTO object) {

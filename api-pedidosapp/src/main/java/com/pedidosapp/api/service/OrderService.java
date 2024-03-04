@@ -2,50 +2,82 @@ package com.pedidosapp.api.service;
 
 import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.dtos.OrderDTO;
+import com.pedidosapp.api.model.entities.Customer;
 import com.pedidosapp.api.model.entities.Order;
-import com.pedidosapp.api.repository.OrderItemRepository;
+import com.pedidosapp.api.model.entities.OrderItem;
+import com.pedidosapp.api.model.entities.User;
+import com.pedidosapp.api.model.enums.EnumStatusOrder;
 import com.pedidosapp.api.repository.OrderRepository;
 import com.pedidosapp.api.service.validators.OrderValidator;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class OrderService extends AbstractService<OrderRepository, Order, OrderDTO, OrderValidator> {
     private final OrderRepository orderRepository;
 
-    private final OrderItemRepository orderItemRepository;
-
     private final OrderValidator orderValidator;
 
-    OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
+    private final OrderItemService orderItemService;
+
+    private final CustomerService customerService;
+
+    private final UserService userService;
+
+    OrderService(OrderRepository orderRepository, OrderItemService orderItemService, CustomerService customerService, UserService userService) {
         super(orderRepository, new Order(), new OrderDTO(), new OrderValidator());
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
+        this.orderItemService = orderItemService;
+        this.customerService = customerService;
+        this.userService = userService;
         this.orderValidator = new OrderValidator();
     }
 
     @Override
+    @Transactional
     public ResponseEntity<OrderDTO> insert(OrderDTO orderDTO) {
         Order order = Converter.convertDTOToEntity(orderDTO, Order.class);
+        order.setInclusionDate(new Date());
         orderValidator.validate(order);
-        prepareInsert(order);
 
-        orderRepository.save(order);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Converter.convertEntityToDTO(order, OrderDTO.class));
+        Order orderManaged = prepareInsert(order);
+        orderRepository.save(orderManaged);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Converter.convertEntityToDTO(orderManaged, OrderDTO.class));
     }
 
-    @Override
-    public ResponseEntity<OrderDTO> update(Integer id, OrderDTO orderDTO) {
-        Order order = Converter.convertDTOToEntity(super.findAndValidate(id), Order.class);
-        orderValidator.validate(order);
-        prepareInsert(order);
+    private Order prepareInsert(Order order) {
+        List<OrderItem> orderItems = order.getItems();
+        List<OrderItem> orderItemsManaged = new ArrayList<>();
+        order.setAmount(BigDecimal.ZERO);
+        order.setDiscount(BigDecimal.ZERO);
+        order.setAddition(BigDecimal.ZERO);
+        order.setItems(new ArrayList<>());
+        order.setStatus(EnumStatusOrder.OPEN);
+        order.setCustomer(Converter.convertDTOToEntity(customerService.findAndValidateActive(order.getCustomer().getId()), Customer.class));
+        order.setUser(Converter.convertDTOToEntity(userService.findAndValidateActive(order.getUser().getId()), User.class));
 
-        orderRepository.save(order);
-        return ResponseEntity.ok().body(Converter.convertEntityToDTO(order, OrderDTO.class));
-    }
+        Order orderManaged = orderRepository.save(order);
 
-    private void prepareInsert(Order order) {
-        order.setAmount(order.calculateAmount());
+        orderItems.forEach(orderItem -> {
+            orderItem.setOrder(orderManaged);
+            OrderItem orderItemManged = orderItemService.insertByOrder(orderItem);
+
+            orderItemsManaged.add(orderItemManged);
+        });
+
+        orderManaged.setItems(orderItemsManaged);
+        orderManaged.setAmount(orderManaged.calculateAmount());
+        orderManaged.setDiscount(orderManaged.calculateDiscount());
+        orderManaged.setAddition(orderManaged.calculateAddition());
+
+        return orderManaged;
     }
 }
