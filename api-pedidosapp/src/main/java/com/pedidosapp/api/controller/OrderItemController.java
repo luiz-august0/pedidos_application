@@ -25,4 +25,9 @@ public class OrderItemController extends AbstractAllGetController<OrderItemServi
     public ResponseEntity<OrderItemDTO> update(Integer id, OrderItemDTO orderItemDTO) {
         return service.update(id, orderItemDTO);
     }
+
+    @Override
+    public void delete(Integer id) {
+        service.delete(id);
+    }
 }

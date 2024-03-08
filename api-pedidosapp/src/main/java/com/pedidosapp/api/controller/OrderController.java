@@ -19,4 +19,9 @@ public class OrderController extends AbstractAllGetController<OrderService, Orde
     public ResponseEntity<OrderDTO> insert(OrderDTO orderDTO) {
         return service.insert(orderDTO);
     }
+
+    @Override
+    public ResponseEntity<OrderDTO> closeOrder(Integer id) {
+        return service.closeOrder(id);
+    }
 }

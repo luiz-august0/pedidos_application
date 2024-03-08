@@ -1,6 +1,6 @@
 package com.pedidosapp.api.model.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pedidosapp.api.model.entities.OrderItem;
 import lombok.*;
 
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class OrderItemDTO extends AbstractDTO<OrderItem> {
     private Integer id;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private OrderDTO order;
 
     private ProductDTO product;

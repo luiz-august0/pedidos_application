@@ -1,6 +1,5 @@
 package com.pedidosapp.api.service;
 
-import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.beans.EmployeeBean;
 import com.pedidosapp.api.model.dtos.EmployeeDTO;
 import com.pedidosapp.api.model.entities.Employee;
@@ -44,7 +43,7 @@ public class EmployeeService extends AbstractService<EmployeeRepository, Employe
     }
 
     public ResponseEntity update(Integer id, EmployeeBean bean) {
-        Employee employee = Converter.convertDTOToEntity(super.findAndValidate(id), Employee.class);
+        Employee employee = super.findAndValidate(id);
         User user = (userRepository.findById(employee.getUser().getId())).get();
 
         if ((bean.getLogin() != null) && (!bean.getLogin().equals(user.getLogin()))) {
@@ -71,7 +70,7 @@ public class EmployeeService extends AbstractService<EmployeeRepository, Employe
 
     @Override
     public ResponseEntity activateInactivate(Integer id, Boolean active) {
-        Employee employee = Converter.convertDTOToEntity(super.findAndValidate(id), Employee.class);
+        Employee employee = super.findAndValidate(id);
         User user = employee.getUser();
         employee.setActive(active);
         user.setActive(active);

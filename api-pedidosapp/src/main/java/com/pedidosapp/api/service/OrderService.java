@@ -2,10 +2,8 @@ package com.pedidosapp.api.service;
 
 import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.dtos.OrderDTO;
-import com.pedidosapp.api.model.entities.Customer;
 import com.pedidosapp.api.model.entities.Order;
 import com.pedidosapp.api.model.entities.OrderItem;
-import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.model.enums.EnumStatusOrder;
 import com.pedidosapp.api.repository.OrderRepository;
 import com.pedidosapp.api.service.validators.OrderValidator;
@@ -53,6 +51,15 @@ public class OrderService extends AbstractService<OrderRepository, Order, OrderD
         return ResponseEntity.status(HttpStatus.CREATED).body(Converter.convertEntityToDTO(orderManaged, OrderDTO.class));
     }
 
+    @Transactional
+    public ResponseEntity<OrderDTO> closeOrder(Integer id) {
+        Order order = this.findAndValidate(id);
+        order.setStatus(EnumStatusOrder.CLOSED);
+
+        order = orderRepository.save(order);
+        return ResponseEntity.status(HttpStatus.OK).body(Converter.convertEntityToDTO(order, OrderDTO.class));
+    }
+
     private Order prepareInsert(Order order) {
         List<OrderItem> orderItems = order.getItems();
         List<OrderItem> orderItemsManaged = new ArrayList<>();
@@ -61,8 +68,8 @@ public class OrderService extends AbstractService<OrderRepository, Order, OrderD
         order.setAddition(BigDecimal.ZERO);
         order.setItems(new ArrayList<>());
         order.setStatus(EnumStatusOrder.OPEN);
-        order.setCustomer(Converter.convertDTOToEntity(customerService.findAndValidateActive(order.getCustomer().getId()), Customer.class));
-        order.setUser(Converter.convertDTOToEntity(userService.findAndValidateActive(order.getUser().getId()), User.class));
+        order.setCustomer(customerService.findAndValidateActive(order.getCustomer().getId()));
+        order.setUser(userService.findAndValidateActive(order.getUser().getId()));
 
         Order orderManaged = orderRepository.save(order);
 

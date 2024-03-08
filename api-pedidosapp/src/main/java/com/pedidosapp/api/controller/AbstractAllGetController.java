@@ -29,6 +29,6 @@ public abstract class AbstractAllGetController<Service extends AbstractService, 
     };
 
     public DTO findById(Integer id) {
-        return (DTO) service.findAndValidate(id);
+        return (DTO) service.findDTOAndValidate(id);
     }
 }

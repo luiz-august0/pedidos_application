@@ -1,6 +1,7 @@
 package com.pedidosapp.api.service.validators;
 
 import com.pedidosapp.api.model.entities.Order;
+import com.pedidosapp.api.model.enums.EnumStatusOrder;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumUnauthorizedException;
 import com.pedidosapp.api.utils.Utils;
@@ -29,6 +30,10 @@ public class OrderValidator extends AbstractValidator {
 
         if (Utils.isEmpty(order.getItems())) {
             throw new ApplicationGenericsException(EnumUnauthorizedException.EMPTY_ITEMS_ORDER);
+        }
+
+        if (EnumStatusOrder.CLOSED.equals(order.getStatus())) {
+            throw new ApplicationGenericsException(EnumUnauthorizedException.ORDER_ALREADY_CLOSED);
         }
     }
 }

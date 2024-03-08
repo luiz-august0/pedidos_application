@@ -16,4 +16,7 @@ public interface IOrderItemController extends IAbstractAllGetController<OrderIte
 
     @PutMapping("/{id}")
     ResponseEntity<OrderItemDTO> update(@PathVariable("id") Integer id, @RequestBody OrderItemDTO orderItemDTO);
+
+    @DeleteMapping("/{id}")
+    void delete(@PathVariable("id") Integer id);
 }
