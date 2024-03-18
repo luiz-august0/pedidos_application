@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 @Entity
@@ -30,15 +31,11 @@ public class Product extends AbstractEntity {
     @Column(nullable = false, name = "unitary_value")
     private BigDecimal unitaryValue;
 
-    @Column(name = "stock_quantity")
-    private BigDecimal stockQuantity;
-
-    @JoinColumn(name = "supplier_id", nullable = false)
-    @ManyToOne
-    private Supplier supplier;
-
     @Column(nullable = false)
     private Boolean active;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductSupplier> productSuppliers;
 
     @PrePersist
     @PreUpdate

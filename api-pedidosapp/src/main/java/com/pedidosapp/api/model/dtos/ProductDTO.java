@@ -5,6 +5,7 @@ import com.pedidosapp.api.model.enums.EnumUnitProduct;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,9 +21,7 @@ public class ProductDTO extends AbstractDTO<Product> {
 
     private BigDecimal unitaryValue;
 
-    private BigDecimal stockQuantity;
-
-    private SupplierDTO supplier;
+    private List<ProductSupplierDTO> productSuppliers;
 
     private Boolean active;
 }
