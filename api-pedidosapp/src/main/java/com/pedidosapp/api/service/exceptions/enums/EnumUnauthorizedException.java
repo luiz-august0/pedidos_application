@@ -2,6 +2,7 @@ package com.pedidosapp.api.service.exceptions.enums;
 
 public enum EnumUnauthorizedException {
     USER_ALREADY_REGISTERED("Usuário já cadastrado"),
+    USER_INACTIVE("Usuário não está ativo"),
     WRONG_CREDENTIALS("Usuário ou senha incorretos"),
     CNPJ_INVALID("CNPJ inválido"),
     CNPJ_CPF_INVALID("CPF/CNPJ inválido"),

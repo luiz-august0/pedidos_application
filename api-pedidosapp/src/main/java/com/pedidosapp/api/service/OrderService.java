@@ -42,8 +42,6 @@ public class OrderService extends AbstractService<OrderRepository, Order, OrderD
     @Transactional
     public ResponseEntity<OrderDTO> insert(OrderDTO orderDTO) {
         Order order = Converter.convertDTOToEntity(orderDTO, Order.class);
-        order.setInclusionDate(new Date());
-        orderValidator.validate(order);
 
         Order orderManaged = prepareInsert(order);
         orderRepository.save(orderManaged);
@@ -63,13 +61,17 @@ public class OrderService extends AbstractService<OrderRepository, Order, OrderD
     private Order prepareInsert(Order order) {
         List<OrderItem> orderItems = order.getItems();
         List<OrderItem> orderItemsManaged = new ArrayList<>();
+        order.setInclusionDate(new Date());
         order.setAmount(BigDecimal.ZERO);
         order.setDiscount(BigDecimal.ZERO);
         order.setAddition(BigDecimal.ZERO);
-        order.setItems(new ArrayList<>());
-        order.setStatus(EnumStatusOrder.OPEN);
         order.setCustomer(customerService.findAndValidateActive(order.getCustomer().getId()));
-        order.setUser(userService.findAndValidateActive(order.getUser().getId()));
+        order.setUser(userService.findAndValidateActive(getUserByContext().getId()));
+
+        orderValidator.validate(order);
+
+        order.setStatus(EnumStatusOrder.OPEN);
+        order.setItems(new ArrayList<>());
 
         Order orderManaged = orderRepository.save(order);
 

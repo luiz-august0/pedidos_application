@@ -3,6 +3,7 @@ package com.pedidosapp.api.service;
 import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.dtos.AbstractDTO;
 import com.pedidosapp.api.model.entities.AbstractEntity;
+import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumResourceInactiveException;
 import com.pedidosapp.api.service.exceptions.enums.EnumResourceNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -145,5 +147,10 @@ public abstract class AbstractService
 
         repository.save(entityObject);
         return ResponseEntity.ok().body((DTO) Converter.convertEntityToDTO(entityObject, dto.getClass()));
+    }
+
+    public User getUserByContext() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user;
     }
 }

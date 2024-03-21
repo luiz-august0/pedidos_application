@@ -4,6 +4,7 @@ import com.pedidosapp.api.converter.Converter;
 import com.pedidosapp.api.model.dtos.OrderItemDTO;
 import com.pedidosapp.api.model.entities.Order;
 import com.pedidosapp.api.model.entities.OrderItem;
+import com.pedidosapp.api.model.entities.Product;
 import com.pedidosapp.api.repository.OrderItemRepository;
 import com.pedidosapp.api.repository.OrderRepository;
 import com.pedidosapp.api.service.validators.OrderItemValidator;
@@ -81,7 +82,10 @@ public class OrderItemService extends AbstractService<OrderItemRepository, Order
     }
 
     private void prepareInsertOrUpdate(OrderItem orderItem) {
-        orderItem.setProduct(productService.findAndValidateActive(orderItem.getProduct().getId()));
+        Product product = productService.findAndValidateActive(orderItem.getProduct().getId());
+
+        orderItem.setProduct(product);
+        orderItem.setUnitaryValue(product.getUnitaryValue());
         orderItem.setAmount(orderItem.getUnitaryValue().multiply(orderItem.getQuantity()));
     }
 

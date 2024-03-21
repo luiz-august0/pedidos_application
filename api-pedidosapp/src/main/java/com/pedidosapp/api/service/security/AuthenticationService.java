@@ -11,7 +11,7 @@ import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumResourceNotFoundException;
 import com.pedidosapp.api.service.exceptions.enums.EnumUnauthorizedException;
 import com.pedidosapp.api.utils.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,22 +23,25 @@ import java.util.Base64;
 import java.util.Optional;
 
 
+@RequiredArgsConstructor
 @Service
 public class AuthenticationService {
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private TokenService tokenService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final TokenService tokenService;
+
+    private final UserRepository userRepository;
 
     public ResponseEntity<TokenBean> login(AuthenticationDTO authenticationDTO) {
         var loginPassword = new UsernamePasswordAuthenticationToken(authenticationDTO.login(), authenticationDTO.password());
+        EnumUnauthorizedException userInactiveEnum = EnumUnauthorizedException.USER_INACTIVE;
+
         try {
             Authentication session = authenticationManager.authenticate(loginPassword);
             User user = (User) session.getPrincipal();
+
+            if (!user.getActive()) throw new ApplicationGenericsException(userInactiveEnum);
 
             String accessToken = tokenService.generateToken(user);
             String refreshToken = tokenService.generateRefreshToken(user);
@@ -59,8 +62,13 @@ public class AuthenticationService {
         } catch (RuntimeException e) {
             if (e.getClass() == BadCredentialsException.class) {
                 throw new ApplicationGenericsException(EnumUnauthorizedException.WRONG_CREDENTIALS);
-            } else {
-                throw new ApplicationGenericsException(e.getMessage());
+            }
+            else {
+                if (e.getMessage().equals(userInactiveEnum.getMessage())) {
+                    throw new ApplicationGenericsException(userInactiveEnum);
+                } else {
+                    throw new ApplicationGenericsException(e.getMessage());
+                }
             }
         }
     }

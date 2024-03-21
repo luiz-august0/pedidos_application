@@ -2,6 +2,7 @@ package com.pedidosapp.api.config.security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.pedidosapp.api.model.entities.User;
 import com.pedidosapp.api.repository.UserRepository;
 import com.pedidosapp.api.service.exceptions.ApplicationGenericsException;
 import com.pedidosapp.api.service.exceptions.enums.EnumGenericsException;
@@ -13,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -39,9 +39,9 @@ public class SecurityFilter extends OncePerRequestFilter {
         try {
             if (Utils.isNotEmpty(token)) {
                 var login = tokenService.validateToken(token);
-                UserDetails userDetails = userRepository.findByLogin(login);
+                User user = userRepository.findByLogin(login);
 
-                var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 

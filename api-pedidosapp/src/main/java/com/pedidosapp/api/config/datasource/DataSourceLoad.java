@@ -10,7 +10,6 @@ import jakarta.annotation.PostConstruct;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.sql.DataSource;
@@ -51,11 +50,11 @@ public class DataSourceLoad {
             Flyway.configure().dataSource(dataSource).schemas(schema).load().migrate();
 
             TenantContext.setCurrentTenant(schema);
-            UserDetails userDetails = userRepository.findByLogin("admin");
+            User user = userRepository.findByLogin("admin");
 
-            if (Utils.isEmpty(userDetails)) {
+            if (Utils.isEmpty(user)) {
                 String encryptedPassword = new BCryptPasswordEncoder().encode(schema + "123logar");
-                User user = new User("admin", encryptedPassword, EnumUserRole.ADMIN);
+                user = new User("admin", encryptedPassword, EnumUserRole.ADMIN);
 
                 userRepository.save(user);
             }
