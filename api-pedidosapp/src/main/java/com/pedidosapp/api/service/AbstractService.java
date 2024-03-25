@@ -150,7 +150,6 @@ public abstract class AbstractService
     }
 
     public User getUserByContext() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user;
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
